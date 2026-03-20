@@ -31,6 +31,23 @@ h1 {
     text-transform: uppercase;
 }
 
+h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 152%;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+p {
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 148%;
+}
+
 .container {
     height: 100%;
     display: flex;
@@ -90,20 +107,69 @@ header {
 }
 
 .hero-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 60px 0px;
-  gap: 12px;
-  color: #FFFFFF;
-  text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 0px;
+    gap: 12px;
+    color: #ffffff;
+    text-align: center;
 }
 
 .btn-explore {
-  display: flex;
-  text-align: center;
-  padding: 20px 32px;
-  border-radius: 20px;
-  color: #FFFFFF;
-  background-color: #181C29;
+    display: flex;
+    text-align: center;
+    padding: 20px 32px;
+    border-radius: 20px;
+    color: #ffffff;
+    background-color: #181c29;
+}
+
+/* section about */
+.about-section {
+    display: flex;
+    padding: 60px 8px;
+    justify-content: center;
+    align-items: center;
+    background-color: #ff4646;
+    background-image: url('./img/bg-snow.png');
+    background-size: cover;
+    background-position: center;
+}
+
+.about-container {
+    display: flex;
+    max-width: 1276px;
+    padding: 0px;
+    align-items: center;
+    border-radius: 20px;
+    background: #fff;
+    width: 100%;
+    max-height: 528px;
+}
+.about-description {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    max-width: 426px;
+}
+.about-wrap {
+    padding: 0 60px;
+    width: 50%;
+    max-width: 546px; /* 426px + 120px padding */
+}
+
+.about-img {
+    background: url('./img/santa.png') center no-repeat;
+    background-size: cover;
+    width: 50%;
+    height: 528px;
+    border-radius: 20px;
+    margin-left: auto;
+}
+
+.about-caption {
+    color: #ff4646;
 }
