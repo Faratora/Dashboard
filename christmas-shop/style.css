@@ -53,6 +53,11 @@ p {
     display: flex;
     flex-direction: column;
 }
+
+.section {
+    padding: 60px 8px;
+    background-color: #ff4646;
+}
 /* header menu*/
 header {
     display: flex;
@@ -97,13 +102,11 @@ header {
 .hero-section {
     display: flex;
     justify-content: center;
-    padding: 60px 8px;
-    background-color: #ff4646;
     border-radius: 20px 20px 0 0;
     background-image: url('./img/bg-snow.png'), url('./img/bg-ball.png');
     background-size: cover;
     background-position: center;
-    background-repeat: no-repeat, no-repeat;
+    background-repeat: no-repeat, no-repeat; 
 }
 
 .hero-container {
@@ -128,10 +131,8 @@ header {
 /* section about */
 .about-section {
     display: flex;
-    padding: 60px 8px;
     justify-content: center;
     align-items: center;
-    background-color: #ff4646;
     background-image: url('./img/bg-snow.png');
     background-size: cover;
     background-position: center;
@@ -173,3 +174,5 @@ header {
 .about-caption {
     color: #ff4646;
 }
+
+/* section slider */
