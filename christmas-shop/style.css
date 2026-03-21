@@ -341,7 +341,7 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 8px 12px 12px 12px;
+  padding: 12px;
   border-radius: 20px;
   background-color: rgba(255, 255, 255, 0.4);
 }
@@ -352,4 +352,70 @@ header {
   flex-direction: column;
   align-items: center;
   position: relative;
+}
+
+/* section footer */
+
+footer {
+  color: #181C29;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.section-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 60px;
+  max-width: 1276px;
+  width: 100%;
+  background-color:  #ffffff;
+  padding-inline: 0;
+}
+
+.footer-card-wrap {
+display: flex;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.footer-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  background-color: #ECF3F8;
+  border-radius: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+.footer-card-wrap img {
+    width: 80px;
+    height: 80px;
+}
+
+.footer-contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.socials {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.socials svg {
+  margin: 8px;
+}
+
+.footer-contacts a{
+  text-align: center;
 }
