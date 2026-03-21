@@ -16,3 +16,10 @@
     line-height: 100%;
     letter-spacing: 0.05em;
 }
+
+.slider-text {
+  font-family: "Montserrat", sans-serif;
+  font-size: 80px;
+  font-weight: 600;
+  text-transform: uppercase;
+}

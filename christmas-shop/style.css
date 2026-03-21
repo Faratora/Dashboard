@@ -57,6 +57,9 @@ p {
 .section {
     padding: 60px 8px;
     background-color: #ff4646;
+    background-image: url('./img/bg-snow.png');
+    background-size: cover;
+    background-position: center;
 }
 /* header menu*/
 header {
@@ -103,9 +106,7 @@ header {
     display: flex;
     justify-content: center;
     border-radius: 20px 20px 0 0;
-    background-image: url('./img/bg-snow.png'), url('./img/bg-ball.png');
-    background-size: cover;
-    background-position: center;
+    background-image: url('./img/bg-ball.png'), url('./img/bg-snow.png');
     background-repeat: no-repeat, no-repeat; 
 }
 
@@ -133,9 +134,8 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url('./img/bg-snow.png');
-    background-size: cover;
-    background-position: center;
+    
+    
 }
 
 .about-container {
@@ -176,3 +176,66 @@ header {
 }
 
 /* section slider */
+.slider-section {
+  display: flex;
+  justify-content: center;
+  color: #FFFFFF;
+  max-width: 1440px;
+  overflow: hidden;
+  min-height: fit-content;
+  padding-left: 10px;
+}
+
+.slider-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: flex-start;
+  max-width: 1276px;
+  width: 100%;
+  
+}
+
+.slider-description {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: center;
+  gap: 12px;
+}
+
+.slider-row {
+    display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+  transition: transform 0.5s ease-in-out;
+  align-self: flex-start;
+  width: 100%;
+}
+
+.slider-img {
+  height: 200px;
+  width: 200px;
+  border-radius: 20px;
+}
+
+.slider-buttons-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  justify-content: flex-end;
+}
+
+.slider-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.slider-button:disabled {
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  cursor: default;
+}
