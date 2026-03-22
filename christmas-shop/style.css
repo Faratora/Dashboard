@@ -211,13 +211,22 @@ header {
     border: none;
     cursor: pointer;
     padding: 0;
+    transition: all 0.3s ease;
 }
 
 .slider-button:disabled {
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  opacity: 0.5;
   cursor: default;
 }
+.slider-button:not(:disabled):hover svg path {
+  stroke: #FF4646;
+  stroke-opacity: 1;
+}
 
+.slider-button:not(:disabled):hover svg rect {
+  fill: #b6b1b1;
+  stroke-opacity: 1;
+}
 
 /* section gift */
 
