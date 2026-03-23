@@ -390,9 +390,9 @@ display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  padding: 22px;
+  padding: 18px;
   background-color: #ECF3F8;
-  border-radius: 20px;
+  border-radius: 18px;
   width: 100%;
   text-align: center;
 }

@@ -11,21 +11,12 @@ h1 {
     text-transform: uppercase;
 }
 
-h2 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 24px;
-    font-weight: 600;
-    line-height: 1.52;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-}
-
-h4 {
-  font-family: "Montserrat", sans-serif;
-  font-size: 16px;
+.h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 24px;
   font-weight: 600;
   line-height: 1.52;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
@@ -37,6 +28,17 @@ h3 {
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
+
+
+h4 {
+  font-family: "Montserrat", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.52;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 
 p {
     font-family: 'Montserrat', sans-serif;
