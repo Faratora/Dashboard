@@ -496,7 +496,7 @@ display: flex;
   background-color: #FF4646;
   border-radius: 20px;
   position: relative;
-  min-height: 100vh;
+  /* min-height: 100vh; */
 }
 
 .gift-img {
@@ -514,7 +514,7 @@ display: flex;
   color: #FFFFFF;
   width: 100%;
   max-width: 1276px;
-  flex: 1; 
+  /* flex: 1;  */
 }
 
 .gift-description{
