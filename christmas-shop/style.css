@@ -260,6 +260,7 @@ header {
   gap: 12px;
 }
 
+.best-gift-card,
 .gift-card {
   display: flex;
   flex-direction: column;
@@ -271,7 +272,7 @@ header {
   height: 342px;
 }
 
-.gift-card img {
+.best-gift-card img {
   width: 310px;
   height: 230px;
 }
@@ -495,6 +496,7 @@ display: flex;
   background-color: #FF4646;
   border-radius: 20px;
   position: relative;
+  min-height: 100vh;
 }
 
 .gift-img {
@@ -512,6 +514,7 @@ display: flex;
   color: #FFFFFF;
   width: 100%;
   max-width: 1276px;
+  flex: 1; 
 }
 
 .gift-description{
