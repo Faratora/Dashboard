@@ -18,13 +18,11 @@ ul {
 body {
     max-width: 1440px;
     margin: 0 auto;
-    scroll-behavior: smooth;
     user-select: none;
 }
-
-
-
-
+html {
+    scroll-behavior: smooth;
+}
 .container {
     height: 100%;
     display: flex;
@@ -78,6 +76,10 @@ header {
 .header-menu a {
     padding: 12px 20px;
     border-radius: 12px;
+}
+
+.header-menu span {
+  cursor: default;
 }
 /* Hero section */
 .hero-section {
@@ -459,11 +461,7 @@ display: flex;
     transition: stroke 0.3s ease;
 } */
 
-
-
-
-
-.footer-card-wrap:hover,
+.footer-card:hover,
 .footer-contacts a:hover {
   color:#FF4646;
   transition: all 0.3s ease;
@@ -547,3 +545,4 @@ display: flex;
     background-color: rgba(255, 255, 255, 0.2);
     border-radius: 12px;
   }
+
