@@ -15,15 +15,16 @@ h1 {
     font-weight: 600;
     line-height: 1.52;
     letter-spacing: 0.16em;
-  text-transform: uppercase;
+    text-transform: uppercase;
 }
+
 .card-text {
-  font-family: "Montserrat", sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.52;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.52;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
 .font-action-small {
@@ -51,9 +52,8 @@ p {
 }
 
 .slider-text {
-  font-family: "Montserrat", sans-serif;
-  font-size: 80px;
-  font-weight: 600;
-  text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 80px;
+    font-weight: 600;
+    text-transform: uppercase;
 }
-
