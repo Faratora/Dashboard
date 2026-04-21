@@ -5,42 +5,40 @@ let seedBackdrop = null;
 
 function initSeedData() {
     log('initSeedData called');
-    seedBackdrop = $('#seed-data-backdrop');
-    seedDataModal = $('#seed-data-modal');
+    
+    seedBackdrop = document.getElementById('seed-data-backdrop');
+    seedDataModal = document.getElementById('seed-data-modal');
     
     closeSeedModal();
     
-    const seedBtn = $('#seed-data-btn');
-    const closeBtn = $('#seed-close-btn');
-    const copyBtn = $('#seed-copy-btn');
+    const seedBtn = document.getElementById('seed-data-btn');
+    const closeBtn = document.getElementById('seed-close-btn');
+    
+    log('seedBtn:', seedBtn);
+    log('closeBtn:', closeBtn);
     
     if (seedBtn) {
-        seedBtn.addEventListener('click', openSeedModal);
-        log('seedBtn listener added');
+        seedBtn.onclick = function() {
+            log('Seed button clicked');
+            openSeedModal();
+        };
     }
     if (closeBtn) {
-        closeBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            log('closeBtn clicked');
+        closeBtn.onclick = function() {
             closeSeedModal();
-        });
-        log('closeBtn listener added');
+        };
     }
     if (seedBackdrop) {
-        seedBackdrop.addEventListener('click', () => {
-            log('backdrop clicked');
-            closeSeedModal();
-        });
-    }
-    if (copyBtn) {
-        copyBtn.addEventListener('click', () => {
-            copyDataFromPeriod();
-        });
+        seedBackdrop.onclick = closeSeedModal;
     }
 }
 
 function openSeedModal() {
-    if (!seedBackdrop || !seedDataModal) return;
+    log('openSeedModal called');
+    if (!seedBackdrop || !seedDataModal) {
+        log('Modal elements not found');
+        return;
+    }
     
     const monthSelect = $('#month-select');
     const yearSelect = $('#year-select');
@@ -92,7 +90,8 @@ function renderSeedTable() {
         `;
         
         tr.querySelector('.copy-btn').addEventListener('click', (e) => {
-            copyDataFromPeriod(period);
+            const targetPeriod = getCurrentPeriod();
+            showConfirmDialog(period, targetPeriod);
         });
         
         tbody.appendChild(tr);
@@ -138,6 +137,41 @@ function getCurrentPeriod() {
     const month = $('#month-select')?.value || (new Date().getMonth() + 1).toString();
     const year = $('#year-select')?.value || new Date().getFullYear().toString();
     return `${year}-${month}`;
+}
+
+function showConfirmDialog(sourcePeriod, targetPeriod) {
+    const [sourceYear, sourceMonth] = sourcePeriod.split('-');
+    const [targetYear, targetMonth] = targetPeriod.split('-');
+    
+    const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const sourceMonthName = monthNames[parseInt(sourceMonth) - 1];
+    const targetMonthName = monthNames[parseInt(targetMonth) - 1];
+    
+    const message = `Copy data from ${sourceMonthName} ${sourceYear} to ${targetMonthName} ${targetYear}?`;
+    
+    const confirmDiv = document.createElement('div');
+    confirmDiv.id = 'confirm-dialog';
+    confirmDiv.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:3000;display:flex;align-items:center;justify-content:center;';
+    confirmDiv.innerHTML = `
+        <div style="background:white;padding:30px;border-radius:12px;text-align:center;max-width:400px;">
+            <p style="font-size:18px;margin-bottom:20px;font-weight:bold;">${message}</p>
+            <div style="display:flex;gap:15px;justify-content:center;">
+                <button id="confirm-yes" style="background:#27ae60;color:white;padding:12px 30px;border:none;border-radius:8px;cursor:pointer;font-size:16px;">Yes</button>
+                <button id="confirm-cancel" style="background:#95a5a6;color:white;padding:12px 30px;border:none;border-radius:8px;cursor:pointer;font-size:16px;">Cancel</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(confirmDiv);
+    
+    confirmDiv.querySelector('#confirm-yes').addEventListener('click', () => {
+        copyDataFromPeriod(sourcePeriod);
+        confirmDiv.remove();
+    });
+    
+    confirmDiv.querySelector('#confirm-cancel').addEventListener('click', () => {
+        confirmDiv.remove();
+    });
 }
 
 export { initSeedData };
