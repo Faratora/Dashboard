@@ -12,10 +12,16 @@ export function validateProject() {
     if (!projectName || !projectName.value.trim()) {
         showFieldError(projectName, 'Project Name is required');
         isValid = false;
+    } else if (!/^[a-zA-Zа-яА-ЯёЁ\s-]+$/.test(projectName.value.trim())) {
+        showFieldError(projectName, 'Project Name must contain only letters');
+        isValid = false;
     }
     
     if (!companyName || !companyName.value.trim()) {
         showFieldError(companyName, 'Company Name is required');
+        isValid = false;
+    } else if (!/^[a-zA-Zа-яА-ЯёЁ\s-]+$/.test(companyName.value.trim())) {
+        showFieldError(companyName, 'Company Name must contain only letters');
         isValid = false;
     }
     
@@ -125,6 +131,7 @@ function showFieldError(field, message) {
     
     const handler = function() {
         field.style.borderColor = '#ddd';
+        field.style.boxShadow = 'none';
         const error = field.parentElement.querySelector('.field-error');
         if (error) {
             error.remove();
@@ -142,5 +149,65 @@ function clearValidationErrors() {
     const inputs = document.querySelectorAll('#add-project-form input, #add-project-form select');
     inputs.forEach(input => {
         input.style.borderColor = '#ddd';
+    });
+}
+
+export function setupInputRestrictions() {
+    const letterFields = [
+        'project-name',
+        'company-name', 
+        'employee-name',
+        'employee-surname'
+    ];
+    
+    letterFields.forEach(id => {
+        const field = $(`#${id}`);
+        if (field) {
+            field.addEventListener('keydown', (e) => {
+                const key = e.key;
+                if (/[0-9]/.test(key)) {
+                    e.preventDefault();
+                    showFieldError(field, 'Numbers are not allowed');
+                }
+            });
+            
+            field.addEventListener('input', (e) => {
+                const oldValue = e.target.value;
+                const newValue = oldValue.replace(/[0-9]/g, '');
+                if (oldValue !== newValue) {
+                    e.target.value = newValue;
+                    showFieldError(field, 'Numbers are not allowed');
+                } else if (/^[a-zA-Zа-яА-ЯёЁ\s-]+$/.test(newValue) && newValue.length >= 3) {
+                    const error = field.parentElement.querySelector('.field-error');
+                    if (error && error.textContent === 'Numbers are not allowed') {
+                        error.remove();
+                        field.style.borderColor = '#ddd';
+                    }
+                }
+            });
+        }
+    });
+    
+    setupRealTimeValidation();
+}
+
+function setupRealTimeValidation() {
+    const projectFields = ['project-name', 'company-name', 'project-budget', 'employee-capacity'];
+    const employeeFields = ['employee-name', 'employee-surname', 'employee-age', 'employee-position', 'employee-salary'];
+    
+    projectFields.forEach(id => {
+        const field = $(`#${id}`);
+        if (field) {
+            field.addEventListener('input', () => validateProject());
+            field.addEventListener('blur', () => validateProject());
+        }
+    });
+    
+    employeeFields.forEach(id => {
+        const field = $(`#${id}`);
+        if (field) {
+            field.addEventListener('input', () => validateEmployee());
+            field.addEventListener('blur', () => validateEmployee());
+        }
     });
 }

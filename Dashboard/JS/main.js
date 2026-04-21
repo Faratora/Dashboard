@@ -5,6 +5,7 @@ import { initModal } from './module/modal.js';
 import { initProjects, renderProjects } from './module/projects.js';
 import { initEmployees, renderEmployees } from './module/employees.js';
 import { initSeedData } from './module/seedData.js';
+import { setupInputRestrictions } from './module/validator.js';
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
     initModal();
     initSeedData();
+    setupInputRestrictions();
 
     window.addEventListener('periodChanged', () => {
         renderProjects();
