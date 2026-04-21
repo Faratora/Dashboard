@@ -84,7 +84,7 @@ export function initModal() {
         } else if (employeeFormFields && employeeFormFields.style.display !== 'none') {
             const name = $('#employee-name').value.trim();
             const surname = $('#employee-surname').value.trim();
-            const age = $('#employee-age').value;
+            const birthDate = $('#employee-age').value;
             const position = $('#employee-position').value.trim();
             const salary = $('#employee-salary').value;
             const capacity = $('#employee-capacity').value || 1;
@@ -92,15 +92,24 @@ export function initModal() {
             const vacation = $('#employee-vacation').value || 0;
             const project = $('#employee-project').value || '';
 
-            if (!name || !surname || !age || !position || !salary) {
+            if (!name || !surname || !birthDate || !position || !salary) {
                 log('Please fill all required fields');
                 return;
+            }
+
+            const birth = new Date(birthDate);
+            const today = new Date();
+            let age = today.getFullYear() - birth.getFullYear();
+            const monthDiff = today.getMonth() - birth.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+                age--;
             }
 
             const employeeData = {
                 name: name,
                 surname: surname,
-                age: parseInt(age, 10),
+                age: age,
+                birthDate: birthDate,
                 position: position,
                 salary: parseFloat(salary),
                 capacity: parseFloat(capacity),
