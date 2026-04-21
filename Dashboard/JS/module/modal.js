@@ -19,7 +19,6 @@ export function initModal(callback) {
         onProjectAddCallback = callback;
     }
 
-    
     const openPanel = () => {
         backdrop.classList.remove('hidden');
         panel.classList.remove('hidden');
@@ -27,7 +26,6 @@ export function initModal(callback) {
         log('Panel opened');
     };
 
-    
     const closePanel = () => {
         backdrop.classList.add('hidden');
         panel.classList.add('hidden');
@@ -36,23 +34,18 @@ export function initModal(callback) {
         log('Panel closed');
     };
 
-    
     closeBtn.addEventListener('click', closePanel);
 
-    
     cancelBtn.addEventListener('click', closePanel);
 
-    
     backdrop.addEventListener('click', closePanel);
 
-    
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && !panel.classList.contains('hidden')) {
             closePanel();
         }
     });
 
-    
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
@@ -63,14 +56,16 @@ export function initModal(callback) {
             employeeCapacity: parseInt($('#employee-capacity').value, 10)
         };
 
-        if (onProjectAddCallback) {
+        
+        if (window.addProjectCallback) {
+            window.addProjectCallback(projectData);
+        } else if (onProjectAddCallback) {
             onProjectAddCallback(projectData);
         }
 
         closePanel();
     });
 
-   
     window.openAddProjectModal = openPanel;
 }
 
