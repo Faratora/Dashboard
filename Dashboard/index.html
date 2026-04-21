@@ -12,7 +12,7 @@
 <body>
 	<!-- LEFT SIDEBAR -->
 	<div id="side-panel">
-		<button id="toggle-btn">&#9776;</button>
+		<button id="toggle-btn" class="toggle-btn">&#9776;</button>
 		<div class="month-selector">
 			<h3>Period</h3>
 			<select id="month-select"></select>
@@ -23,7 +23,7 @@
 			<a href="#" id="nav-employees" class="nav-item">Employees</a>
 		</nav>
 	</div>
-	<button id="open-btn" class="hidden">&rarr;</button>
+	<button id="open-btn" class="open-btn hidden">&rarr;</button>
 	<!-- Project -->
 	<div id="main-content">
 		<div id="projects-content">
@@ -146,6 +146,27 @@
 					<button type="button" id="cancel-panel-btn" class="btn-secondary">Cancel</button>
 				</div>
 			</form>
+		</div>
+
+		<!-- Seed Data Modal -->
+		<div id="seed-data-backdrop" class="hidden"></div>
+		<div id="seed-data-modal" class="hidden" >
+			<h2>Seed Data from Month</h2>
+			<table id="seed-table">
+				<thead>
+					<h3>Select a month to copy its data to the current month: <span id="current-period-label"></span></h3>
+					<tr>
+						<th>Year</th>
+						<th>Month</th>
+						<th>Projects</th>
+						<th>Employees</th>
+						<th>Total Est. Income</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody id="seed-table-body"></tbody>
+			</table>
+			<button type="button" id="seed-close-btn" class="btn-secondary">Close</button>
 		</div>
 
 		<script type="module" src="./JS/main.js"></script>

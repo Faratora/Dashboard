@@ -4,6 +4,8 @@ import { initNavigation } from './module/menu.js';
 import { initModal } from './module/modal.js';
 import { initProjects, renderProjects } from './module/projects.js';
 import { initEmployees, renderEmployees } from './module/employees.js';
+import { initSeedData } from './module/seedData.js';
+
 
 document.addEventListener('DOMContentLoaded', () => {
     initSidebar();
@@ -12,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initEmployees();
     initNavigation();
     initModal();
+    initSeedData();
 
     window.addEventListener('periodChanged', () => {
         renderProjects();
