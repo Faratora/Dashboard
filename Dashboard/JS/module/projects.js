@@ -1,6 +1,5 @@
-import { $, log, generateId, formatCurrency, escapeHtml } from './utils.js';
-
-let projectsData = [];
+import { $, log } from './utils.js';
+import { addProject, deleteProject as storageDelete, getProjects, formatCurrency, escapeHtml } from './dataStorage.js';
 
 export function initProjects() {
     const tbody = $('#projects-tbody');
@@ -10,28 +9,16 @@ export function initProjects() {
         return;
     }
 
-    window.addProjectCallback = addProject;
-    log('addProjectCallback set on window');
-
+    window.addProjectCallback = handleAddProject;
     renderProjects();
     log('Projects module initialized');
 }
-export function addProject(projectData) {
-    const newProject = {
-        id: generateId(),
-        companyName: projectData.companyName,
-        projectName: projectData.projectName,
-        budget: parseFloat(projectData.budget) || 0,
-        employeeCapacity: parseInt(projectData.employeeCapacity) || 0,
-        employees: [],
-        estimatedIncome: 0
-    };
 
-    projectsData.push(newProject);
+export function handleAddProject(projectData) {
+    const newProject = addProject(projectData);
     renderProjectRow(newProject);
     log(`Project added: ${newProject.projectName}`);
 }
-
 
 function renderProjectRow(project) {
     const tbody = $('#projects-tbody');
@@ -44,7 +31,7 @@ function renderProjectRow(project) {
         <td>${escapeHtml(project.projectName)}</td>
         <td>${formatCurrency(project.budget)}</td>
         <td>${project.employeeCapacity}</td>
-        <td>${project.employees.length}</td>
+        <td>${project.employees?.length || 0}</td>
         <td>${formatCurrency(project.estimatedIncome)}</td>
         <td>
             <button class="edit-btn" data-id="${project.id}">Edit</button>
@@ -54,11 +41,9 @@ function renderProjectRow(project) {
 
     tbody.appendChild(tr);
 
-
-    tr.querySelector('.edit-btn').addEventListener('click', () => editProject(project.id));
-    tr.querySelector('.delete-btn').addEventListener('click', () => deleteProject(project.id));
+    tr.querySelector('.edit-btn').addEventListener('click', () => handleEditProject(project.id));
+    tr.querySelector('.delete-btn').addEventListener('click', () => handleDeleteProject(project.id));
 }
-
 
 export function renderProjects() {
     const tbody = $('#projects-tbody');
@@ -66,31 +51,27 @@ export function renderProjects() {
 
     tbody.innerHTML = '';
     
-    projectsData.forEach(project => {
+    const projects = getProjects();
+    projects.forEach(project => {
         renderProjectRow(project);
     });
 }
 
-
-function deleteProject(id) {
+function handleDeleteProject(id) {
     const row = $(`tr[data-id="${id}"]`);
     if (row) {
         row.remove();
-        projectsData = projectsData.filter(p => p.id !== id);
+        storageDelete(id);
         log(`Project deleted: ${id}`);
     }
 }
 
-
-function editProject(id) {
-    const project = projectsData.find(p => p.id === id);
+function handleEditProject(id) {
+    const projects = getProjects();
+    const project = projects.find(p => p.id === id);
     if (project) {
         log(`Edit project: ${project.projectName}`);
-        // TODO: TODO: Реализовать функцию редактирования
     }
 }
 
-
-export function getProjects() {
-    return [...projectsData];
-}
+export { getProjects };

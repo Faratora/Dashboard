@@ -1,4 +1,3 @@
-// menu.js - Navigation between views
 import { $, log } from './utils.js';
 
 export function initNavigation() {

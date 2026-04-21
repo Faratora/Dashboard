@@ -2,8 +2,8 @@ import { initSidebar } from './module/sidebar.js';
 import { initPeriodSelector } from './module/period.js';
 import { initNavigation } from './module/menu.js';
 import { initModal } from './module/modal.js';
-import { initProjects } from './module/projects.js';
-import { initEmployees } from './module/employees.js';
+import { initProjects, renderProjects } from './module/projects.js';
+import { initEmployees, renderEmployees } from './module/employees.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     initSidebar();
@@ -12,4 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initEmployees();
     initNavigation();
     initModal();
+
+    window.addEventListener('periodChanged', () => {
+        renderProjects();
+        renderEmployees();
+    });
 });

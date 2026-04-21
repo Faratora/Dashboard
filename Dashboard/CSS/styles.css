@@ -88,12 +88,13 @@ body.panel-collapsed #open-btn {
     position: absolute;
     right: 0;
     top: 0;
-    
 }
+
 #toggle-btn:hover {
     background: var(--color-hover-dark);
-    border-radius: 0;    
+    border-radius: 0;
 }
+
 .month-selector {
     padding: 20px;
     border-bottom: 1px solid var(--color-border-bottom);
@@ -267,8 +268,6 @@ body.panel-collapsed #main-content {
     background: var(--color-bg-body);
 }
 
-
-
 .btn-secondary {
     background: #e0e0e0;
     color: #333;
@@ -277,7 +276,6 @@ body.panel-collapsed #main-content {
 .btn-secondary:hover {
     background: #d0d0d0;
 }
-*/
 
 /* Table */
 table {

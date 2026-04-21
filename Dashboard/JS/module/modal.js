@@ -1,4 +1,3 @@
-//Slide-in panel for adding projects and employees
 import { $, log } from './utils.js';
 
 let onProjectAddCallback = null;

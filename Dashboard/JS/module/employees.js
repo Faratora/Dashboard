@@ -1,7 +1,5 @@
-import { $, log, generateId, formatCurrency, escapeHtml } from './utils.js';
-
-let employeesData = [];
-
+import { $, log } from './utils.js';
+import { addEmployee, deleteEmployee, getEmployees, formatCurrency, escapeHtml } from './dataStorage.js';
 
 export function initEmployees() {
     const tbody = $('#employees-tbody');
@@ -11,33 +9,16 @@ export function initEmployees() {
         return;
     }
 
-    
-    window.addEmployeeCallback = addEmployee;
-
+    window.addEmployeeCallback = handleAddEmployee;
     renderEmployees();
     log('Employees module initialized');
 }
 
-
-export function addEmployee(employeeData) {
-    const newEmployee = {
-        id: generateId(),
-        name: employeeData.name,
-        surname: employeeData.surname,
-        age: parseInt(employeeData.age) || 0,
-        position: employeeData.position,
-        salary: parseFloat(employeeData.salary) || 0,
-        project: employeeData.project || '',
-        estimatedPayment: 0,
-        estimatedIncome: 0,
-        availability: 1.0 
-    };
-
-    employeesData.push(newEmployee);
+export function handleAddEmployee(employeeData) {
+    const newEmployee = addEmployee(employeeData);
     renderEmployeeRow(newEmployee);
     log(`Employee added: ${newEmployee.name} ${newEmployee.surname}`);
 }
-
 
 function renderEmployeeRow(employee) {
     const tbody = $('#employees-tbody');
@@ -52,7 +33,7 @@ function renderEmployeeRow(employee) {
         <td>${escapeHtml(employee.position)}</td>
         <td>${formatCurrency(employee.salary)}</td>
         <td>${formatCurrency(employee.estimatedPayment)}</td>
-        <td>${escapeHtml(employee.project)}</td>
+        <td>${escapeHtml(employee.project || '-')}</td>
         <td>${formatCurrency(employee.estimatedIncome)}</td>
         <td>
             <button class="edit-btn" data-id="${employee.id}">Edit</button>
@@ -62,11 +43,9 @@ function renderEmployeeRow(employee) {
 
     tbody.appendChild(tr);
 
-    
-    tr.querySelector('.edit-btn').addEventListener('click', () => editEmployee(employee.id));
-    tr.querySelector('.delete-btn').addEventListener('click', () => deleteEmployee(employee.id));
+    tr.querySelector('.edit-btn').addEventListener('click', () => handleEditEmployee(employee.id));
+    tr.querySelector('.delete-btn').addEventListener('click', () => handleDeleteEmployee(employee.id));
 }
-
 
 export function renderEmployees() {
     const tbody = $('#employees-tbody');
@@ -74,31 +53,27 @@ export function renderEmployees() {
 
     tbody.innerHTML = '';
     
-    employeesData.forEach(employee => {
+    const employees = getEmployees();
+    employees.forEach(employee => {
         renderEmployeeRow(employee);
     });
 }
 
-
-function deleteEmployee(id) {
+function handleDeleteEmployee(id) {
     const row = $(`tr[data-id="${id}"]`);
     if (row) {
         row.remove();
-        employeesData = employeesData.filter(e => e.id !== id);
+        deleteEmployee(id);
         log(`Employee deleted: ${id}`);
     }
 }
 
-
-function editEmployee(id) {
-    const employee = employeesData.find(e => e.id === id);
+function handleEditEmployee(id) {
+    const employees = getEmployees();
+    const employee = employees.find(e => e.id === id);
     if (employee) {
         log(`Edit employee: ${employee.name} ${employee.surname}`);
-        // TODO: Implement edit functionality
     }
 }
 
-
-export function getEmployees() {
-    return [...employeesData];
-}
+export { getEmployees };

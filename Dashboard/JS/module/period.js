@@ -38,10 +38,11 @@ function populateYearSelect() {
 function onPeriodChange() {
     const month = $('#month-select').value;
     const year = $('#year-select').value;
-    console.log(`Selected period: ${month}.${year}`);
-
+    
     localStorage.setItem('selectedMonth', month);
     localStorage.setItem('selectedYear', year);
+    
+    window.dispatchEvent(new CustomEvent('periodChanged', { detail: { month, year } }));
 }
 
 function initPeriodSelector() {
@@ -50,13 +51,6 @@ function initPeriodSelector() {
 
     const monthSelect = $('#month-select');
     const yearSelect = $('#year-select');
-
-    console.log('initPeriodSelector called');
-    console.log('Current month options count:', monthSelect?.options?.length);
-    console.log('Current month select value BEFORE localStorage:', monthSelect?.value);
-
-    localStorage.removeItem('selectedMonth');
-    localStorage.removeItem('selectedYear');
 
     if (monthSelect) {
         monthSelect.addEventListener('change', onPeriodChange);
