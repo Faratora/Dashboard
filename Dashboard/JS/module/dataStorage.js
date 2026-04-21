@@ -121,11 +121,12 @@ export function addEmployee(employeeData) {
         age: parseInt(employeeData.age) || 0,
         position: employeeData.position,
         salary: parseFloat(employeeData.salary) || 0,
+        capacity: parseFloat(employeeData.capacity) || 1,
+        fit: parseFloat(employeeData.fit) || 1,
+        vacationDays: parseInt(employeeData.vacationDays) || 0,
         project: employeeData.project || '',
         estimatedPayment: 0,
-        estimatedIncome: 0,
-        availability: 1.0,
-        vacationDays: 0
+        estimatedIncome: 0
     };
     
     data.monthlyData[period].employees.push(newEmployee);
@@ -157,7 +158,11 @@ export function updateEmployee(id, employeeData) {
                 surname: employeeData.surname,
                 age: parseInt(employeeData.age) || 0,
                 position: employeeData.position,
-                salary: parseFloat(employeeData.salary) || 0
+                salary: parseFloat(employeeData.salary) || 0,
+                capacity: parseFloat(employeeData.capacity) || 1,
+                fit: parseFloat(employeeData.fit) || 1,
+                vacationDays: parseInt(employeeData.vacationDays) || 0,
+                project: employeeData.project || ''
             };
             saveData(data);
             return data.monthlyData[period].employees[index];

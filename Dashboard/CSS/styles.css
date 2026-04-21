@@ -341,3 +341,64 @@ th.sortable:hover {
 .delete-btn:hover {
     background: #c0392b;
 }
+
+/* Project table color coding */
+.over-capacity {
+    background-color: #ffcccc;
+    color: #cc0000;
+    font-weight: bold;
+}
+
+.income-positive {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+.income-negative {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.show-employees-btn {
+    background: #3498db;
+    padding: 5px 12px;
+    font-size: 12px;
+}
+
+.show-employees-btn:hover {
+    background: #2980b9;
+}
+
+.filter-input {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 200px;
+}
+
+.header-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.availability-btn {
+    background: #27ae60;
+    padding: 5px 12px;
+    font-size: 12px;
+}
+
+.availability-btn:hover {
+    background: #1e8449;
+}
+
+.high-availability {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.low-availability {
+    background-color: #f8d7da;
+    color: #721c24;
+}

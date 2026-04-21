@@ -87,6 +87,10 @@ export function initModal() {
             const age = $('#employee-age').value;
             const position = $('#employee-position').value.trim();
             const salary = $('#employee-salary').value;
+            const capacity = $('#employee-capacity').value || 1;
+            const fit = $('#employee-fit').value || 1;
+            const vacation = $('#employee-vacation').value || 0;
+            const project = $('#employee-project').value || '';
 
             if (!name || !surname || !age || !position || !salary) {
                 log('Please fill all required fields');
@@ -98,7 +102,11 @@ export function initModal() {
                 surname: surname,
                 age: parseInt(age, 10),
                 position: position,
-                salary: parseFloat(salary)
+                salary: parseFloat(salary),
+                capacity: parseFloat(capacity),
+                fit: parseFloat(fit),
+                vacationDays: parseInt(vacation, 10),
+                project: project
             };
 
             if (editMode === 'edit' && editingId && window.editEmployeeCallback) {

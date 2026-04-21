@@ -23,14 +23,15 @@
 			<a href="#" id="nav-employees" class="nav-item">Employees</a>
 		</nav>
 	</div>
-	<button id="open-btn" class="hidden">&#8250;</button>
+	<button id="open-btn" class="hidden">&rarr;</button>
 	<!-- Project -->
 	<div id="main-content">
 		<div id="projects-content">
 			<div class="content-header">
 
 				<h1 class="project-text">Projects</h1>
-				<div>
+				<div class="header-controls">
+					<input type="text" id="project-filter-input" placeholder="Filter projects..." class="filter-input">
 					<button id="add-project-btn" class="add-btn">+ Add Project</button>
 					<button id="seed-data-btn" class="add-btn">Seed Data</button>
 				</div>
@@ -57,7 +58,8 @@
 		<div id="employees-content" style="display: none;">
 			<div class="content-header">
 				<h1 class="employee-text">Employees</h1>
-				<div>
+				<div class="header-controls">
+					<input type="text" id="employee-filter-input" placeholder="Filter employees..." class="filter-input">
 					<button id="add-employee-btn" class="add-btn">+ Add Employee</button>
 				</div>
 			</div>
@@ -78,7 +80,7 @@
 						<th data-sort="project" data-filter="project" class="sortable filterable">Project <span
 								class="sort-icon">⇅</span><span class="filter-icon">⌕</span></th>
 						<th data-sort="estimatedIncome" class="sortable">Projected Income <span class="sort-icon">⇅</span></th>
-
+						<th>Availability</th>
 
 						<th>Actions</th>
 					</tr>
@@ -137,6 +139,8 @@
 						<label for="employee-salary">Salary: *</label>
 						<input type="number" id="employee-salary" step="0.01" min="0">
 					</div>
+					
+					
 				</div>
 				<div class="panel-footer">
 					<button type="button" class="btn-primary" id="submit-btn">Add Project</button>

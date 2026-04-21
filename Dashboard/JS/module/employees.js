@@ -1,29 +1,75 @@
 import { $, log } from './utils.js';
 import { addEmployee, deleteEmployee, updateEmployee, getEmployees, formatCurrency, escapeHtml } from './dataStorage.js';
 
-export function initEmployees() {
-    const tbody = $('#employees-tbody');
-    
-    if (!tbody) {
-        log('Employees tbody not found');
-        return;
-    }
+let sortColumn = null;
+let sortDirection = 'asc';
+let filterText = '';
+let projectFilter = '';
 
-    window.addEmployeeCallback = handleAddEmployee;
-    window.editEmployeeCallback = handleEditEmployee;
-    renderEmployees();
-    log('Employees module initialized');
+function sortAndFilterEmployees(employees) {
+    let result = [...employees];
+    
+    if (filterText) {
+        const search = filterText.toLowerCase();
+        result = result.filter(e => 
+            e.name.toLowerCase().includes(search) ||
+            e.surname.toLowerCase().includes(search) ||
+            e.position.toLowerCase().includes(search)
+        );
+    }
+    
+    if (projectFilter) {
+        result = result.filter(e => e.project === projectFilter);
+    }
+    
+    if (sortColumn) {
+        result.sort((a, b) => {
+            let valA, valB;
+            switch (sortColumn) {
+                case 'name': valA = a.name; valB = b.name; break;
+                case 'surname': valA = a.surname; valB = b.surname; break;
+                case 'age': valA = a.age; valB = b.age; break;
+                case 'position': valA = a.position; valB = b.position; break;
+                case 'salary': valA = a.salary; valB = b.salary; break;
+                case 'project': valA = a.project || ''; valB = b.project || ''; break;
+                case 'estimatedIncome': valA = a.estimatedIncome; valB = b.estimatedIncome; break;
+                default: return 0;
+            }
+            
+            if (typeof valA === 'string') {
+                return sortDirection === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            }
+            return sortDirection === 'asc' ? valA - valB : valB - valA;
+        });
+    }
+    
+    return result;
 }
 
-export function handleAddEmployee(employeeData) {
-    const newEmployee = addEmployee(employeeData);
-    renderEmployeeRow(newEmployee);
-    log(`Employee added: ${newEmployee.name} ${newEmployee.surname}`);
+function renderEmployees() {
+    const tbody = $('#employees-tbody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+    
+    const employees = sortAndFilterEmployees(getEmployees());
+    employees.forEach(employee => {
+        renderEmployeeRow(employee);
+    });
+}
+
+function calculateAvailability(employee) {
+    const vacation = employee.vacationDays || 0;
+    const fit = employee.fit || 1;
+    return (20 - vacation) / 20 * fit * 100;
 }
 
 function renderEmployeeRow(employee) {
     const tbody = $('#employees-tbody');
     if (!tbody) return;
+
+    const availability = calculateAvailability(employee);
+    const availabilityClass = availability > 80 ? 'high-availability' : availability < 50 ? 'low-availability' : '';
 
     const tr = document.createElement('tr');
     tr.dataset.id = employee.id;
@@ -36,6 +82,7 @@ function renderEmployeeRow(employee) {
         <td>${formatCurrency(employee.estimatedPayment)}</td>
         <td>${escapeHtml(employee.project || '-')}</td>
         <td>${formatCurrency(employee.estimatedIncome)}</td>
+        <td><button class="availability-btn" data-id="${employee.id}">${availability.toFixed(0)}%</button></td>
         <td>
             <button class="edit-btn" data-id="${employee.id}">Edit</button>
             <button class="delete-btn" data-id="${employee.id}">Delete</button>
@@ -46,6 +93,12 @@ function renderEmployeeRow(employee) {
 
     const editBtn = tr.querySelector('.edit-btn');
     const deleteBtn = tr.querySelector('.delete-btn');
+    const availBtn = tr.querySelector('.availability-btn');
+    
+    availBtn.addEventListener('click', () => {
+        log('Availability button clicked for employee: ' + employee.id);
+        window.dispatchEvent(new CustomEvent('showEmployeeAvailability', { detail: { employeeId: employee.id } }));
+    });
     
     editBtn.addEventListener('click', () => {
         log('Edit button clicked for employee: ' + employee.id);
@@ -54,18 +107,6 @@ function renderEmployeeRow(employee) {
     deleteBtn.addEventListener('click', () => {
         log('Delete button clicked for employee: ' + employee.id);
         handleDeleteEmployee(employee.id);
-    });
-}
-
-export function renderEmployees() {
-    const tbody = $('#employees-tbody');
-    if (!tbody) return;
-
-    tbody.innerHTML = '';
-    
-    const employees = getEmployees();
-    employees.forEach(employee => {
-        renderEmployeeRow(employee);
     });
 }
 
@@ -93,4 +134,58 @@ function handleEditEmployee(id, employeeData) {
     }
 }
 
-export { getEmployees };
+export function initEmployees() {
+    const tbody = $('#employees-tbody');
+    
+    if (!tbody) {
+        log('Employees tbody not found');
+        return;
+    }
+
+    window.addEmployeeCallback = handleAddEmployee;
+    window.editEmployeeCallback = handleEditEmployee;
+    
+    initSortFilter();
+    renderEmployees();
+    log('Employees module initialized');
+}
+
+function initSortFilter() {
+    const thead = $('#employees-thead');
+    if (!thead) return;
+    
+    const headers = thead.querySelectorAll('th.sortable');
+    headers.forEach(th => {
+        th.addEventListener('click', () => {
+            const column = th.dataset.sort;
+            if (sortColumn === column) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortColumn = column;
+                sortDirection = 'asc';
+            }
+            renderEmployees();
+        });
+    });
+    
+    const filterInput = document.getElementById('employee-filter-input');
+    if (filterInput) {
+        filterInput.addEventListener('input', (e) => {
+            filterText = e.target.value;
+            renderEmployees();
+        });
+    }
+    
+    window.addEventListener('showProjectEmployees', (e) => {
+        projectFilter = e.detail.projectId;
+        renderEmployees();
+    });
+}
+
+export function handleAddEmployee(employeeData) {
+    const newEmployee = addEmployee(employeeData);
+    renderEmployeeRow(newEmployee);
+    log(`Employee added: ${newEmployee.name} ${newEmployee.surname}`);
+}
+
+export { getEmployees, renderEmployees };

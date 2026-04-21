@@ -1,29 +1,92 @@
 import { $, log } from './utils.js';
-import { addProject, deleteProject as storageDelete, updateProject, getProjects, formatCurrency, escapeHtml } from './dataStorage.js';
+import { addProject, deleteProject as storageDelete, updateProject, getProjects, getEmployees, formatCurrency, escapeHtml } from './dataStorage.js';
 
-export function initProjects() {
-    const tbody = $('#projects-tbody');
+let sortColumn = null;
+let sortDirection = 'asc';
+let filterText = '';
 
-    if (!tbody) {
-        log('Projects tbody not found');
-        return;
-    }
-
-    window.addProjectCallback = handleAddProject;
-    window.editProjectCallback = handleEditProject;
-    renderProjects();
-    log('Projects module initialized');
+function calculateUsedCapacity(projectId) {
+    const employees = getEmployees();
+    const projectEmployees = employees.filter(e => e.project === projectId);
+    
+    return projectEmployees.reduce((sum, emp) => {
+        const capacity = emp.capacity || 1;
+        const fit = emp.fit || 1;
+        const vacation = emp.vacationDays ? (20 - emp.vacationDays) / 20 : 1;
+        return sum + (capacity * fit * vacation);
+    }, 0);
 }
 
-export function handleAddProject(projectData) {
-    const newProject = addProject(projectData);
-    renderProjectRow(newProject);
-    log(`Project added: ${newProject.projectName}`);
+function calculateEstimatedIncome(projectId, budget) {
+    const employees = getEmployees();
+    const projectEmployees = employees.filter(e => e.project === projectId);
+    
+    const totalSalary = projectEmployees.reduce((sum, emp) => sum + (emp.salary || 0), 0);
+    
+    const profitMargin = budget > 0 ? (budget - totalSalary) / budget : 0;
+    return totalSalary * profitMargin;
+}
+
+function sortAndFilterProjects(projects) {
+    let result = [...projects];
+    
+    if (filterText) {
+        const search = filterText.toLowerCase();
+        result = result.filter(p => 
+            p.companyName.toLowerCase().includes(search) ||
+            p.projectName.toLowerCase().includes(search)
+        );
+    }
+    
+    if (sortColumn) {
+        result.sort((a, b) => {
+            let valA, valB;
+            switch (sortColumn) {
+                case 'companyName': valA = a.companyName; valB = b.companyName; break;
+                case 'projectName': valA = a.projectName; valB = b.projectName; break;
+                case 'budget': valA = a.budget; valB = b.budget; break;
+                case 'employeeCapacity': valA = a.employeeCapacity; valB = b.employeeCapacity; break;
+                case 'estimatedIncome': 
+                    valA = calculateEstimatedIncome(a.id, a.budget);
+                    valB = calculateEstimatedIncome(b.id, b.budget);
+                    break;
+                default: return 0;
+            }
+            
+            if (typeof valA === 'string') {
+                return sortDirection === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            }
+            return sortDirection === 'asc' ? valA - valB : valB - valA;
+        });
+    }
+    
+    return result;
+}
+
+function renderProjects() {
+    const tbody = $('#projects-tbody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+    
+    const projects = sortAndFilterProjects(getProjects());
+    projects.forEach(project => {
+        renderProjectRow(project);
+    });
 }
 
 function renderProjectRow(project) {
     const tbody = $('#projects-tbody');
     if (!tbody) return;
+
+    const usedCapacity = calculateUsedCapacity(project.id);
+    const totalCapacity = project.employeeCapacity || 0;
+    const estimatedIncome = calculateEstimatedIncome(project.id, project.budget);
+    const overCapacity = usedCapacity > totalCapacity;
+    const employeeCount = getEmployees().filter(e => e.project === project.id).length;
+    
+    const incomeClass = estimatedIncome > 0 ? 'income-positive' : estimatedIncome < 0 ? 'income-negative' : '';
+    const capacityClass = overCapacity ? 'over-capacity' : '';
 
     const tr = document.createElement('tr');
     tr.dataset.id = project.id;
@@ -31,9 +94,9 @@ function renderProjectRow(project) {
         <td>${escapeHtml(project.companyName)}</td>
         <td>${escapeHtml(project.projectName)}</td>
         <td>${formatCurrency(project.budget)}</td>
-        <td>${project.employeeCapacity}</td>
-        <td>${project.employees?.length || 0}</td>
-        <td>${formatCurrency(project.estimatedIncome)}</td>
+        <td class="${capacityClass}">${usedCapacity.toFixed(1)}/${totalCapacity}</td>
+        <td><button class="show-employees-btn" data-id="${project.id}">Show Employees (${employeeCount})</button></td>
+        <td class="${incomeClass}">${formatCurrency(estimatedIncome)}</td>
         <td>
             <button class="edit-btn" data-id="${project.id}">Edit</button>
             <button class="delete-btn" data-id="${project.id}">Delete</button>
@@ -43,27 +106,19 @@ function renderProjectRow(project) {
     tbody.appendChild(tr);
 
     const editBtn = tr.querySelector('.edit-btn');
+    const showEmpBtn = tr.querySelector('.show-employees-btn');
     const deleteBtn = tr.querySelector('.delete-btn');
     
     editBtn.addEventListener('click', () => {
         log('Edit button clicked for project: ' + project.id);
         handleEditProject(project.id);
     });
-    deleteBtn.addEventListener('click', () => {
-        log('Delete button clicked for project: ' + project.id);
-        handleDeleteProject(project.id);
+    showEmpBtn.addEventListener('click', () => {
+        log('Show employees for project: ' + project.id);
+        window.dispatchEvent(new CustomEvent('showProjectEmployees', { detail: { projectId: project.id } }));
     });
-}
-
-export function renderProjects() {
-    const tbody = $('#projects-tbody');
-    if (!tbody) return;
-
-    tbody.innerHTML = '';
-    
-    const projects = getProjects();
-    projects.forEach(project => {
-        renderProjectRow(project);
+    deleteBtn.addEventListener('click', () => {
+        handleDeleteProject(project.id);
     });
 }
 
@@ -91,4 +146,53 @@ function handleEditProject(id, projectData) {
     }
 }
 
-export { getProjects };
+export function initProjects() {
+    const tbody = $('#projects-tbody');
+
+    if (!tbody) {
+        log('Projects tbody not found');
+        return;
+    }
+
+    window.addProjectCallback = handleAddProject;
+    window.editProjectCallback = handleEditProject;
+    
+    initSortFilter();
+    renderProjects();
+    log('Projects module initialized');
+}
+
+function initSortFilter() {
+    const thead = $('#projects-thead');
+    if (!thead) return;
+    
+    const headers = thead.querySelectorAll('th.sortable');
+    headers.forEach(th => {
+        th.addEventListener('click', () => {
+            const column = th.dataset.sort;
+            if (sortColumn === column) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortColumn = column;
+                sortDirection = 'asc';
+            }
+            renderProjects();
+        });
+    });
+    
+    const filterInput = document.getElementById('project-filter-input');
+    if (filterInput) {
+        filterInput.addEventListener('input', (e) => {
+            filterText = e.target.value;
+            renderProjects();
+        });
+    }
+}
+
+export function handleAddProject(projectData) {
+    const newProject = addProject(projectData);
+    renderProjectRow(newProject);
+    log(`Project added: ${newProject.projectName}`);
+}
+
+export { getProjects, renderProjects };
