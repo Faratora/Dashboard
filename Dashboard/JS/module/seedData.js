@@ -8,6 +8,8 @@ function initSeedData() {
     seedBackdrop = $('#seed-data-backdrop');
     seedDataModal = $('#seed-data-modal');
     
+    closeSeedModal();
+    
     const seedBtn = $('#seed-data-btn');
     const closeBtn = $('#seed-close-btn');
     const copyBtn = $('#seed-copy-btn');

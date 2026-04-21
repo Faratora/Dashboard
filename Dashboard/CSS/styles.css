@@ -300,6 +300,7 @@ body.panel-collapsed #main-content {
     background: #d0d0d0;
 }
 
+
 /* Table */
 table {
     width: 100%;
@@ -483,4 +484,24 @@ th.sortable:hover {
     border-radius: 8px;
     z-index: 2001;
     min-width: 400px;
+}
+#seed-data-modal.hidden,
+#seed-data-backdrop.hidden {
+    display: none;
+}
+/* Validation */
+.validation-error {
+    background: #ffdddd;
+    color: #cc0000;
+    padding: 10px 20px;
+    margin: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+.field-error {
+    color: #cc0000;
+    font-size: 12px;
+    margin-top: 4px;
+    font-weight: bold;
+    display: block;
 }

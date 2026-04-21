@@ -1,4 +1,5 @@
 import { $, log } from './utils.js';
+import { validateProject, validateEmployee } from './validator.js';
 
 let editMode = null;
 let editingId = null;
@@ -18,6 +19,15 @@ export function initModal() {
 
     const openPanel = (mode = 'add') => {
         editMode = mode;
+        
+        const allInputs = document.querySelectorAll('#add-project-form input, #add-project-form select');
+        allInputs.forEach(input => {
+            input.style.borderColor = '#ddd';
+            input.style.boxShadow = 'none';
+        });
+        const allErrors = document.querySelectorAll('.field-error');
+        allErrors.forEach(err => err.remove());
+        
         backdrop.classList.remove('hidden');
         panel.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
@@ -55,15 +65,17 @@ export function initModal() {
         const employeeFormFields = $('#employee-form-fields');
         
         if (projectFormFields && projectFormFields.style.display !== 'none') {
+            log('checking project form');
+            if (!validateProject()) {
+                log('project validation failed, returning');
+                return;
+            }
+            log('project validation passed');
+            
             const companyName = $('#company-name').value.trim();
             const projectName = $('#project-name').value.trim();
             const budget = $('#project-budget').value;
             const employeeCapacity = $('#employee-capacity').value;
-
-            if (!companyName || !projectName || !budget || !employeeCapacity) {
-                log('Please fill all required fields');
-                return;
-            }
 
             const projectData = {
                 companyName: companyName,
@@ -82,20 +94,19 @@ export function initModal() {
                 log('addProjectCallback not found');
             }
         } else if (employeeFormFields && employeeFormFields.style.display !== 'none') {
+            if (!validateEmployee()) {
+                return;
+            }
+            
             const name = $('#employee-name').value.trim();
             const surname = $('#employee-surname').value.trim();
             const birthDate = $('#employee-age').value;
-            const position = $('#employee-position').value.trim();
+            const position = $('#employee-position').value;
             const salary = $('#employee-salary').value;
             const capacity = $('#employee-capacity').value || 1;
             const fit = $('#employee-fit').value || 1;
             const vacation = $('#employee-vacation').value || 0;
             const project = $('#employee-project').value || '';
-
-            if (!name || !surname || !birthDate || !position || !salary) {
-                log('Please fill all required fields');
-                return;
-            }
 
             const birth = new Date(birthDate);
             const today = new Date();
