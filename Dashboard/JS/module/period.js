@@ -23,7 +23,7 @@ function populateYearSelect() {
 
     const currentYear = new Date().getFullYear();
     const startYear = currentYear - 1;
-    const endYear = currentYear + 5;
+    const endYear = currentYear + 1;
 
     for (let year = startYear; year <= endYear; year++) {
         const option = document.createElement('option');
@@ -51,11 +51,12 @@ function initPeriodSelector() {
     const monthSelect = $('#month-select');
     const yearSelect = $('#year-select');
 
-    const savedMonth = localStorage.getItem('selectedMonth');
-    const savedYear = localStorage.getItem('selectedYear');
+    console.log('initPeriodSelector called');
+    console.log('Current month options count:', monthSelect?.options?.length);
+    console.log('Current month select value BEFORE localStorage:', monthSelect?.value);
 
-    if (savedMonth && monthSelect) monthSelect.value = savedMonth;
-    if (savedYear && yearSelect) yearSelect.value = savedYear;
+    localStorage.removeItem('selectedMonth');
+    localStorage.removeItem('selectedYear');
 
     if (monthSelect) {
         monthSelect.addEventListener('change', onPeriodChange);
