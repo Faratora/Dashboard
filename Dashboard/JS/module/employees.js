@@ -69,7 +69,6 @@ function renderEmployeeRow(employee) {
     if (!tbody) return;
 
     const availability = calculateAvailability(employee);
-    const availabilityClass = availability > 80 ? 'high-availability' : availability < 50 ? 'low-availability' : '';
 
     const tr = document.createElement('tr');
     tr.dataset.id = employee.id;
@@ -82,8 +81,10 @@ function renderEmployeeRow(employee) {
         <td>${formatCurrency(employee.estimatedPayment)}</td>
         <td>${escapeHtml(employee.project || '-')}</td>
         <td>${formatCurrency(employee.estimatedIncome)}</td>
-        <td><button class="availability-btn" data-id="${employee.id}">${availability.toFixed(0)}%</button></td>
         <td>
+            
+            <button class="availability-btn" data-id="${employee.id}">Availability</button>
+            <button class="assign-btn" data-id="${employee.id}">Assign</button>
             <button class="edit-btn" data-id="${employee.id}">Edit</button>
             <button class="delete-btn" data-id="${employee.id}">Delete</button>
         </td>
@@ -94,10 +95,15 @@ function renderEmployeeRow(employee) {
     const editBtn = tr.querySelector('.edit-btn');
     const deleteBtn = tr.querySelector('.delete-btn');
     const availBtn = tr.querySelector('.availability-btn');
+    const assignBtn = tr.querySelector('.assign-btn');
     
     availBtn.addEventListener('click', () => {
         log('Availability button clicked for employee: ' + employee.id);
-        window.dispatchEvent(new CustomEvent('showEmployeeAvailability', { detail: { employeeId: employee.id } }));
+    });
+    
+    assignBtn.addEventListener('click', () => {
+        log('Assign button clicked for employee: ' + employee.id);
+        window.dispatchEvent(new CustomEvent('showAssignEmployee', { detail: { employeeId: employee.id } }));
     });
     
     editBtn.addEventListener('click', () => {

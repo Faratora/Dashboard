@@ -384,13 +384,23 @@ th.sortable:hover {
 }
 
 .availability-btn {
-    background: #27ae60;
+    background: #e215d1;
     padding: 5px 12px;
     font-size: 12px;
 }
 
 .availability-btn:hover {
-    background: #1e8449;
+    background: #5c0e55;
+}
+
+.assign-btn {
+    background: #3498db;
+    padding: 5px 12px;
+    font-size: 12px;
+}
+
+.assign-btn:hover {
+    background: #2980b9;
 }
 
 .high-availability {
