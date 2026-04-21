@@ -85,36 +85,40 @@
 				</thead>
 				<tbody id="employees-tbody"></tbody>
 			</table>
-		</div>
-	</div>
+    </div>
 
-	<script type="module" src="./JS/main.js"></script>
+    <!-- Add Project Slide-in Panel -->
+    <div id="panel-backdrop" class="panel-backdrop hidden"></div>
+    <div id="add-project-panel" class="panel-drawer hidden">
+        <div class="panel-header">
+            <h2>Add New Project</h2>
+						<!-- крестик -->
+            <button id="panel-close-btn" class="panel-close">&times;</button>
+        </div>
+        <form id="add-project-form">
+            <div class="form-group">
+                <label for="project-name">Project Name: *</label>
+                <input type="text" id="project-name" required>
+            </div>
+            <div class="form-group">
+                <label for="company-name">Company Name: *</label>
+                <input type="text" id="company-name" required>
+            </div>
+            <div class="form-group">
+                <label for="project-budget">Budget: *</label>
+                <input type="number" id="project-budget" step="0.01" min="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="employee-capacity">Employee Capacity: *</label>
+                <input type="number" id="employee-capacity" min="1" step="1" required>
+            </div>
+            <div class="panel-footer">
+                <button type="submit" class="btn btn-primary">Add Project</button>
+                <button type="button" id="cancel-panel-btn" class="btn btn-secondary">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <script type="module" src="./JS/main.js"></script>
 </body>
-
-<!-- Modal Add New project -->
-
-<h2>Add New Project</h2>
-                    <form id="add-project-form">
-                        <div class="form-group">
-                            <label>Project Name: *</label>
-                            <input type="text" id="project-name" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Company Name: *</label>
-                            <input type="text" id="company-name" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Budget: *</label>
-                            <input type="number" id="project-budget" step="0.01" min="0.01" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Employee Capacity: *</label>
-                            <input type="number" id="employee-capacity" min="1" step="1" required>
-                        </div>
-                        <div class="form-buttons">
-                            <button type="submit" id="add-project-btn-form" disabled>Add Project</button>
-                            <button type="button" id="cancel-project-btn-form">Cancel</button>
-                        </div>
-                    </form>
-
 </html>

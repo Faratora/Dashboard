@@ -6,6 +6,7 @@ export function initNavigation() {
     const navEmployees = $('#nav-employees');
     const projectsContent = $('#projects-content');
     const employeesContent = $('#employees-content');
+    const addProjectBtn = $('#add-project-btn');
 
     if (!navProjects || !navEmployees || !projectsContent || !employeesContent) {
         log('Navigation elements not found');
@@ -29,4 +30,13 @@ export function initNavigation() {
         navProjects.classList.remove('active');
         log('Switched to Employees view');
     });
+
+    // Open Add Project modal
+    if (addProjectBtn) {
+        addProjectBtn.addEventListener('click', () => {
+            if (window.openAddProjectModal) {
+                window.openAddProjectModal();
+            }
+        });
+    }
 }
