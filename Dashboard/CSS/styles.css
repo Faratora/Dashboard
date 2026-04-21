@@ -141,7 +141,7 @@ nav {
     width: calc(100% - 280px);
     transition: margin-left 0.3s ease;
 }
-#side-panel.collapsed + #main-content {
+body.panel-collapsed #main-content {
     margin-left: 0;
     width: 100%;
 }
