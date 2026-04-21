@@ -14,6 +14,26 @@ body {
     overflow-x: hidden;
 }
 
+/* Button base styles */
+button {
+    background: var(--color-button);
+    color: var(--color-white);
+    font-weight: bold;
+    padding: 10px 24px;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    border: none;
+    box-shadow: 2px 2px 6px var(--color-box-shadow);
+}
+button:hover {
+    background: var(--color-hover-dark);
+    box-shadow: 0 4px 12px var(--color-box-shadow);
+}
 /* Sidebar Styles */
 #side-panel {
     width: 280px;
@@ -34,34 +54,25 @@ body {
     transform: translateX(-280px);
 }
 
-#open-button {
-    background: var(--color-button);
-    border: none;
-    color: var(--color-white);
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    cursor: pointer;
+#open-btn {
     font-size: 24px;
     position: fixed;
     left: 20px;
     top: 5px;
     display: none;
-    box-shadow: 2px 2px 6px var(--color-box-shadow);
-    transition: 0.2s;
     z-index: 1001;
 }
 
-#open-button:hover {
+#open-btn:hover {
     background: var(--color-hover-dark);
     transform: scale(1.1);
 }
 
-#open-button.hidden {
+#open-btn.hidden {
     display: none !important;
 }
 
-body.panel-collapsed #open-button {
+body.panel-collapsed #open-btn {
     display: block;
 }
 
@@ -70,23 +81,18 @@ body.panel-collapsed #open-button {
     width: 100%;
 }
 
-#toggle-button {
+#toggle-btn {
     background: var(--color-side-panel);
-    border: none;
-    color: var(--color-white);
     font-size: 24px;
-    cursor: pointer;
     width: 280px;
-    height: 45px;
     position: absolute;
     right: 0;
     top: 0;
-    transition: 0.2s;
-    box-shadow: 2px 2px 6px var(--color-box-shadow);
+    
 }
-#toggle-button:hover {
+#toggle-btn:hover {
     background: var(--color-hover-dark);
-    /* transform: scale(1.05); */
+    border-radius: 0;    
 }
 .month-selector {
     padding: 20px;
@@ -157,22 +163,6 @@ body.panel-collapsed #main-content {
     margin: 0;
     color: #1a1a2e;
     font-size: 28px;
-}
-
-.add-btn {
-    background: var(--color-button);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.2s;
-}
-.add-btn:hover {
-    background: var(--color-hover-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(233, 69, 96, 0.3);
 }
 
 /* Slide-in Panel Styles */
@@ -279,26 +269,7 @@ body.panel-collapsed #main-content {
     background: var(--color-bg-body);
 }
 
-/* Button base styles */
-.btn {
-    padding: 10px 24px;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 500;
-}
 
-.btn-primary {
-    background: var(--color-button);
-    color: white;
-}
-
-.btn-primary:hover {
-    background: var(--color-hover-dark);
-    transform: translateY(-1px);
-}
 
 .btn-secondary {
     background: #e0e0e0;
@@ -341,13 +312,10 @@ th.sortable:hover {
 }
 
 /* Projects table full width */
-#projects-table {
+#projects-table,
+#employees-table {
     width: 100% !important;
     table-layout: auto !important;
     overflow: visible !important;
-}
-
-#projects-table thead th {
-    width: auto;
-    flex: 1;
+    background: var;
 }
