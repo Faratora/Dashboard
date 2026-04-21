@@ -6,52 +6,115 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Project & Employee Manager</title>
-		<link rel="stylesheet" href="./css/styles.css">
+	<link rel="stylesheet" href="./css/styles.css">
 </head>
 
 <body>
- <!-- LEFT SIDEBAR -->
-    <div id="side-panel">
-        <button id="toggle-button">&#9776;</button>
-        <div class="month-selector">
-            <h3>Period</h3>
-            <select id="month-select"></select>
-            <select id="year-select"></select>
-        </div>
-        <nav>
-            <a href="#" id="nav-projects" class="nav-item active">Projects</a>
-            <a href="#" id="nav-employees" class="nav-item">Employees</a>
-        </nav>
-    </div>
-    <button id="open-button" class="hidden">&#8250;</button>
-<!-- Project -->
+	<!-- LEFT SIDEBAR -->
+	<div id="side-panel">
+		<button id="toggle-button">&#9776;</button>
+		<div class="month-selector">
+			<h3>Period</h3>
+			<select id="month-select"></select>
+			<select id="year-select"></select>
+		</div>
+		<nav>
+			<a href="#" id="nav-projects" class="nav-item active">Projects</a>
+			<a href="#" id="nav-employees" class="nav-item">Employees</a>
+		</nav>
+	</div>
+	<button id="open-button" class="hidden">&#8250;</button>
+	<!-- Project -->
 	<div id="main-content">
 		<div id="projects-content">
 			<div class="content-header">
+
 				<h1 class="project-text">Projects</h1>
 				<div>
 					<button id="add-project-btn" class="add-btn">+ Add Project</button>
 					<button id="seed-data-btn" class="add-btn">Seed Data</button>
 				</div>
 			</div>
-			
+
 			<table id="projects-table">
-                <thead id="projects-thead">
-                    <tr>
-                        <th data-sort="companyName" data-filter="companyName" class="sortable filterable">Company Name <span class="sort-icon">⇅</span><span class="filter-icon">⌕</span></th>
-                        <th data-sort="projectName" data-filter="projectName" class="sortable filterable">Project Name <span class="sort-icon">⇅</span><span class="filter-icon">⌕</span></th>
-                        <th data-sort="budget" class="sortable">Budget <span class="sort-icon">⇅</span></th>
-                        <th data-sort="employeeCapacity" class="sortable">Employee Capacity <span class="sort-icon">⇅</span></th>
-                        <th>Employees</th>
-                        <th data-sort="estimatedIncome" class="sortable">Estimated Income <span class="sort-icon">⇅</span></th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="projects-tbody"></tbody>
-            </table>
-        </div>
+				<thead id="projects-thead">
+					<tr>
+						<th data-sort="companyName" data-filter="companyName" class="sortable filterable">Company Name <span
+								class="sort-icon">⇅</span><span class="filter-icon">⌕</span></th>
+						<th data-sort="projectName" data-filter="projectName" class="sortable filterable">Project Name <span
+								class="sort-icon">⇅</span><span class="filter-icon">⌕</span></th>
+						<th data-sort="budget" class="sortable">Budget <span class="sort-icon">⇅</span></th>
+						<th data-sort="employeeCapacity" class="sortable">Employee Capacity <span class="sort-icon">⇅</span></th>
+						<th>Employees</th>
+						<th data-sort="estimatedIncome" class="sortable">Estimated Income <span class="sort-icon">⇅</span></th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody id="projects-tbody"></tbody>
+			</table>
+		</div>
+		<!-- Employees -->
+		<div id="employees-content" style="display: none;">
+			<div class="content-header">
+				<h1 class="employee-text">Employees</h1>
+				<div>
+					<button id="add-employee-btn" class="add-btn">+ Add Employee</button>
+				</div>
+			</div>
+
+			<table id="employees-table">
+				<thead id="employees-thead">
+					<tr>
+						<th data-sort="name" data-filter="name" class="sortable filterable">Name <span
+								class="sort-icon">⇅</span><span class="filter-icon">⌕</span></th>
+						<th data-sort="surname" data-filter="surname" class="sortable filterable">Surname <span
+								class="sort-icon">⇅</span><span class="filter-icon">⌕</span></th>
+						<th data-sort="age" data-filter="age" class="sortable filterable">Age <span class="sort-icon">⇅</span></th>
+						<th data-sort="position" data-filter="position" class="sortable filterable">Position <span
+								class="sort-icon">⇅</span><span class="filter-icon">⌕</span></th>
+						<th data-sort="salary" class="sortable">Salary <span class="sort-icon">⇅</span></th>
+
+						<th data-sort="estimatedPayment" class="sortable">Estimated Payment <span class="sort-icon">⇅</span></th>
+						<th data-sort="project" data-filter="project" class="sortable filterable">Project <span
+								class="sort-icon">⇅</span><span class="filter-icon">⌕</span></th>
+						<th data-sort="estimatedIncome" class="sortable">Projected Income <span class="sort-icon">⇅</span></th>
+
+
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody id="employees-tbody"></tbody>
+			</table>
+		</div>
 	</div>
 
 	<script type="module" src="./JS/main.js"></script>
 </body>
+
+<!-- Modal Add New project -->
+
+<h2>Add New Project</h2>
+                    <form id="add-project-form">
+                        <div class="form-group">
+                            <label>Project Name: *</label>
+                            <input type="text" id="project-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Company Name: *</label>
+                            <input type="text" id="company-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Budget: *</label>
+                            <input type="number" id="project-budget" step="0.01" min="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Employee Capacity: *</label>
+                            <input type="number" id="employee-capacity" min="1" step="1" required>
+                        </div>
+                        <div class="form-buttons">
+                            <button type="submit" id="add-project-btn-form" disabled>Add Project</button>
+                            <button type="button" id="cancel-project-btn-form">Cancel</button>
+                        </div>
+                    </form>
+
 </html>
