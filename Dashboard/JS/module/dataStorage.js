@@ -76,6 +76,27 @@ export function deleteProject(id) {
     }
 }
 
+export function updateProject(id, projectData) {
+    const data = loadData();
+    const period = getCurrentPeriod();
+    
+    if (data.monthlyData[period]) {
+        const index = data.monthlyData[period].projects.findIndex(p => p.id === id);
+        if (index !== -1) {
+            data.monthlyData[period].projects[index] = {
+                ...data.monthlyData[period].projects[index],
+                companyName: projectData.companyName,
+                projectName: projectData.projectName,
+                budget: parseFloat(projectData.budget) || 0,
+                employeeCapacity: parseInt(projectData.employeeCapacity) || 0
+            };
+            saveData(data);
+            return data.monthlyData[period].projects[index];
+        }
+    }
+    return null;
+}
+
 export function getProjects() {
     const period = getCurrentPeriod();
     log('getProjects called for period: ' + period);
@@ -121,6 +142,28 @@ export function deleteEmployee(id) {
         data.monthlyData[period].employees = data.monthlyData[period].employees.filter(e => e.id !== id);
         saveData(data);
     }
+}
+
+export function updateEmployee(id, employeeData) {
+    const data = loadData();
+    const period = getCurrentPeriod();
+    
+    if (data.monthlyData[period]) {
+        const index = data.monthlyData[period].employees.findIndex(e => e.id === id);
+        if (index !== -1) {
+            data.monthlyData[period].employees[index] = {
+                ...data.monthlyData[period].employees[index],
+                name: employeeData.name,
+                surname: employeeData.surname,
+                age: parseInt(employeeData.age) || 0,
+                position: employeeData.position,
+                salary: parseFloat(employeeData.salary) || 0
+            };
+            saveData(data);
+            return data.monthlyData[period].employees[index];
+        }
+    }
+    return null;
 }
 
 export function getEmployees() {

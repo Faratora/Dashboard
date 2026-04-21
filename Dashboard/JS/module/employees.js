@@ -1,5 +1,5 @@
 import { $, log } from './utils.js';
-import { addEmployee, deleteEmployee, getEmployees, formatCurrency, escapeHtml } from './dataStorage.js';
+import { addEmployee, deleteEmployee, updateEmployee, getEmployees, formatCurrency, escapeHtml } from './dataStorage.js';
 
 export function initEmployees() {
     const tbody = $('#employees-tbody');
@@ -10,6 +10,7 @@ export function initEmployees() {
     }
 
     window.addEmployeeCallback = handleAddEmployee;
+    window.editEmployeeCallback = handleEditEmployee;
     renderEmployees();
     log('Employees module initialized');
 }
@@ -43,8 +44,17 @@ function renderEmployeeRow(employee) {
 
     tbody.appendChild(tr);
 
-    tr.querySelector('.edit-btn').addEventListener('click', () => handleEditEmployee(employee.id));
-    tr.querySelector('.delete-btn').addEventListener('click', () => handleDeleteEmployee(employee.id));
+    const editBtn = tr.querySelector('.edit-btn');
+    const deleteBtn = tr.querySelector('.delete-btn');
+    
+    editBtn.addEventListener('click', () => {
+        log('Edit button clicked for employee: ' + employee.id);
+        handleEditEmployee(employee.id);
+    });
+    deleteBtn.addEventListener('click', () => {
+        log('Delete button clicked for employee: ' + employee.id);
+        handleDeleteEmployee(employee.id);
+    });
 }
 
 export function renderEmployees() {
@@ -68,11 +78,18 @@ function handleDeleteEmployee(id) {
     }
 }
 
-function handleEditEmployee(id) {
-    const employees = getEmployees();
-    const employee = employees.find(e => e.id === id);
-    if (employee) {
-        log(`Edit employee: ${employee.name} ${employee.surname}`);
+function handleEditEmployee(id, employeeData) {
+    log(`handleEditEmployee called with id: ${id}`);
+    if (employeeData) {
+        updateEmployee(id, employeeData);
+        log(`Employee updated: ${employeeData.name} ${employeeData.surname}`);
+        renderEmployees();
+    } else {
+        const employees = getEmployees();
+        const employee = employees.find(e => e.id === id);
+        if (employee && window.openAddEmployeeEditModal) {
+            window.openAddEmployeeEditModal(employee);
+        }
     }
 }
 

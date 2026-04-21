@@ -1,7 +1,7 @@
 import { $, log } from './utils.js';
 
-let onProjectAddCallback = null;
-let onEmployeeAddCallback = null;
+let editMode = null;
+let editingId = null;
 
 export function initModal() {
     const backdrop = $('#panel-backdrop');
@@ -16,14 +16,31 @@ export function initModal() {
         return;
     }
 
-    const openPanel = () => {
+    const openPanel = (mode = 'add') => {
+        editMode = mode;
         backdrop.classList.remove('hidden');
         panel.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
-        log('Panel opened');
+        
+        const projectFormFields = $('#project-form-fields');
+        const employeeFormFields = $('#employee-form-fields');
+        const panelTitle = $('#panel-title');
+        const submitBtn = $('#submit-btn');
+        
+        if (projectFormFields && projectFormFields.style.display !== 'none') {
+            panelTitle.textContent = mode === 'edit' ? 'Edit Project' : 'Add New Project';
+            submitBtn.textContent = mode === 'edit' ? 'Update Project' : 'Add Project';
+        } else if (employeeFormFields && employeeFormFields.style.display !== 'none') {
+            panelTitle.textContent = mode === 'edit' ? 'Edit Employee' : 'Add New Employee';
+            submitBtn.textContent = mode === 'edit' ? 'Update Employee' : 'Add Employee';
+        }
+        
+        log('Panel opened in ' + mode + ' mode');
     };
 
     const closePanel = () => {
+        editMode = null;
+        editingId = null;
         backdrop.classList.add('hidden');
         panel.classList.add('hidden');
         form.reset();
@@ -55,7 +72,10 @@ export function initModal() {
                 employeeCapacity: parseInt(employeeCapacity, 10)
             };
 
-            if (window.addProjectCallback) {
+            if (editMode === 'edit' && editingId && window.editProjectCallback) {
+                log('Editing project: ' + editingId);
+                window.editProjectCallback(editingId, projectData);
+            } else if (window.addProjectCallback) {
                 log('Adding project: ' + JSON.stringify(projectData));
                 window.addProjectCallback(projectData);
             } else {
@@ -81,7 +101,10 @@ export function initModal() {
                 salary: parseFloat(salary)
             };
 
-            if (window.addEmployeeCallback) {
+            if (editMode === 'edit' && editingId && window.editEmployeeCallback) {
+                log('Editing employee: ' + editingId);
+                window.editEmployeeCallback(editingId, employeeData);
+            } else if (window.addEmployeeCallback) {
                 window.addEmployeeCallback(employeeData);
             }
         }
@@ -100,14 +123,23 @@ export function initModal() {
         }
     });
 
-    window.openAddProjectModal = openPanel;
-    window.openAddEmployeeModal = openPanel;
-}
-
-export function setOnProjectAdd(callback) {
-    onProjectAddCallback = callback;
-}
-
-export function setOnEmployeeAdd(callback) {
-    onEmployeeAddCallback = callback;
+    window.openAddProjectModal = () => openPanel('add');
+    window.openAddProjectEditModal = (project) => {
+        openPanel('edit');
+        editingId = project.id;
+        $('#project-name').value = project.projectName;
+        $('#company-name').value = project.companyName;
+        $('#project-budget').value = project.budget;
+        $('#employee-capacity').value = project.employeeCapacity;
+    };
+    window.openAddEmployeeModal = () => openPanel('add');
+    window.openAddEmployeeEditModal = (employee) => {
+        openPanel('edit');
+        editingId = employee.id;
+        $('#employee-name').value = employee.name;
+        $('#employee-surname').value = employee.surname;
+        $('#employee-age').value = employee.age;
+        $('#employee-position').value = employee.position;
+        $('#employee-salary').value = employee.salary;
+    };
 }

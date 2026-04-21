@@ -1,5 +1,5 @@
 import { $, log } from './utils.js';
-import { addProject, deleteProject as storageDelete, getProjects, formatCurrency, escapeHtml } from './dataStorage.js';
+import { addProject, deleteProject as storageDelete, updateProject, getProjects, formatCurrency, escapeHtml } from './dataStorage.js';
 
 export function initProjects() {
     const tbody = $('#projects-tbody');
@@ -10,6 +10,7 @@ export function initProjects() {
     }
 
     window.addProjectCallback = handleAddProject;
+    window.editProjectCallback = handleEditProject;
     renderProjects();
     log('Projects module initialized');
 }
@@ -41,8 +42,17 @@ function renderProjectRow(project) {
 
     tbody.appendChild(tr);
 
-    tr.querySelector('.edit-btn').addEventListener('click', () => handleEditProject(project.id));
-    tr.querySelector('.delete-btn').addEventListener('click', () => handleDeleteProject(project.id));
+    const editBtn = tr.querySelector('.edit-btn');
+    const deleteBtn = tr.querySelector('.delete-btn');
+    
+    editBtn.addEventListener('click', () => {
+        log('Edit button clicked for project: ' + project.id);
+        handleEditProject(project.id);
+    });
+    deleteBtn.addEventListener('click', () => {
+        log('Delete button clicked for project: ' + project.id);
+        handleDeleteProject(project.id);
+    });
 }
 
 export function renderProjects() {
@@ -66,11 +76,18 @@ function handleDeleteProject(id) {
     }
 }
 
-function handleEditProject(id) {
-    const projects = getProjects();
-    const project = projects.find(p => p.id === id);
-    if (project) {
-        log(`Edit project: ${project.projectName}`);
+function handleEditProject(id, projectData) {
+    log(`handleEditProject called with id: ${id}`);
+    if (projectData) {
+        updateProject(id, projectData);
+        log(`Project updated: ${projectData.projectName}`);
+        renderProjects();
+    } else {
+        const projects = getProjects();
+        const project = projects.find(p => p.id === id);
+        if (project && window.openAddProjectEditModal) {
+            window.openAddProjectEditModal(project);
+        }
     }
 }
 
