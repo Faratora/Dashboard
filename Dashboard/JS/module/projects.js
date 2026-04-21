@@ -1,4 +1,4 @@
-import { $, log } from './utils.js';
+import { $, log, generateId, formatCurrency, escapeHtml } from './utils.js';
 
 let projectsData = [];
 
@@ -11,6 +11,7 @@ export function initProjects() {
     }
 
     window.addProjectCallback = addProject;
+    log('addProjectCallback set on window');
 
     renderProjects();
     log('Projects module initialized');
@@ -92,24 +93,4 @@ function editProject(id) {
 
 export function getProjects() {
     return [...projectsData];
-}
-
-
-function generateId() {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-}
-
-
-function formatCurrency(value) {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
-    }).format(value);
-}
-
-
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
 }

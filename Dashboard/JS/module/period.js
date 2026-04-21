@@ -1,11 +1,10 @@
-// Заполнения выпадающего списка
+import { $ } from './utils.js';
+
 function populateMonthSelect() {
-    const monthSelect = document.getElementById('month-select');
+    const monthSelect = $('#month-select');
     if (!monthSelect) return;
 
-    const months = [
-        'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'
-    ];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
     months.forEach((month, index) => {
         const option = document.createElement('option');
@@ -18,13 +17,12 @@ function populateMonthSelect() {
     monthSelect.value = currentMonth;
 }
 
-
 function populateYearSelect() {
-    const yearSelect = document.getElementById('year-select');
+    const yearSelect = $('#year-select');
     if (!yearSelect) return;
 
     const currentYear = new Date().getFullYear();
-    const startYear = currentYear - 5;
+    const startYear = currentYear - 1;
     const endYear = currentYear + 5;
 
     for (let year = startYear; year <= endYear; year++) {
@@ -37,29 +35,25 @@ function populateYearSelect() {
     yearSelect.value = currentYear;
 }
 
-
 function onPeriodChange() {
-    const month = document.getElementById('month-select').value;
-    const year = document.getElementById('year-select').value;
-    console.log(`Выбран период: ${month}.${year}`);
+    const month = $('#month-select').value;
+    const year = $('#year-select').value;
+    console.log(`Selected period: ${month}.${year}`);
 
-    
     localStorage.setItem('selectedMonth', month);
     localStorage.setItem('selectedYear', year);
 }
-
 
 function initPeriodSelector() {
     populateMonthSelect();
     populateYearSelect();
 
-    
-    const monthSelect = document.getElementById('month-select');
-    const yearSelect = document.getElementById('year-select');
+    const monthSelect = $('#month-select');
+    const yearSelect = $('#year-select');
 
     const savedMonth = localStorage.getItem('selectedMonth');
     const savedYear = localStorage.getItem('selectedYear');
-    
+
     if (savedMonth && monthSelect) monthSelect.value = savedMonth;
     if (savedYear && yearSelect) yearSelect.value = savedYear;
 
