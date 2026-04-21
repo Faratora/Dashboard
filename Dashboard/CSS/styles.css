@@ -59,31 +59,35 @@ body {
 }
 
 #open-button.hidden {
-    display: none;
+    display: none !important;
 }
 
-#side-panel.collapsed #open-button {
+body.panel-collapsed #open-button {
     display: block;
 }
 
+#main-content.collapsed {
+    margin-left: 0;
+    width: 100%;
+}
+
 #toggle-button {
-    background: var(--color-button);
+    background: var(--color-side-panel);
     border: none;
     color: var(--color-white);
     font-size: 24px;
     cursor: pointer;
-    width: 45px;
+    width: 280px;
     height: 45px;
-    border-radius: 0 12px 12px 0;
     position: absolute;
-    right: -45px;
-    top: 20px;
+    right: 0;
+    top: 0;
     transition: 0.2s;
     box-shadow: 2px 2px 6px var(--color-box-shadow);
 }
 #toggle-button:hover {
     background: var(--color-hover-dark);
-    transform: scale(1.05);
+    /* transform: scale(1.05); */
 }
 .month-selector {
     padding: 20px;
@@ -91,13 +95,13 @@ body {
     margin-bottom: 20px;
 }
 .month-selector h3 {
-    margin: 0 0 10px 0;
+    margin:  20px 0;
     color: var(--color-button);
     font-size: 18px;
 }
 select {
     width: 100%;
-    padding: 10px;
+    padding: 10px 15px;
     margin: 5px 0;
     border-radius: 8px;
     border: none;
@@ -170,4 +174,12 @@ nav {
     background: var(--color-hover-dark);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(233, 69, 96, 0.3);
+}
+
+.dashboard-info {
+    background: var(--color-white);
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    color: var(--color-text-muted);
 }
