@@ -24,14 +24,32 @@
         </nav>
     </div>
     <button id="open-button" class="hidden">&#8250;</button>
-
+<!-- Project -->
 	<div id="main-content">
-		<div class="content-header">
-			<h1>Dashboard</h1>
-		</div>
-		<div class="dashboard-info">
-			<p>Welcome! Select a period from the sidebar.</p>
-		</div>
+		<div id="projects-content">
+			<div class="content-header">
+				<h1 class="project-text">Projects</h1>
+				<div>
+					<button id="add-project-btn" class="add-btn">+ Add Project</button>
+					<button id="seed-data-btn" class="add-btn">Seed Data</button>
+				</div>
+			</div>
+			
+			<table id="projects-table">
+                <thead id="projects-thead">
+                    <tr>
+                        <th data-sort="companyName" data-filter="companyName" class="sortable filterable">Company Name <span class="sort-icon">⇅</span><span class="filter-icon">⌕</span></th>
+                        <th data-sort="projectName" data-filter="projectName" class="sortable filterable">Project Name <span class="sort-icon">⇅</span><span class="filter-icon">⌕</span></th>
+                        <th data-sort="budget" class="sortable">Budget <span class="sort-icon">⇅</span></th>
+                        <th data-sort="employeeCapacity" class="sortable">Employee Capacity <span class="sort-icon">⇅</span></th>
+                        <th>Employees</th>
+                        <th data-sort="estimatedIncome" class="sortable">Estimated Income <span class="sort-icon">⇅</span></th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="projects-tbody"></tbody>
+            </table>
+        </div>
 	</div>
 
 	<script type="module" src="./JS/main.js"></script>
