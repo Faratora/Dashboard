@@ -6,14 +6,26 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Project & Employee Manager</title>
-	<link rel="stylesheet" href="./css/variables.css">
-	<link rel="stylesheet" href="./css/styles.css">
+		<link rel="stylesheet" href="./css/styles.css">
 </head>
 
 <body>
+ <!-- LEFT SIDEBAR -->
+    <div id="side-panel">
+        <button id="toggle-button">☰</button>
+        <div class="month-selector">
+            <h3>Period</h3>
+            <select id="month-select"></select>
+            <select id="year-select"></select>
+        </div>
+        <nav>
+            <a href="#" id="nav-projects" class="nav-item active">Projects</a>
+            <a href="#" id="nav-employees" class="nav-item">Employees</a>
+        </nav>
+    </div>
+    <button id="open-button" class="hidden">☰</button>
 
 
-	
 	<script type="module" src="./JS/main.js"></script>
 </body>
 </html>

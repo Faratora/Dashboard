@@ -1,0 +1,11 @@
+:root {
+    --color-bg-body: #f0f2f5;
+    --color-white: white;
+    --color-button: #1abc9c;
+    --color-hover-dark: #16a085;
+    --color-box-shadow: rgba(0, 0, 0, 0.2);
+    --color-border-bottom: rgba(255, 255, 255, 0.1);
+    --color-btn-hover: rgba(255, 255, 255, 0.05);
+
+}
+    
