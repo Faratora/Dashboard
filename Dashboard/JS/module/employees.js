@@ -1,5 +1,12 @@
 import { $, log } from './utils.js';
-import { addEmployee, deleteEmployee, updateEmployee, getEmployees, formatCurrency, escapeHtml } from './dataStorage.js';
+import {
+    addEmployee,
+    deleteEmployee,
+    updateEmployee,
+    getEmployees,
+    formatCurrency,
+    escapeHtml,
+} from './dataStorage.js';
 
 let sortColumn = null;
 let sortDirection = 'asc';
@@ -8,41 +15,64 @@ let projectFilter = '';
 
 function sortAndFilterEmployees(employees) {
     let result = [...employees];
-    
+
     if (filterText) {
         const search = filterText.toLowerCase();
-        result = result.filter(e => 
-            e.name.toLowerCase().includes(search) ||
-            e.surname.toLowerCase().includes(search) ||
-            e.position.toLowerCase().includes(search)
+        result = result.filter(
+            (e) =>
+                e.name.toLowerCase().includes(search) ||
+                e.surname.toLowerCase().includes(search) ||
+                e.position.toLowerCase().includes(search)
         );
     }
-    
+
     if (projectFilter) {
-        result = result.filter(e => e.project === projectFilter);
+        result = result.filter((e) => e.project === projectFilter);
     }
-    
+
     if (sortColumn) {
         result.sort((a, b) => {
             let valA, valB;
             switch (sortColumn) {
-                case 'name': valA = a.name; valB = b.name; break;
-                case 'surname': valA = a.surname; valB = b.surname; break;
-                case 'age': valA = a.age; valB = b.age; break;
-                case 'position': valA = a.position; valB = b.position; break;
-                case 'salary': valA = a.salary; valB = b.salary; break;
-                case 'project': valA = a.project || ''; valB = b.project || ''; break;
-                case 'estimatedIncome': valA = a.estimatedIncome; valB = b.estimatedIncome; break;
-                default: return 0;
+                case 'name':
+                    valA = a.name;
+                    valB = b.name;
+                    break;
+                case 'surname':
+                    valA = a.surname;
+                    valB = b.surname;
+                    break;
+                case 'age':
+                    valA = a.age;
+                    valB = b.age;
+                    break;
+                case 'position':
+                    valA = a.position;
+                    valB = b.position;
+                    break;
+                case 'salary':
+                    valA = a.salary;
+                    valB = b.salary;
+                    break;
+                case 'project':
+                    valA = a.project || '';
+                    valB = b.project || '';
+                    break;
+                case 'estimatedIncome':
+                    valA = a.estimatedIncome;
+                    valB = b.estimatedIncome;
+                    break;
+                default:
+                    return 0;
             }
-            
+
             if (typeof valA === 'string') {
                 return sortDirection === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
             }
             return sortDirection === 'asc' ? valA - valB : valB - valA;
         });
     }
-    
+
     return result;
 }
 
@@ -51,9 +81,10 @@ function renderEmployees() {
     if (!tbody) return;
 
     tbody.innerHTML = '';
-    
+
     const employees = sortAndFilterEmployees(getEmployees());
-    employees.forEach(employee => {
+    log(`renderEmployees: found ${employees.length} employees`);
+    employees.forEach((employee) => {
         renderEmployeeRow(employee);
     });
 }
@@ -61,7 +92,7 @@ function renderEmployees() {
 function calculateAvailability(employee) {
     const vacation = employee.vacationDays || 0;
     const fit = employee.fit || 1;
-    return (20 - vacation) / 20 * fit * 100;
+    return ((20 - vacation) / 20) * fit * 100;
 }
 
 function renderEmployeeRow(employee) {
@@ -96,16 +127,16 @@ function renderEmployeeRow(employee) {
     const deleteBtn = tr.querySelector('.delete-btn');
     const availBtn = tr.querySelector('.availability-btn');
     const assignBtn = tr.querySelector('.assign-btn');
-    
+
     availBtn.addEventListener('click', () => {
         log('Availability button clicked for employee: ' + employee.id);
     });
-    
+
     assignBtn.addEventListener('click', () => {
         log('Assign button clicked for employee: ' + employee.id);
         window.dispatchEvent(new CustomEvent('showAssignEmployee', { detail: { employeeId: employee.id } }));
     });
-    
+
     editBtn.addEventListener('click', () => {
         log('Edit button clicked for employee: ' + employee.id);
         handleEditEmployee(employee.id);
@@ -133,7 +164,7 @@ function handleEditEmployee(id, employeeData) {
         renderEmployees();
     } else {
         const employees = getEmployees();
-        const employee = employees.find(e => e.id === id);
+        const employee = employees.find((e) => e.id === id);
         if (employee && window.openAddEmployeeEditModal) {
             window.openAddEmployeeEditModal(employee);
         }
@@ -142,7 +173,7 @@ function handleEditEmployee(id, employeeData) {
 
 export function initEmployees() {
     const tbody = $('#employees-tbody');
-    
+
     if (!tbody) {
         log('Employees tbody not found');
         return;
@@ -150,7 +181,10 @@ export function initEmployees() {
 
     window.addEmployeeCallback = handleAddEmployee;
     window.editEmployeeCallback = handleEditEmployee;
-    
+
+    log('addEmployeeCallback registered: ' + typeof window.addEmployeeCallback);
+    log('editEmployeeCallback registered: ' + typeof window.editEmployeeCallback);
+
     initSortFilter();
     renderEmployees();
     log('Employees module initialized');
@@ -159,9 +193,9 @@ export function initEmployees() {
 function initSortFilter() {
     const thead = $('#employees-thead');
     if (!thead) return;
-    
+
     const headers = thead.querySelectorAll('th.sortable');
-    headers.forEach(th => {
+    headers.forEach((th) => {
         th.addEventListener('click', () => {
             const column = th.dataset.sort;
             if (sortColumn === column) {
@@ -173,7 +207,7 @@ function initSortFilter() {
             renderEmployees();
         });
     });
-    
+
     const filterInput = document.getElementById('employee-filter-input');
     if (filterInput) {
         filterInput.addEventListener('input', (e) => {
@@ -181,7 +215,7 @@ function initSortFilter() {
             renderEmployees();
         });
     }
-    
+
     window.addEventListener('showProjectEmployees', (e) => {
         projectFilter = e.detail.projectId;
         renderEmployees();
@@ -189,8 +223,10 @@ function initSortFilter() {
 }
 
 export function handleAddEmployee(employeeData) {
+    log(`handleAddEmployee called with data: ${JSON.stringify(employeeData)}`);
     const newEmployee = addEmployee(employeeData);
-    renderEmployeeRow(newEmployee);
+    log(`Employee added to storage: ${newEmployee.id}`);
+    renderEmployees();
     log(`Employee added: ${newEmployee.name} ${newEmployee.surname}`);
 }
 

@@ -1,8 +1,23 @@
 import { $, log } from './utils.js';
 import { validateProject, validateEmployee } from './validator.js';
+import { getProjects } from './dataStorage.js';
 
 let editMode = null;
 let editingId = null;
+
+function populateEmployeeProjectSelect() {
+    const projectSelect = $('#employee-project');
+    if (!projectSelect) return;
+    
+    projectSelect.innerHTML = '<option value="">Select project</option>';
+    const projects = getProjects();
+    projects.forEach(project => {
+        const option = document.createElement('option');
+        option.value = project.projectName;
+        option.textContent = project.projectName;
+        projectSelect.appendChild(option);
+    });
+}
 
 export function initModal() {
     const backdrop = $('#panel-backdrop');
@@ -19,24 +34,24 @@ export function initModal() {
 
     const openPanel = (mode = 'add') => {
         editMode = mode;
-        
+
         const allInputs = document.querySelectorAll('#add-project-form input, #add-project-form select');
-        allInputs.forEach(input => {
+        allInputs.forEach((input) => {
             input.style.borderColor = '#ddd';
             input.style.boxShadow = 'none';
         });
         const allErrors = document.querySelectorAll('.field-error');
-        allErrors.forEach(err => err.remove());
-        
+        allErrors.forEach((err) => err.remove());
+
         backdrop.classList.remove('hidden');
         panel.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
-        
+
         const projectFormFields = $('#project-form-fields');
         const employeeFormFields = $('#employee-form-fields');
         const panelTitle = $('#panel-title');
         const submitBtn = $('#submit-btn');
-        
+
         if (projectFormFields && projectFormFields.style.display !== 'none') {
             panelTitle.textContent = mode === 'edit' ? 'Edit Project' : 'Add New Project';
             submitBtn.textContent = mode === 'edit' ? 'Update Project' : 'Add Project';
@@ -44,7 +59,7 @@ export function initModal() {
             panelTitle.textContent = mode === 'edit' ? 'Edit Employee' : 'Add New Employee';
             submitBtn.textContent = mode === 'edit' ? 'Update Employee' : 'Add Employee';
         }
-        
+
         log('Panel opened in ' + mode + ' mode');
     };
 
@@ -63,7 +78,7 @@ export function initModal() {
 
         const projectFormFields = $('#project-form-fields');
         const employeeFormFields = $('#employee-form-fields');
-        
+
         if (projectFormFields && projectFormFields.style.display !== 'none') {
             log('checking project form');
             if (!validateProject()) {
@@ -71,7 +86,7 @@ export function initModal() {
                 return;
             }
             log('project validation passed');
-            
+
             const companyName = $('#company-name').value.trim();
             const projectName = $('#project-name').value.trim();
             const budget = $('#project-budget').value;
@@ -81,7 +96,7 @@ export function initModal() {
                 companyName: companyName,
                 projectName: projectName,
                 budget: parseFloat(budget),
-                employeeCapacity: parseInt(employeeCapacity, 10)
+                employeeCapacity: parseInt(employeeCapacity, 10),
             };
 
             if (editMode === 'edit' && editingId && window.editProjectCallback) {
@@ -97,16 +112,13 @@ export function initModal() {
             if (!validateEmployee()) {
                 return;
             }
-            
+
             const name = $('#employee-name').value.trim();
             const surname = $('#employee-surname').value.trim();
             const birthDate = $('#employee-age').value;
             const position = $('#employee-position').value;
             const salary = $('#employee-salary').value;
-            const capacity = $('#employee-capacity').value || 1;
-            const fit = $('#employee-fit').value || 1;
-            const vacation = $('#employee-vacation').value || 0;
-            const project = $('#employee-project').value || '';
+            
 
             const birth = new Date(birthDate);
             const today = new Date();
@@ -123,17 +135,17 @@ export function initModal() {
                 birthDate: birthDate,
                 position: position,
                 salary: parseFloat(salary),
-                capacity: parseFloat(capacity),
-                fit: parseFloat(fit),
-                vacationDays: parseInt(vacation, 10),
-                project: project
+                
             };
 
             if (editMode === 'edit' && editingId && window.editEmployeeCallback) {
                 log('Editing employee: ' + editingId);
                 window.editEmployeeCallback(editingId, employeeData);
             } else if (window.addEmployeeCallback) {
+                log('Adding employee: ' + JSON.stringify(employeeData));
                 window.addEmployeeCallback(employeeData);
+            } else {
+                log('addEmployeeCallback not found');
             }
         }
 

@@ -146,8 +146,6 @@
 						<label for="employee-salary">Salary: *</label>
 						<input type="number" id="employee-salary" step="0.01" min="0">
 					</div>
-					
-					
 				</div>
 				<div class="panel-footer">
 					<button type="button" class="btn-primary" id="submit-btn">Add Project</button>
@@ -158,7 +156,7 @@
 
 		<!-- Seed Data Modal -->
 		<div id="seed-data-backdrop" class="hidden"></div>
-		<div id="seed-data-modal" class="hidden" >
+		<div id="seed-data-modal" class="hidden">
 			<h2>Seed Data from Month</h2>
 			<table id="seed-table">
 				<thead>
@@ -176,6 +174,36 @@
 			</table>
 			<button type="button" id="seed-close-btn" class="btn-secondary">Close</button>
 		</div>
+
+
+		<!-- Employees Modal -->
+		<div id="employees-modal-backdrop" class="hidden"></div>
+		<div id="employees-modal" class="hidden">
+			<div class="modal-header">
+				<h2 id="employees-modal-title">Employees on E-Commerce Platform</h2>
+				<button type="button" class="modal-close" id="employees-modal-close-x">&times;</button>
+			</div>
+			<table id="project-employees-table">
+				<thead>
+					<tr>
+						<th>Employee</th>
+						<th>Capacity</th>
+						<th>Fit</th>
+						<th>Vacation</th>
+						<th>Effective</th>
+						<th>Revenue</th>
+						<th>Cost</th>
+						<th>Profit</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody id="project-employees-tbody"></tbody>
+			</table>
+			<div class="modal-footer">
+				<button type="button" id="employees-modal-close-btn" class="btn-secondary">Close</button>
+			</div>
+		</div>
+
 
 		<script type="module" src="./JS/main.js"></script>
 </body>

@@ -505,3 +505,106 @@ th.sortable:hover {
     font-weight: bold;
     display: block;
 }
+
+
+/* Employees Modal */
+
+#employees-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+}
+#employees-modal-backdrop.hidden {
+    display: none;
+}
+#employees-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    z-index: 2001;
+    width: 90%;
+    max-width: 900px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+#employees-modal.hidden {
+    display: none;
+}
+#employees-modal h2 {
+    margin: 0 0 20px 0;
+    color: #1a1a2e;
+    font-size: 22px;
+    border-bottom: 2px solid #1abc9c;
+    padding-bottom: 15px;
+}
+#employees-modal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+#employees-modal .modal-close {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none;
+    padding: 0;
+}
+#employees-modal .modal-close:hover {
+    background: #c0392b;
+}
+#employees-modal table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+#employees-modal th,
+#employees-modal td {
+    border: 1px solid #ddd;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 14px;
+}
+#employees-modal th {
+    background: #ecf0f1;
+    font-weight: 600;
+    white-space: nowrap;
+}
+#employees-modal tbody tr:hover {
+    background: #f8f9fa;
+}
+#employees-modal .modal-footer {
+    margin-top: 20px;
+    text-align: right;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+}
+#employees-modal .edit-btn,
+#employees-modal .unassign-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+    margin-right: 5px;
+}
+#employees-modal .unassign-btn {
+    background: #e67e22;
+}
+#employees-modal .unassign-btn:hover {
+    background: #d35400;
+}

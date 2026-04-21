@@ -7,9 +7,9 @@ function getCurrentPeriod() {
     const yearSelect = $('#year-select');
     const month = monthSelect ? monthSelect.value : null;
     const year = yearSelect ? yearSelect.value : null;
-    
+
     if (!month || !year) {
-        return (new Date().getFullYear()) + '-' + (new Date().getMonth() + 1);
+        return new Date().getFullYear() + '-' + (new Date().getMonth() + 1);
     }
     return `${year}-${month}`;
 }
@@ -45,11 +45,11 @@ export function addProject(projectData) {
     const data = loadData();
     const period = getCurrentPeriod();
     log('Period: ' + period);
-    
+
     if (!data.monthlyData[period]) {
         data.monthlyData[period] = { employees: [], projects: [] };
     }
-    
+
     const newProject = {
         id: generateId(),
         companyName: projectData.companyName,
@@ -57,21 +57,21 @@ export function addProject(projectData) {
         budget: parseFloat(projectData.budget) || 0,
         employeeCapacity: parseInt(projectData.employeeCapacity) || 0,
         employees: [],
-        estimatedIncome: 0
+        estimatedIncome: 0,
     };
-    
+
     data.monthlyData[period].projects.push(newProject);
     saveData(data);
-    
+
     return newProject;
 }
 
 export function deleteProject(id) {
     const data = loadData();
     const period = getCurrentPeriod();
-    
+
     if (data.monthlyData[period]) {
-        data.monthlyData[period].projects = data.monthlyData[period].projects.filter(p => p.id !== id);
+        data.monthlyData[period].projects = data.monthlyData[period].projects.filter((p) => p.id !== id);
         saveData(data);
     }
 }
@@ -79,16 +79,16 @@ export function deleteProject(id) {
 export function updateProject(id, projectData) {
     const data = loadData();
     const period = getCurrentPeriod();
-    
+
     if (data.monthlyData[period]) {
-        const index = data.monthlyData[period].projects.findIndex(p => p.id === id);
+        const index = data.monthlyData[period].projects.findIndex((p) => p.id === id);
         if (index !== -1) {
             data.monthlyData[period].projects[index] = {
                 ...data.monthlyData[period].projects[index],
                 companyName: projectData.companyName,
                 projectName: projectData.projectName,
                 budget: parseFloat(projectData.budget) || 0,
-                employeeCapacity: parseInt(projectData.employeeCapacity) || 0
+                employeeCapacity: parseInt(projectData.employeeCapacity) || 0,
             };
             saveData(data);
             return data.monthlyData[period].projects[index];
@@ -105,15 +105,15 @@ export function getProjects() {
 }
 
 export function addEmployee(employeeData) {
-    log('addEmployee called');
+    log('addEmployee called with: ' + JSON.stringify(employeeData));
     const data = loadData();
     const period = getCurrentPeriod();
     log('Period: ' + period);
-    
+
     if (!data.monthlyData[period]) {
         data.monthlyData[period] = { employees: [], projects: [] };
     }
-    
+
     const newEmployee = {
         id: generateId(),
         name: employeeData.name,
@@ -126,21 +126,22 @@ export function addEmployee(employeeData) {
         vacationDays: parseInt(employeeData.vacationDays) || 0,
         project: employeeData.project || '',
         estimatedPayment: 0,
-        estimatedIncome: 0
+        estimatedIncome: 0,
     };
-    
+
     data.monthlyData[period].employees.push(newEmployee);
     saveData(data);
-    
+    log(`Employee saved with id: ${newEmployee.id}, total employees: ${data.monthlyData[period].employees.length}`);
+
     return newEmployee;
 }
 
 export function deleteEmployee(id) {
     const data = loadData();
     const period = getCurrentPeriod();
-    
+
     if (data.monthlyData[period]) {
-        data.monthlyData[period].employees = data.monthlyData[period].employees.filter(e => e.id !== id);
+        data.monthlyData[period].employees = data.monthlyData[period].employees.filter((e) => e.id !== id);
         saveData(data);
     }
 }
@@ -148,9 +149,9 @@ export function deleteEmployee(id) {
 export function updateEmployee(id, employeeData) {
     const data = loadData();
     const period = getCurrentPeriod();
-    
+
     if (data.monthlyData[period]) {
-        const index = data.monthlyData[period].employees.findIndex(e => e.id === id);
+        const index = data.monthlyData[period].employees.findIndex((e) => e.id === id);
         if (index !== -1) {
             data.monthlyData[period].employees[index] = {
                 ...data.monthlyData[period].employees[index],
@@ -162,7 +163,7 @@ export function updateEmployee(id, employeeData) {
                 capacity: parseFloat(employeeData.capacity) || 1,
                 fit: parseFloat(employeeData.fit) || 1,
                 vacationDays: parseInt(employeeData.vacationDays) || 0,
-                project: employeeData.project || ''
+                project: employeeData.project || '',
             };
             saveData(data);
             return data.monthlyData[period].employees[index];

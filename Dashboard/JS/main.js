@@ -7,14 +7,13 @@ import { initEmployees, renderEmployees } from './module/employees.js';
 import { initSeedData } from './module/seedData.js';
 import { setupInputRestrictions } from './module/validator.js';
 
-
 document.addEventListener('DOMContentLoaded', () => {
     initSidebar();
     initPeriodSelector();
     initProjects();
     initEmployees();
-    initNavigation();
     initModal();
+    initNavigation();
     initSeedData();
     setupInputRestrictions();
 
