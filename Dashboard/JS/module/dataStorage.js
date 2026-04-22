@@ -2,7 +2,7 @@ import { $, log, generateId, formatCurrency, escapeHtml } from './utils.js';
 
 const STORAGE_KEY = 'monthlyData';
 
-function getCurrentPeriod() {
+export function getCurrentPeriod() {
     const monthSelect = $('#month-select');
     const yearSelect = $('#year-select');
     const month = monthSelect ? monthSelect.value : null;

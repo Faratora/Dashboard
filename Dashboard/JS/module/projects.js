@@ -47,10 +47,10 @@ function sortAndFilterProjects(projects) {
 
     // Apply column-specific filters
     const filterableColumns = ['companyName', 'projectName'];
-    filterableColumns.forEach(column => {
+    filterableColumns.forEach((column) => {
         const columnFilter = window[`filter_${column}`];
         if (columnFilter) {
-            result = result.filter(p => {
+            result = result.filter((p) => {
                 const value = p[column];
                 return value && value.toLowerCase().includes(columnFilter);
             });
@@ -99,7 +99,7 @@ function sortAndFilterProjects(projects) {
 function updateProjectTableSortIcons() {
     const thead = $('#projects-thead');
     if (!thead) return;
-    
+
     const headers = thead.querySelectorAll('th.sortable');
     headers.forEach((th) => {
         const sortIcon = th.querySelector('.sort-icon');
@@ -117,9 +117,8 @@ function renderProjects() {
     const tbody = $('#projects-tbody');
     if (!tbody) return;
 
-    tbody.innerHTML = '';
-
     const projects = sortAndFilterProjects(getProjects());
+    log('renderProjects: got ' + projects.length + ' projects');
     projects.forEach((project) => {
         renderProjectRow(project);
     });

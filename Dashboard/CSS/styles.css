@@ -36,46 +36,16 @@ body {
     transform: translateX(-280px);
 }
 
-.open-btn {
-    font-size: 24px;
-    position: fixed;
-    left: 20px;
-    top: 5px;
-    display: none;
-    z-index: 1001;
-}
 
-.open-btn:hover {
-    background: var(--color-hover-dark);
-    transform: scale(1.1);
-}
 
-.open-btn.hidden {
-    display: none !important;
-}
 
-body.panel-collapsed #open-btn {
-    display: block;
-}
 
 #main-content.collapsed {
     margin-left: 0;
     width: 100%;
 }
 
-.toggle-btn {
-    background: var(--color-side-panel);
-    font-size: 24px;
-    width: 280px;
-    position: absolute;
-    right: 0;
-    top: 0;
-}
 
-#toggle-btn:hover {
-    background: var(--color-hover-dark);
-    border-radius: 0;
-}
 
 .month-selector {
     padding: 20px;
@@ -273,7 +243,6 @@ body.panel-collapsed #main-content {
     background: var(--color-bg-body);
 }
 
-
 /* Table */
 table {
     width: 100%;
@@ -315,7 +284,6 @@ th.sortable:hover {
 
 /* Table action buttons */
 
-
 /* Project table color coding */
 .over-capacity {
     background-color: #ffcccc;
@@ -333,15 +301,7 @@ th.sortable:hover {
     font-weight: bold;
 }
 
-.show-employees-btn {
-    background: #3498db;
-    padding: 5px 12px;
-    font-size: 12px;
-}
 
-.show-employees-btn:hover {
-    background: #2980b9;
-}
 
 .filter-input {
     padding: 8px 12px;
@@ -357,25 +317,9 @@ th.sortable:hover {
     align-items: center;
 }
 
-.availability-btn {
-    background: #e215d1;
-    padding: 5px 12px;
-    font-size: 12px;
-}
 
-.availability-btn:hover {
-    background: #5c0e55;
-}
 
-.assign-btn {
-    background: #3498db;
-    padding: 5px 12px;
-    font-size: 12px;
-}
 
-.assign-btn:hover {
-    background: #2980b9;
-}
 
 .high-availability {
     background-color: #d4edda;
@@ -399,8 +343,6 @@ th.sortable:hover {
     width: 100%;
     margin-bottom: 15px;
 }
-
-
 
 /* <!-- Seed Data Modal --> */
 #seed-data-backdrop {
@@ -444,7 +386,6 @@ th.sortable:hover {
     display: block;
 }
 
-
 /* Employees Modal */
 
 #employees-modal-backdrop {
@@ -453,7 +394,7 @@ th.sortable:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 2000;
 }
 #employees-modal-backdrop.hidden {
@@ -472,7 +413,7 @@ th.sortable:hover {
     max-width: 900px;
     max-height: 85vh;
     overflow-y: auto;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 #employees-modal.hidden {
     display: none;
@@ -534,15 +475,74 @@ th.sortable:hover {
     padding-top: 15px;
     border-top: 1px solid #ddd;
 }
-#employees-modal .edit-btn,
-#employees-modal .unassign-btn {
-    padding: 5px 10px;
-    font-size: 12px;
-    margin-right: 5px;
+
+/* Filter Modal */
+#filter-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
 }
-#employees-modal .unassign-btn {
-    background: #e67e22;
+
+#filter-backdrop.hidden {
+    display: none;
 }
-#employees-modal .unassign-btn:hover {
-    background: #d35400;
+
+#filter-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    z-index: 2001;
+    min-width: 350px;
+    max-width: 90%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+#filter-modal.hidden {
+    display: none;
+}
+
+#filter-modal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#filter-modal .modal-header h2 {
+    margin: 0;
+    color: #1a1a2e;
+    font-size: 22px;
+}
+
+#filter-modal .modal-body {
+    margin-bottom: 20px;
+}
+
+#filter-modal .modal-body input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+#filter-modal .modal-body input:focus {
+    outline: none;
+    border-color: var(--color-button);
+    box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.1);
+}
+
+#filter-modal .modal-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
 }
