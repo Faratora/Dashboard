@@ -1,4 +1,4 @@
-import { $, log } from './utils.js';
+import { $, log, initSortFilter as initCommonSortFilter } from './utils.js';
 import {
     addEmployee,
     deleteEmployee,
@@ -191,34 +191,25 @@ export function initEmployees() {
 }
 
 function initSortFilter() {
-    const thead = $('#employees-thead');
-    if (!thead) return;
-
-    const headers = thead.querySelectorAll('th.sortable');
-    headers.forEach((th) => {
-        th.addEventListener('click', () => {
-            const column = th.dataset.sort;
-            if (sortColumn === column) {
-                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-            } else {
-                sortColumn = column;
-                sortDirection = 'asc';
-            }
-            renderEmployees();
-        });
-    });
-
-    const filterInput = document.getElementById('employee-filter-input');
-    if (filterInput) {
-        filterInput.addEventListener('input', (e) => {
-            filterText = e.target.value;
-            renderEmployees();
-        });
-    }
-
-    window.addEventListener('showProjectEmployees', (e) => {
-        projectFilter = e.detail.projectId;
-        renderEmployees();
+    initCommonSortFilter({
+        theadSelector: '#employees-thead',
+        filterInputId: 'employee-filter-input',
+        renderFunction: renderEmployees,
+        getSortState: () => ({ column: sortColumn, direction: sortDirection }),
+        setSortState: ({ column, direction }) => {
+            sortColumn = column;
+            sortDirection = direction;
+        },
+        getFilterText: () => filterText,
+        setFilterText: (value) => {
+            filterText = value;
+        },
+        extraListeners: {
+            showProjectEmployees: (e) => {
+                projectFilter = e.detail.projectId;
+                renderEmployees();
+            },
+        },
     });
 }
 

@@ -1,22 +1,121 @@
 import { $, log } from './utils.js';
 import { validateProject, validateEmployee } from './validator.js';
-import { getProjects } from './dataStorage.js';
+import { getProjects, getEmployees } from './dataStorage.js';
 
 let editMode = null;
 let editingId = null;
+let currentProjectId = null;
 
 function populateEmployeeProjectSelect() {
     const projectSelect = $('#employee-project');
     if (!projectSelect) return;
-    
+
     projectSelect.innerHTML = '<option value="">Select project</option>';
     const projects = getProjects();
-    projects.forEach(project => {
+    projects.forEach((project) => {
         const option = document.createElement('option');
         option.value = project.projectName;
         option.textContent = project.projectName;
         projectSelect.appendChild(option);
     });
+}
+
+function openEmployeesModal(projectId) {
+    const modalBackdrop = $('#employees-modal-backdrop');
+    const modal = $('#employees-modal');
+    const modalTitle = $('#employees-modal-title');
+    const tbody = $('#project-employees-tbody');
+
+    if (!modalBackdrop || !modal || !modalTitle || !tbody) {
+        log('Employees modal elements not found');
+        return;
+    }
+
+    currentProjectId = projectId;
+    const projects = getProjects();
+    const project = projects.find((p) => p.id === projectId);
+
+    if (project) {
+        modalTitle.textContent = `Employees on ${project.projectName}`;
+    }
+
+    tbody.innerHTML = '';
+    const allEmployees = getEmployees();
+    const employees = allEmployees.filter((e) => e.project === project.projectName);
+
+    if (employees.length === 0) {
+        tbody.innerHTML =
+            '<tr><td colspan="9" style="text-align: center; padding: 20px;">No employees assigned</td></tr>';
+    } else {
+        employees.forEach((employee) => {
+            const capacity = employee.capacity || 1;
+            const fit = employee.fit || 1;
+            const vacation = employee.vacationDays || 0;
+            const availability = ((20 - vacation) / 20) * fit * 100;
+            const effectiveRevenue = employee.salary * (availability / 100);
+            const cost = employee.salary;
+            const profit = effectiveRevenue - cost;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${employee.name} ${employee.surname}</td>
+                <td>${capacity}</td>
+                <td>${fit}</td>
+                <td>${vacation}</td>
+                <td>${availability.toFixed(1)}%</td>
+                <td>$${effectiveRevenue.toFixed(2)}</td>
+                <td>$${cost.toFixed(2)}</td>
+                <td>$${profit.toFixed(2)}</td>
+                <td>
+                    <button class="modal-edit-employee" data-id="${employee.id}">Edit</button>
+                    <button class="modal-delete-employee" data-id="${employee.id}">Delete</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    modalBackdrop.classList.remove('hidden');
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    setTimeout(() => {
+        tbody.querySelectorAll('.modal-edit-employee').forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                const empId = e.target.dataset.id;
+                const employee = allEmployees.find((emp) => emp.id === empId);
+                if (employee) {
+                    closeEmployeesModal();
+                    window.openAddEmployeeEditModal(employee);
+                }
+            });
+        });
+
+        tbody.querySelectorAll('.modal-delete-employee').forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                const empId = e.target.dataset.id;
+                if (window.editEmployeeCallback) {
+                    const employee = allEmployees.find((emp) => emp.id === empId);
+                    if (employee) {
+                        window.editEmployeeCallback(empId, { ...employee, project: '' });
+                    }
+                }
+                openEmployeesModal(projectId);
+            });
+        });
+    }, 0);
+}
+
+function closeEmployeesModal() {
+    const modalBackdrop = $('#employees-modal-backdrop');
+    const modal = $('#employees-modal');
+
+    if (modalBackdrop && modal) {
+        modalBackdrop.classList.add('hidden');
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+        currentProjectId = null;
+    }
 }
 
 export function initModal() {
@@ -118,7 +217,10 @@ export function initModal() {
             const birthDate = $('#employee-age').value;
             const position = $('#employee-position').value;
             const salary = $('#employee-salary').value;
-            
+            const capacity = $('#employee-capacity').value || 1;
+            const fit = $('#employee-fit').value || 1;
+            const vacation = $('#employee-vacation').value || 0;
+            const project = $('#employee-project').value || '';
 
             const birth = new Date(birthDate);
             const today = new Date();
@@ -135,7 +237,10 @@ export function initModal() {
                 birthDate: birthDate,
                 position: position,
                 salary: parseFloat(salary),
-                
+                capacity: parseFloat(capacity),
+                fit: parseFloat(fit),
+                vacationDays: parseInt(vacation, 10),
+                project: project,
             };
 
             if (editMode === 'edit' && editingId && window.editEmployeeCallback) {
@@ -163,6 +268,27 @@ export function initModal() {
         }
     });
 
+    // Employees modal close buttons
+    const employeesModalCloseX = $('#employees-modal-close-x');
+    const employeesModalCloseBtn = $('#employees-modal-close-btn');
+    const employeesModalBackdrop = $('#employees-modal-backdrop');
+
+    if (employeesModalCloseX) {
+        employeesModalCloseX.addEventListener('click', closeEmployeesModal);
+    }
+    if (employeesModalCloseBtn) {
+        employeesModalCloseBtn.addEventListener('click', closeEmployeesModal);
+    }
+    if (employeesModalBackdrop) {
+        employeesModalBackdrop.addEventListener('click', closeEmployeesModal);
+    }
+
+    // Listen for showProjectEmployees event
+    window.addEventListener('showProjectEmployees', (e) => {
+        log('showProjectEmployees event received for project: ' + e.detail.projectId);
+        openEmployeesModal(e.detail.projectId);
+    });
+
     window.openAddProjectModal = () => openPanel('add');
     window.openAddProjectEditModal = (project) => {
         openPanel('edit');
@@ -172,7 +298,10 @@ export function initModal() {
         $('#project-budget').value = project.budget;
         $('#employee-capacity').value = project.employeeCapacity;
     };
-    window.openAddEmployeeModal = () => openPanel('add');
+    window.openAddEmployeeModal = () => {
+        populateEmployeeProjectSelect();
+        openPanel('add');
+    };
     window.openAddEmployeeEditModal = (employee) => {
         openPanel('edit');
         editingId = employee.id;

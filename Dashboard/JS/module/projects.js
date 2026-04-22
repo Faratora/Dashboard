@@ -1,5 +1,13 @@
-import { $, log } from './utils.js';
-import { addProject, deleteProject as storageDelete, updateProject, getProjects, getEmployees, formatCurrency, escapeHtml } from './dataStorage.js';
+import { $, log, initSortFilter as initCommonSortFilter } from './utils.js';
+import {
+    addProject,
+    deleteProject as storageDelete,
+    updateProject,
+    getProjects,
+    getEmployees,
+    formatCurrency,
+    escapeHtml,
+} from './dataStorage.js';
 
 let sortColumn = null;
 let sortDirection = 'asc';
@@ -7,59 +15,71 @@ let filterText = '';
 
 function calculateUsedCapacity(projectId) {
     const employees = getEmployees();
-    const projectEmployees = employees.filter(e => e.project === projectId);
-    
+    const projectEmployees = employees.filter((e) => e.project === projectId);
+
     return projectEmployees.reduce((sum, emp) => {
         const capacity = emp.capacity || 1;
         const fit = emp.fit || 1;
         const vacation = emp.vacationDays ? (20 - emp.vacationDays) / 20 : 1;
-        return sum + (capacity * fit * vacation);
+        return sum + capacity * fit * vacation;
     }, 0);
 }
 
 function calculateEstimatedIncome(projectId, budget) {
     const employees = getEmployees();
-    const projectEmployees = employees.filter(e => e.project === projectId);
-    
+    const projectEmployees = employees.filter((e) => e.project === projectId);
+
     const totalSalary = projectEmployees.reduce((sum, emp) => sum + (emp.salary || 0), 0);
-    
+
     const profitMargin = budget > 0 ? (budget - totalSalary) / budget : 0;
     return totalSalary * profitMargin;
 }
 
 function sortAndFilterProjects(projects) {
     let result = [...projects];
-    
+
     if (filterText) {
         const search = filterText.toLowerCase();
-        result = result.filter(p => 
-            p.companyName.toLowerCase().includes(search) ||
-            p.projectName.toLowerCase().includes(search)
+        result = result.filter(
+            (p) => p.companyName.toLowerCase().includes(search) || p.projectName.toLowerCase().includes(search)
         );
     }
-    
+
     if (sortColumn) {
         result.sort((a, b) => {
             let valA, valB;
             switch (sortColumn) {
-                case 'companyName': valA = a.companyName; valB = b.companyName; break;
-                case 'projectName': valA = a.projectName; valB = b.projectName; break;
-                case 'budget': valA = a.budget; valB = b.budget; break;
-                case 'employeeCapacity': valA = a.employeeCapacity; valB = b.employeeCapacity; break;
-                case 'estimatedIncome': 
+                case 'companyName':
+                    valA = a.companyName;
+                    valB = b.companyName;
+                    break;
+                case 'projectName':
+                    valA = a.projectName;
+                    valB = b.projectName;
+                    break;
+                case 'budget':
+                    valA = a.budget;
+                    valB = b.budget;
+                    break;
+                case 'employeeCapacity':
+                    valA = a.employeeCapacity;
+                    valB = b.employeeCapacity;
+                    break;
+                case 'estimatedIncome':
                     valA = calculateEstimatedIncome(a.id, a.budget);
                     valB = calculateEstimatedIncome(b.id, b.budget);
                     break;
-                default: return 0;
+                default:
+                    return 0;
             }
-            
+
             if (typeof valA === 'string') {
                 return sortDirection === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
             }
             return sortDirection === 'asc' ? valA - valB : valB - valA;
         });
     }
-    
+
     return result;
 }
 
@@ -68,9 +88,9 @@ function renderProjects() {
     if (!tbody) return;
 
     tbody.innerHTML = '';
-    
+
     const projects = sortAndFilterProjects(getProjects());
-    projects.forEach(project => {
+    projects.forEach((project) => {
         renderProjectRow(project);
     });
 }
@@ -83,8 +103,8 @@ function renderProjectRow(project) {
     const totalCapacity = project.employeeCapacity || 0;
     const estimatedIncome = calculateEstimatedIncome(project.id, project.budget);
     const overCapacity = usedCapacity > totalCapacity;
-    const employeeCount = getEmployees().filter(e => e.project === project.id).length;
-    
+    const employeeCount = getEmployees().filter((e) => e.project === project.id).length;
+
     const incomeClass = estimatedIncome > 0 ? 'income-positive' : estimatedIncome < 0 ? 'income-negative' : '';
     const capacityClass = overCapacity ? 'over-capacity' : '';
 
@@ -108,7 +128,7 @@ function renderProjectRow(project) {
     const editBtn = tr.querySelector('.edit-btn');
     const showEmpBtn = tr.querySelector('.show-employees-btn');
     const deleteBtn = tr.querySelector('.delete-btn');
-    
+
     editBtn.addEventListener('click', () => {
         log('Edit button clicked for project: ' + project.id);
         handleEditProject(project.id);
@@ -139,7 +159,7 @@ function handleEditProject(id, projectData) {
         renderProjects();
     } else {
         const projects = getProjects();
-        const project = projects.find(p => p.id === id);
+        const project = projects.find((p) => p.id === id);
         if (project && window.openAddProjectEditModal) {
             window.openAddProjectEditModal(project);
         }
@@ -156,37 +176,27 @@ export function initProjects() {
 
     window.addProjectCallback = handleAddProject;
     window.editProjectCallback = handleEditProject;
-    
+
     initSortFilter();
     renderProjects();
     log('Projects module initialized');
 }
 
 function initSortFilter() {
-    const thead = $('#projects-thead');
-    if (!thead) return;
-    
-    const headers = thead.querySelectorAll('th.sortable');
-    headers.forEach(th => {
-        th.addEventListener('click', () => {
-            const column = th.dataset.sort;
-            if (sortColumn === column) {
-                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-            } else {
-                sortColumn = column;
-                sortDirection = 'asc';
-            }
-            renderProjects();
-        });
+    initCommonSortFilter({
+        theadSelector: '#projects-thead',
+        filterInputId: 'project-filter-input',
+        renderFunction: renderProjects,
+        getSortState: () => ({ column: sortColumn, direction: sortDirection }),
+        setSortState: ({ column, direction }) => {
+            sortColumn = column;
+            sortDirection = direction;
+        },
+        getFilterText: () => filterText,
+        setFilterText: (value) => {
+            filterText = value;
+        },
     });
-    
-    const filterInput = document.getElementById('project-filter-input');
-    if (filterInput) {
-        filterInput.addEventListener('input', (e) => {
-            filterText = e.target.value;
-            renderProjects();
-        });
-    }
 }
 
 export function handleAddProject(projectData) {
