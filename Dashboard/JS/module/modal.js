@@ -133,6 +133,67 @@ export function initModal() {
         return;
     }
 
+    // Filter modal elements
+    const filterBackdrop = $('#filter-backdrop');
+    const filterModal = $('#filter-modal');
+    const filterInput = $('#filter-input');
+    const filterApplyBtn = $('#filter-apply-btn');
+    const filterCancelBtn = $('#filter-cancel-btn');
+    const filterModalClose = $('#filter-modal-close');
+    let currentFilterColumn = null;
+
+    const openFilterModal = (column, headerText) => {
+        currentFilterColumn = column;
+        const filterModalTitle = $('#filter-modal-title');
+        if (filterModalTitle) {
+            filterModalTitle.textContent = headerText || `Filter by ${column}`;
+        }
+        filterInput.value = '';
+        filterInput.focus();
+        filterBackdrop.classList.remove('hidden');
+        filterModal.classList.remove('hidden');
+    };
+
+    const closeFilterModal = () => {
+        filterBackdrop.classList.add('hidden');
+        filterModal.classList.add('hidden');
+        currentFilterColumn = null;
+    };
+
+    const applyFilter = () => {
+        const filterValue = filterInput.value.trim();
+        if (currentFilterColumn) {
+            const filterEvent = new CustomEvent('applyColumnFilter', {
+                detail: { column: currentFilterColumn, value: filterValue }
+            });
+            window.dispatchEvent(filterEvent);
+        }
+        closeFilterModal();
+    };
+
+    // Filter modal event listeners
+    if (filterModalClose) {
+        filterModalClose.addEventListener('click', closeFilterModal);
+    }
+    if (filterBackdrop) {
+        filterBackdrop.addEventListener('click', closeFilterModal);
+    }
+    if (filterCancelBtn) {
+        filterCancelBtn.addEventListener('click', closeFilterModal);
+    }
+    if (filterApplyBtn) {
+        filterApplyBtn.addEventListener('click', applyFilter);
+    }
+    if (filterInput) {
+        filterInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                applyFilter();
+            } else if (e.key === 'Escape') {
+                closeFilterModal();
+            }
+        });
+    }
+
     const openPanel = (mode = 'add') => {
         editMode = mode;
         const panelTitle = $('#panel-title');
@@ -279,6 +340,21 @@ export function initModal() {
         log('showProjectEmployees event received for project: ' + e.detail.projectId);
         openEmployeesModal(e.detail.projectId);
     });
+
+    // Filter modal event listeners
+    if (filterBackdrop && filterModal && filterInput && filterApplyBtn && filterCancelBtn) {
+        // Open filter modal on filter icon click
+        document.querySelectorAll('th.filterable .filter-icon').forEach((icon) => {
+            icon.style.cursor = 'pointer';
+            icon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const th = icon.closest('th');
+                const column = th.dataset.filter || th.dataset.sort;
+                const headerText = th.textContent.replace('⌕', '').replace('⇅', '').trim();
+                openFilterModal(column, headerText);
+            });
+        });
+    }
 
     window.openAddProjectModal = () => openPanel('add');
     window.openAddProjectEditModal = (project) => {

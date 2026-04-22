@@ -45,6 +45,18 @@ function sortAndFilterProjects(projects) {
         );
     }
 
+    // Apply column-specific filters
+    const filterableColumns = ['companyName', 'projectName'];
+    filterableColumns.forEach(column => {
+        const columnFilter = window[`filter_${column}`];
+        if (columnFilter) {
+            result = result.filter(p => {
+                const value = p[column];
+                return value && value.toLowerCase().includes(columnFilter);
+            });
+        }
+    });
+
     if (sortColumn) {
         result.sort((a, b) => {
             let valA, valB;
@@ -80,7 +92,25 @@ function sortAndFilterProjects(projects) {
         });
     }
 
+    updateProjectTableSortIcons();
     return result;
+}
+
+function updateProjectTableSortIcons() {
+    const thead = $('#projects-thead');
+    if (!thead) return;
+    
+    const headers = thead.querySelectorAll('th.sortable');
+    headers.forEach((th) => {
+        const sortIcon = th.querySelector('.sort-icon');
+        if (sortIcon) {
+            if (th.dataset.sort === sortColumn) {
+                sortIcon.textContent = sortDirection === 'asc' ? '↑' : '↓';
+            } else {
+                sortIcon.textContent = '⇅';
+            }
+        }
+    });
 }
 
 function renderProjects() {
@@ -197,6 +227,40 @@ function initSortFilter() {
             filterText = value;
         },
     });
+
+    // Listen for column filter events
+    window.addEventListener('applyColumnFilter', (e) => {
+        const { column, value } = e.detail;
+        applyColumnFilter(column, value);
+    });
+}
+
+function applyColumnFilter(column, value) {
+    const thead = $('#projects-thead');
+    if (!thead) return;
+
+    const th = thead.querySelector(`th[data-filter="${column}"]`);
+    if (!th) return;
+
+    const sortIcon = th.querySelector('.sort-icon');
+    const filterIcon = th.querySelector('.filter-icon');
+
+    if (sortIcon) {
+        sortIcon.textContent = value ? '↓' : '⇅';
+    }
+    if (filterIcon) {
+        filterIcon.textContent = value ? '⌕' : '⌕';
+        filterIcon.style.color = value ? '#1abc9c' : '';
+    }
+
+    // Store column-specific filter
+    if (value) {
+        window[`filter_${column}`] = value.toLowerCase();
+    } else {
+        window[`filter_${column}`] = '';
+    }
+
+    renderProjects();
 }
 
 export function handleAddProject(projectData) {

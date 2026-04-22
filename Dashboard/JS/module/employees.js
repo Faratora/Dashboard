@@ -16,6 +16,10 @@ let projectFilter = '';
 function sortAndFilterEmployees(employees) {
     let result = [...employees];
 
+    if (projectFilter) {
+        result = result.filter((e) => e.project === projectFilter);
+    }
+
     if (filterText) {
         const search = filterText.toLowerCase();
         result = result.filter(
@@ -24,10 +28,6 @@ function sortAndFilterEmployees(employees) {
                 e.surname.toLowerCase().includes(search) ||
                 e.position.toLowerCase().includes(search)
         );
-    }
-
-    if (projectFilter) {
-        result = result.filter((e) => e.project === projectFilter);
     }
 
     if (sortColumn) {
@@ -54,13 +54,17 @@ function sortAndFilterEmployees(employees) {
                     valA = a.salary;
                     valB = b.salary;
                     break;
+                case 'estimatedPayment':
+                    valA = a.salary;
+                    valB = b.salary;
+                    break;
                 case 'project':
                     valA = a.project || '';
                     valB = b.project || '';
                     break;
                 case 'estimatedIncome':
-                    valA = a.estimatedIncome;
-                    valB = b.estimatedIncome;
+                    valA = a.salary * ((20 - (a.vacationDays || 0)) / 20) * (a.fit || 1);
+                    valB = b.salary * ((20 - (b.vacationDays || 0)) / 20) * (b.fit || 1);
                     break;
                 default:
                     return 0;
@@ -73,7 +77,25 @@ function sortAndFilterEmployees(employees) {
         });
     }
 
+    updateEmployeeTableSortIcons();
     return result;
+}
+
+function updateEmployeeTableSortIcons() {
+    const thead = $('#employees-thead');
+    if (!thead) return;
+
+    const headers = thead.querySelectorAll('th.sortable');
+    headers.forEach((th) => {
+        const sortIcon = th.querySelector('.sort-icon');
+        if (sortIcon) {
+            if (th.dataset.sort === sortColumn) {
+                sortIcon.textContent = sortDirection === 'asc' ? '↑' : '↓';
+            } else {
+                sortIcon.textContent = '⇅';
+            }
+        }
+    });
 }
 
 function renderEmployees() {

@@ -206,6 +206,22 @@
 			</div>
 		</div>
 
+		<!-- Filter Modal -->
+		<div id="filter-backdrop" class="hidden"></div>
+		<div id="filter-modal" class="hidden">
+			<div class="modal-header">
+				<h2 id="filter-modal-title">Filter</h2>
+				<button type="button" class="modal-close" id="filter-modal-close">&times;</button>
+			</div>
+			<div class="modal-body">
+				<input type="text" id="filter-input" placeholder="Filter by Project Name..." autofocus>
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="filter-apply-btn" class="btn-primary">Apply</button>
+				<button type="button" id="filter-cancel-btn" class="btn-secondary">Cancel</button>
+			</div>
+		</div>
+
 
 		<script type="module" src="./JS/main.js"></script>
 </body>

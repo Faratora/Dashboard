@@ -48,11 +48,13 @@ export function initSortFilter(config) {
         th.addEventListener('click', () => {
             const column = th.dataset.sort;
             const currentSort = getSortState();
+            let newDirection;
             if (currentSort.column === column) {
-                setSortState({ column, direction: currentSort.direction === 'asc' ? 'desc' : 'asc' });
+                newDirection = currentSort.direction === 'asc' ? 'desc' : 'asc';
             } else {
-                setSortState({ column, direction: 'asc' });
+                newDirection = 'asc';
             }
+            setSortState({ column, direction: newDirection });
             renderFunction();
         });
     });
@@ -71,3 +73,4 @@ export function initSortFilter(config) {
         window.addEventListener(eventName, handler);
     }
 }
+
