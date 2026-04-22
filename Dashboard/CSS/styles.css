@@ -1,5 +1,5 @@
 @import 'variables.css';
-
+@import 'buttons.css';
 * {
     box-sizing: border-box;
 }
@@ -15,25 +15,7 @@ body {
 }
 
 /* Button base styles */
-button {
-    background: var(--color-button);
-    color: var(--color-white);
-    font-weight: bold;
-    padding: 10px 24px;
-    border: none;
-    cursor: pointer;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-weight: 500;
-    border: none;
-    box-shadow: 2px 2px 6px var(--color-box-shadow);
-}
-button:hover {
-    background: var(--color-hover-dark);
-    box-shadow: 0 4px 12px var(--color-box-shadow);
-}
+
 /* Sidebar Styles */
 #side-panel {
     width: 280px;
@@ -291,15 +273,6 @@ body.panel-collapsed #main-content {
     background: var(--color-bg-body);
 }
 
-.btn-secondary {
-    background: #e0e0e0;
-    color: #333;
-}
-
-.btn-secondary:hover {
-    background: #d0d0d0;
-}
-
 
 /* Table */
 table {
@@ -341,31 +314,7 @@ th.sortable:hover {
 }
 
 /* Table action buttons */
-.edit-btn,
-.delete-btn {
-    background: var(--color-button);
-    color: var(--color-white);
-    border: none;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px;
-    margin-right: 5px;
-    transition: all 0.2s;
-    box-shadow: none;
-}
 
-.edit-btn:hover {
-    background: var(--color-hover-dark);
-}
-
-.delete-btn {
-    background: #e74c3c;
-}
-
-.delete-btn:hover {
-    background: #c0392b;
-}
 
 /* Project table color coding */
 .over-capacity {
@@ -451,18 +400,7 @@ th.sortable:hover {
     margin-bottom: 15px;
 }
 
-.copy-btn {
-    background: #3498db;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-}
 
-.copy-btn:hover {
-    background: #2980b9;
-}
 
 /* <!-- Seed Data Modal --> */
 #seed-data-backdrop {

@@ -125,14 +125,17 @@ export function initModal() {
     const cancelBtn = $('#cancel-panel-btn');
     const submitBtn = $('#submit-btn');
     const form = $('#add-project-form');
+    const projectFormFields = $('#project-form-fields');
+    const employeeFormFields = $('#employee-form-fields');
 
-    if (!backdrop || !panel || !closeBtn || !cancelBtn || !form) {
+    if (!backdrop || !panel || !closeBtn || !cancelBtn || !submitBtn || !form) {
         log('Panel elements not found');
         return;
     }
 
     const openPanel = (mode = 'add') => {
         editMode = mode;
+        const panelTitle = $('#panel-title');
 
         const allInputs = document.querySelectorAll('#add-project-form input, #add-project-form select');
         allInputs.forEach((input) => {
@@ -145,11 +148,6 @@ export function initModal() {
         backdrop.classList.remove('hidden');
         panel.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
-
-        const projectFormFields = $('#project-form-fields');
-        const employeeFormFields = $('#employee-form-fields');
-        const panelTitle = $('#panel-title');
-        const submitBtn = $('#submit-btn');
 
         if (projectFormFields && projectFormFields.style.display !== 'none') {
             panelTitle.textContent = mode === 'edit' ? 'Edit Project' : 'Add New Project';
@@ -174,9 +172,6 @@ export function initModal() {
 
     const handleSubmit = () => {
         log('Form submit triggered');
-
-        const projectFormFields = $('#project-form-fields');
-        const employeeFormFields = $('#employee-form-fields');
 
         if (projectFormFields && projectFormFields.style.display !== 'none') {
             log('checking project form');
@@ -217,10 +212,6 @@ export function initModal() {
             const birthDate = $('#employee-age').value;
             const position = $('#employee-position').value;
             const salary = $('#employee-salary').value;
-            const capacity = $('#employee-capacity').value || 1;
-            const fit = $('#employee-fit').value || 1;
-            const vacation = $('#employee-vacation').value || 0;
-            const project = $('#employee-project').value || '';
 
             const birth = new Date(birthDate);
             const today = new Date();
@@ -237,10 +228,10 @@ export function initModal() {
                 birthDate: birthDate,
                 position: position,
                 salary: parseFloat(salary),
-                capacity: parseFloat(capacity),
-                fit: parseFloat(fit),
-                vacationDays: parseInt(vacation, 10),
-                project: project,
+                capacity: 1,
+                fit: 1,
+                vacationDays: 0,
+                project: '',
             };
 
             if (editMode === 'edit' && editingId && window.editEmployeeCallback) {

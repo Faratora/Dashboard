@@ -5,12 +5,6 @@ export function initNavigation() {
     const navEmployees = $('#nav-employees');
     const projectsContent = $('#projects-content');
     const employeesContent = $('#employees-content');
-    const addProjectBtn = $('#add-project-btn');
-    const addEmployeeBtn = $('#add-employee-btn');
-    const panelTitle = $('#panel-title');
-    const projectFormFields = $('#project-form-fields');
-    const employeeFormFields = $('#employee-form-fields');
-    const submitBtn = $('#submit-btn');
 
     if (!navProjects || !navEmployees || !projectsContent || !employeesContent) {
         log('Navigation elements not found');
@@ -35,33 +29,33 @@ export function initNavigation() {
         log('Switched to Employees view');
     });
 
-    // Open Add Project modal
-    if (addProjectBtn) {
-        addProjectBtn.addEventListener('click', () => {
-            // Set form to project mode
-            panelTitle.textContent = 'Add New Project';
-            projectFormFields.style.display = 'block';
-            employeeFormFields.style.display = 'none';
-            submitBtn.textContent = 'Add Project';
-            
-            if (window.openAddProjectModal) {
-                window.openAddProjectModal();
-            }
-        });
+    // Universal handler for Add buttons
+    function configureAddButton(buttonId, mode, openModalFn) {
+        const button = $(buttonId);
+        if (button) {
+            button.addEventListener('click', () => {
+                const panelTitle = $('#panel-title');
+                const projectFormFields = $('#project-form-fields');
+                const employeeFormFields = $('#employee-form-fields');
+                const submitBtn = $('#submit-btn');
+
+                panelTitle.textContent = mode === 'project' ? 'Add New Project' : 'Add New Employee';
+                projectFormFields.style.display = mode === 'project' ? 'block' : 'none';
+                employeeFormFields.style.display = mode === 'project' ? 'none' : 'block';
+                submitBtn.textContent = mode === 'project' ? 'Add Project' : 'Add Employee';
+
+                if (openModalFn && typeof openModalFn === 'function') {
+                    openModalFn();
+                } else {
+                    log(`openModalFn is not a function: ${openModalFn}`);
+                }
+            });
+        }
     }
 
-    // Open Add Employee modal
-    if (addEmployeeBtn) {
-        addEmployeeBtn.addEventListener('click', () => {
-            // Set form to employee mode
-            panelTitle.textContent = 'Add New Employee';
-            projectFormFields.style.display = 'none';
-            employeeFormFields.style.display = 'block';
-            submitBtn.textContent = 'Add Employee';
-            
-            if (window.openAddEmployeeModal) {
-                window.openAddEmployeeModal();
-            }
-        });
-    }
+    configureAddButton('#add-project-btn', 'project', window.openAddProjectModal);
+    configureAddButton('#add-employee-btn', 'employee', window.openAddEmployeeModal);
+    
+    log(`openAddProjectModal: ${typeof window.openAddProjectModal}`);
+    log(`openAddEmployeeModal: ${typeof window.openAddEmployeeModal}`);
 }
