@@ -108,6 +108,22 @@ body.panel-collapsed .main-content {
     margin-bottom: 25px;
     flex-wrap: wrap;
 }
+.table-controls {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.table-controls .controls-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
 .content-header h1 {
     margin: 0;
     color: #1a1a2e;

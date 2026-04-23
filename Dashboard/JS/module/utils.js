@@ -60,16 +60,17 @@ export function initSortFilter(config) {
     });
 
     // Filter functionality
-    const filterInput = document.getElementById(filterInputId);
-    if (filterInput) {
-        filterInput.addEventListener('input', (e) => {
-            setFilterText(e.target.value);
-            renderFunction();
-        });
+    if (filterInputId) {
+        const filterInput = document.getElementById(filterInputId);
+        if (filterInput) {
+            filterInput.addEventListener('input', (e) => {
+                setFilterText(e.target.value);
+                renderFunction();
+            });
+        }
     }
 
-    // Extra event listeners (e.g., showProjectEmployees)
-    for (const [eventName, handler] of Object.entries(extraListeners)) {
+        for (const [eventName, handler] of Object.entries(extraListeners)) {
         window.addEventListener(eventName, handler);
     }
 }

@@ -11,7 +11,6 @@ import {
 
 let sortColumn = null;
 let sortDirection = 'asc';
-let filterText = '';
 
 function calculateUsedCapacity(projectId) {
     const employees = getEmployees();
@@ -37,13 +36,6 @@ function calculateEstimatedIncome(projectId, budget) {
 
 function sortAndFilterProjects(projects) {
     let result = [...projects];
-
-    if (filterText) {
-        const search = filterText.toLowerCase();
-        result = result.filter(
-            (p) => p.companyName.toLowerCase().includes(search) || p.projectName.toLowerCase().includes(search)
-        );
-    }
 
     // Apply column-specific filters
     const filterableColumns = ['companyName', 'projectName'];
@@ -216,17 +208,11 @@ export function initProjects() {
 function initSortFilter() {
     initCommonSortFilter({
         theadSelector: '#projects-thead',
-        filterInputId: 'project-filter-input',
         renderFunction: renderProjects,
         getSortState: () => ({ column: sortColumn, direction: sortDirection }),
         setSortState: ({ column, direction }) => {
             sortColumn = column;
             sortDirection = direction;
-            updateClearButtonVisibility();
-        },
-        getFilterText: () => filterText,
-        setFilterText: (value) => {
-            filterText = value;
             updateClearButtonVisibility();
         },
     });
@@ -281,8 +267,7 @@ function applyColumnFilter(column, value) {
 function updateClearButtonVisibility() {
     const clearBtn = $('#clear-project-filters-btn');
     if (clearBtn) {
-        const hasFilters = filterText ||
-            window.filter_companyName ||
+        const hasFilters = window.filter_companyName ||
             window.filter_projectName ||
             sortColumn;
         clearBtn.style.display = hasFilters ? 'flex' : 'none';
@@ -290,7 +275,6 @@ function updateClearButtonVisibility() {
 }
 
 function resetAllFilters() {
-    filterText = '';
     sortColumn = null;
     sortDirection = 'asc';
 
@@ -299,12 +283,6 @@ function resetAllFilters() {
     filterableColumns.forEach((column) => {
         window[`filter_${column}`] = '';
     });
-
-    // Clear text input
-    const filterInput = $('#project-filter-input');
-    if (filterInput) {
-        filterInput.value = '';
-    }
 
     // Reset column filter icons
     const thead = $('#projects-thead');

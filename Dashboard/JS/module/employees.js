@@ -10,7 +10,6 @@ import {
 
 let sortColumn = null;
 let sortDirection = 'asc';
-let filterText = '';
 let projectFilter = '';
 
 function sortAndFilterEmployees(employees) {
@@ -18,16 +17,6 @@ function sortAndFilterEmployees(employees) {
 
     if (projectFilter) {
         result = result.filter((e) => e.project === projectFilter);
-    }
-
-    if (filterText) {
-        const search = filterText.toLowerCase();
-        result = result.filter(
-            (e) =>
-                e.name.toLowerCase().includes(search) ||
-                e.surname.toLowerCase().includes(search) ||
-                e.position.toLowerCase().includes(search)
-        );
     }
 
     // Apply column-specific filters
@@ -233,17 +222,11 @@ export function initEmployees() {
 function initSortFilter() {
     initCommonSortFilter({
         theadSelector: '#employees-thead',
-        filterInputId: 'employee-filter-input',
         renderFunction: renderEmployees,
         getSortState: () => ({ column: sortColumn, direction: sortDirection }),
         setSortState: ({ column, direction }) => {
             sortColumn = column;
             sortDirection = direction;
-            updateClearButtonVisibility();
-        },
-        getFilterText: () => filterText,
-        setFilterText: (value) => {
-            filterText = value;
             updateClearButtonVisibility();
         },
         extraListeners: {
@@ -305,8 +288,7 @@ function applyColumnFilter(column, value) {
 function updateClearButtonVisibility() {
     const clearBtn = $('#clear-employee-filters-btn');
     if (clearBtn) {
-        const hasFilters = filterText ||
-            window.filter_name ||
+        const hasFilters = window.filter_name ||
             window.filter_surname ||
             window.filter_age ||
             window.filter_position ||
@@ -321,7 +303,6 @@ function updateClearButtonVisibility() {
 }
 
 function resetAllFilters() {
-    filterText = '';
     sortColumn = null;
     sortDirection = 'asc';
     projectFilter = '';
@@ -331,12 +312,6 @@ function resetAllFilters() {
     filterableColumns.forEach((column) => {
         window[`filter_${column}`] = '';
     });
-
-    // Clear text input
-    const filterInput = $('#employee-filter-input');
-    if (filterInput) {
-        filterInput.value = '';
-    }
 
     // Reset column filter icons
     const thead = $('#employees-thead');
