@@ -392,6 +392,16 @@ th.sortable:hover {
     color: #721c24;
 }
 
+.profit-positive {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+.profit-negative {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
 #seed-data-modal table,
 #seed-data-modal th,
 #seed-data-modal td {
@@ -471,7 +481,7 @@ th.sortable:hover {
     border-radius: 12px;
     z-index: 2001;
     width: 90%;
-    max-width: 900px;
+    width: calc(100% - 280px);
     max-height: 85vh;
     overflow-y: auto;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);

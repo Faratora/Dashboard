@@ -36,9 +36,10 @@ function openEmployeesModal(projectId) {
     const project = projects.find((p) => p.id === projectId);
 
     if (project) {
+       log(`Opening employees modal for project: ${project.projectName}`);
         modalTitle.textContent = `Employees on ${project.projectName}`;
     }
-
+// ${project.projectName}
     tbody.innerHTML = '';
     const allEmployees = getEmployees();
     const employees = allEmployees.filter((e) => e.project === project.id);
@@ -50,25 +51,61 @@ function openEmployeesModal(projectId) {
         employees.forEach((employee) => {
             const capacity = employee.capacity || 1;
             const fit = employee.fit || 1;
-            const vacation = employee.vacationDays || 0;
-            const availability = ((20 - vacation) / 20) * fit * 100;
-            const effectiveRevenue = employee.salary * (availability / 100);
-            const cost = employee.salary;
-            const profit = effectiveRevenue - cost;
+            const vacationDays = employee.vacationDays || 0;
+            
+            // Vacation coefficient: (20 - vacationDays) / 20
+            const vacationCoefficient = (20 - vacationDays) / 20;
+            
+            // Effective capacity: capacity × fit × vacation coefficient (3 decimal places)
+            const effectiveCapacity = capacity * fit * vacationCoefficient;
+            
+            // Get project budget for revenue calculation
+            const budget = project.budget || 0;
+            const totalCapacity = project.employeeCapacity || 0;
+            
+            // Capacity for revenue = max(project capacity, sum of effective capacities of all employees)
+            // We'll calculate this after summing all effective capacities
+            // For now, calculate revenue per effective capacity unit
+            // Revenue = (budget / capacityForRevenue) × effectiveCapacity
+            
+            // Cost: based on assigned capacity (salary)
+            const cost = employee.salary || 0;
+            
+            // Revenue allocation: proportional to effective capacity
+            // We need total effective capacity of all employees in this project
+            const totalEffectiveCapacity = employees.reduce((sum, emp) => {
+                const cap = emp.capacity || 1;
+                const f = emp.fit || 1;
+                const vac = emp.vacationDays || 0;
+                return sum + cap * f * ((20 - vac) / 20);
+            }, 0);
+            
+            const capacityForRevenue = Math.max(totalCapacity, totalEffectiveCapacity);
+            let revenue = 0;
+            if (capacityForRevenue > 0) {
+                const revenuePerUnit = budget / capacityForRevenue;
+                revenue = revenuePerUnit * effectiveCapacity;
+            }
+            
+            // Profit = revenue - cost
+            const profit = revenue - cost;
+            
+            // Profit color class
+            const profitClass = profit >= 0 ? 'profit-positive' : 'profit-negative';
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td>${employee.name} ${employee.surname}</td>
-                <td>${capacity}</td>
-                <td>${fit}</td>
-                <td>${vacation}</td>
-                <td>${availability.toFixed(1)}%</td>
-                <td>$${effectiveRevenue.toFixed(2)}</td>
+                <td><a href="#" class="employee-link" data-id="${employee.id}">${employee.name} ${employee.surname}</a></td>
+                <td>${capacity.toFixed(2)}</td>
+                <td>${fit.toFixed(2)}</td>
+                <td>${vacationDays}</td>
+                <td>${effectiveCapacity.toFixed(3)}</td>
+                <td>$${revenue.toFixed(2)}</td>
                 <td>$${cost.toFixed(2)}</td>
-                <td>$${profit.toFixed(2)}</td>
+                <td class="${profitClass}">$${profit.toFixed(2)}</td>
                 <td>
-                    <button class="modal-edit-employee" data-id="${employee.id}">Edit</button>
-                    <button class="modal-delete-employee" data-id="${employee.id}">Delete</button>
+                    <button class="modal-edit-employee change-btn" data-id="${employee.id}">Change</button>
+                    <button class="modal-unassign-employee unassign-btn" data-id="${employee.id}">Unassign</button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -80,6 +117,7 @@ function openEmployeesModal(projectId) {
     document.body.style.overflow = 'hidden';
 
     setTimeout(() => {
+        // Edit button handlers
         tbody.querySelectorAll('.modal-edit-employee').forEach((btn) => {
             btn.addEventListener('click', (e) => {
                 const empId = e.target.dataset.id;
@@ -91,7 +129,8 @@ function openEmployeesModal(projectId) {
             });
         });
 
-        tbody.querySelectorAll('.modal-delete-employee').forEach((btn) => {
+        // Unassign button handlers
+        tbody.querySelectorAll('.modal-unassign-employee').forEach((btn) => {
             btn.addEventListener('click', (e) => {
                 const empId = e.target.dataset.id;
                 if (window.editEmployeeCallback) {
@@ -100,7 +139,21 @@ function openEmployeesModal(projectId) {
                         window.editEmployeeCallback(empId, { ...employee, project: '' });
                     }
                 }
+                // Refresh modal
                 openEmployeesModal(projectId);
+            });
+        });
+
+        // Employee name click handler (could show details or edit)
+        tbody.querySelectorAll('.employee-link').forEach((link) => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const empId = e.target.dataset.id;
+                const employee = allEmployees.find((emp) => emp.id === empId);
+                if (employee) {
+                    closeEmployeesModal();
+                    window.openAddEmployeeEditModal(employee);
+                }
             });
         });
     }, 0);

@@ -72,11 +72,11 @@ button:hover:disabled {
     margin-right: 5px;
     box-shadow: none;
 }
-
+.unassign-btn,
 .delete-btn {
     background: #e74c3c;
 }
-
+.unassign-btn:hover,
 .delete-btn:hover {
     background: #c0392b;
 }
@@ -123,13 +123,15 @@ button:hover:disabled {
 .open-btn.hidden {
     display: none !important;
 }
-.show-employees-btn {
+.show-employees-btn,
+.change-btn {
     background: #3498db;
     padding: 5px 12px;
     font-size: 12px;
 }
 
-.show-employees-btn:hover {
+.show-employees-btn:hover,
+.change-btn:hover {
     background: #2980b9;
 }
 .availability-btn {
