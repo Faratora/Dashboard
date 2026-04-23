@@ -415,29 +415,43 @@ export function initModal() {
     }
 
     window.openAddProjectModal = () => openPanel('add');
-    window.openAddProjectEditModal = (project) => {
-        openPanel('edit');
-        editingId = project.id;
-        $('#project-name').value = project.projectName;
-        $('#company-name').value = project.companyName;
-        $('#project-budget').value = project.budget;
-        $('#employee-capacity').value = project.employeeCapacity;
-    };
+window.openAddProjectEditModal = (project) => {
+    // Ensure project form fields are visible
+    const projectFormFields = $('#project-form-fields');
+    const employeeFormFields = $('#employee-form-fields');
+    if (projectFormFields && employeeFormFields) {
+        projectFormFields.style.display = 'block';
+        employeeFormFields.style.display = 'none';
+    }
+    openPanel('edit');
+    editingId = project.id;
+    $('#project-name').value = project.projectName;
+    $('#company-name').value = project.companyName;
+    $('#project-budget').value = project.budget;
+    $('#employee-capacity').value = project.employeeCapacity;
+};
     window.openAddEmployeeModal = () => {
         populateEmployeeProjectSelect();
         openPanel('add');
     };
-    window.openAddEmployeeEditModal = (employee) => {
-        openPanel('edit');
-        editingId = employee.id;
-        $('#employee-name').value = employee.name;
-        $('#employee-surname').value = employee.surname;
-        $('#employee-age').value = employee.age;
-        $('#employee-position').value = employee.position;
-        const projectSelect = $('#employee-project');
-        if (projectSelect) {
-            projectSelect.value = employee.project || '';
-        }
-        $('#employee-salary').value = employee.salary;
-    };
+window.openAddEmployeeEditModal = (employee) => {
+    // Ensure employee form fields are visible
+    const projectFormFields = $('#project-form-fields');
+    const employeeFormFields = $('#employee-form-fields');
+    if (projectFormFields && employeeFormFields) {
+        projectFormFields.style.display = 'none';
+        employeeFormFields.style.display = 'block';
+    }
+    openPanel('edit');
+    editingId = employee.id;
+    $('#employee-name').value = employee.name;
+    $('#employee-surname').value = employee.surname;
+    $('#employee-age').value = employee.age;
+    $('#employee-position').value = employee.position;
+    const projectSelect = $('#employee-project');
+    if (projectSelect) {
+        projectSelect.value = employee.project || '';
+    }
+    $('#employee-salary').value = employee.salary;
+};
 }

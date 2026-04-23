@@ -459,7 +459,7 @@ th.sortable:hover {
 
 /* Employees Modal */
 
-#employees-modal-backdrop {
+.employees-modal-backdrop {
     position: fixed;
     top: 0;
     left: 0;
@@ -468,10 +468,10 @@ th.sortable:hover {
     background: rgba(0, 0, 0, 0.5);
     z-index: 2000;
 }
-#employees-modal-backdrop.hidden {
+.employees-modal-backdrop.hidden {
     display: none;
 }
-#employees-modal {
+.employees-modal {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -486,23 +486,23 @@ th.sortable:hover {
     overflow-y: auto;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
-#employees-modal.hidden {
+.employees-modal.hidden {
     display: none;
 }
-#employees-modal h2 {
+.employees-modal h2 {
     margin: 0 0 20px 0;
     color: #1a1a2e;
     font-size: 22px;
     border-bottom: 2px solid #1abc9c;
     padding-bottom: 15px;
 }
-#employees-modal .modal-header {
+.employees-modal .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
 }
-#employees-modal .modal-close {
+.employees-modal .modal-close {
     background: #e74c3c;
     color: white;
     border: none;
@@ -517,30 +517,30 @@ th.sortable:hover {
     box-shadow: none;
     padding: 0;
 }
-#employees-modal .modal-close:hover {
+.employees-modal .modal-close:hover {
     background: #c0392b;
 }
-#employees-modal table {
+.employees-modal table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 15px;
 }
-#employees-modal th,
-#employees-modal td {
+.employees-modal th,
+.employees-modal td {
     border: 1px solid #ddd;
     padding: 10px 12px;
     text-align: left;
     font-size: 14px;
 }
-#employees-modal th {
+.employees-modal th {
     background: #ecf0f1;
     font-weight: 600;
     white-space: nowrap;
 }
-#employees-modal tbody tr:hover {
+.employees-modal tbody tr:hover {
     background: #f8f9fa;
 }
-#employees-modal .modal-footer {
+.employees-modal .modal-footer {
     margin-top: 20px;
     text-align: right;
     padding-top: 15px;

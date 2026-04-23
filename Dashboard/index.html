@@ -33,7 +33,8 @@
 				<h1>Projects</h1>
 			</div>
 			<div class="table-controls">
-				<button id="clear-project-filters-btn" class="reset-filters-btn" title="Clear all filters">✕ Clear filters</button>
+				<button id="clear-project-filters-btn" class="reset-filters-btn" title="Clear all filters">✕ Clear
+					filters</button>
 				<div class="controls-right">
 					<button id="add-project-btn" class="add-btn">+ Add Project</button>
 					<button id="seed-data-btn" class="add-btn">Seed Data</button>
@@ -63,7 +64,8 @@
 				<h1>Employees</h1>
 			</div>
 			<div class="table-controls">
-				<button id="clear-employee-filters-btn" class="reset-filters-btn" title="Clear all filters">✕ Clear filters</button>
+				<button id="clear-employee-filters-btn" class="reset-filters-btn" title="Clear all filters">✕ Clear
+					filters</button>
 				<div class="controls-right">
 					<button id="add-employee-btn" class="add-btn">+ Add Employee</button>
 				</div>
@@ -121,45 +123,45 @@
 						<input type="number" id="employee-capacity" min="1" step="1" required>
 					</div>
 				</div>
-                <!-- Employee fields -->
-                <div id="employee-form-fields" style="display: none;">
-                    <div class="form-group">
-                        <label for="employee-name">Name: *</label>
-                        <input type="text" id="employee-name">
-                    </div>
-                    <div class="form-group">
-                        <label for="employee-surname">Surname: *</label>
-                        <input type="text" id="employee-surname">
-                    </div>
-                    <div class="form-group">
-                        <label for="employee-age">Date of Birth: *</label>
-                        <input type="date" id="employee-age">
-                    </div>
-                    <div class="form-group">
-                        <label for="employee-position">Position: *</label>
-                        <select id="employee-position" required>
-                            <option value="">Select position</option>
-                            <option value="Junior">Junior</option>
-                            <option value="Middle">Middle</option>
-                            <option value="Senior">Senior</option>
-                            <option value="Lead">Lead</option>
-                            <option value="Architect">Architect</option>
-                            <option value="BO">BO</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="employee-project">Project</label>
-                        <select id="employee-project">
-                            <option value="">Unassigned</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="employee-salary">Salary: *</label>
-                        <input type="number" id="employee-salary" step="0.01" min="0">
-                    </div>
-                </div>
+				<!-- Employee fields -->
+				<div id="employee-form-fields" style="display: none;">
+					<div class="form-group">
+						<label for="employee-name">Name: *</label>
+						<input type="text" id="employee-name">
+					</div>
+					<div class="form-group">
+						<label for="employee-surname">Surname: *</label>
+						<input type="text" id="employee-surname">
+					</div>
+					<div class="form-group">
+						<label for="employee-age">Date of Birth: *</label>
+						<input type="date" id="employee-age">
+					</div>
+					<div class="form-group">
+						<label for="employee-position">Position: *</label>
+						<select id="employee-position" required>
+							<option value="">Select position</option>
+							<option value="Junior">Junior</option>
+							<option value="Middle">Middle</option>
+							<option value="Senior">Senior</option>
+							<option value="Lead">Lead</option>
+							<option value="Architect">Architect</option>
+							<option value="BO">BO</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="employee-project">Project</label>
+						<select id="employee-project">
+							<option value="">Unassigned</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="employee-salary">Salary: *</label>
+						<input type="number" id="employee-salary" step="0.01" min="0">
+					</div>
+				</div>
 				<div class="panel-footer">
-					<button type="button" class="btn-primary" id="submit-btn">Add Project</button>
+					<button type="button" id="submit-btn">Add Project</button>
 					<button type="button" id="cancel-panel-btn" class="cancel-btn">Cancel</button>
 				</div>
 			</form>
@@ -188,8 +190,8 @@
 
 
 		<!-- Employees Modal -->
-		<div id="employees-modal-backdrop" class="hidden"></div>
-		<div id="employees-modal" class="hidden">
+		<div id="employees-modal-backdrop" class="employees-modal-backdrop hidden"></div>
+		<div id="employees-modal" class="employees-modal hidden">
 			<div class="modal-header">
 				<h2 id="employees-modal-title">Employees on E-Commerce Platform</h2>
 				<button type="button" class="modal-close" id="employees-modal-close-x">&times;</button>

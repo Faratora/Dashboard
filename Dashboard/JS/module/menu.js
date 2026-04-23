@@ -1,4 +1,6 @@
 import { $, log } from './utils.js';
+import { renderProjects } from './projects.js';
+import { renderEmployees } from './employees.js';
 
 export function initNavigation() {
     const navProjects = $('#nav-projects');
@@ -18,6 +20,7 @@ export function initNavigation() {
         navProjects.classList.add('active');
         navEmployees.classList.remove('active');
         log('Switched to Projects view');
+        renderProjects();
     });
 
     navEmployees.addEventListener('click', (e) => {
@@ -27,6 +30,7 @@ export function initNavigation() {
         navEmployees.classList.add('active');
         navProjects.classList.remove('active');
         log('Switched to Employees view');
+        renderEmployees();
     });
 
     // Universal handler for Add buttons
