@@ -239,24 +239,39 @@ function initSortFilter() {
         setSortState: ({ column, direction }) => {
             sortColumn = column;
             sortDirection = direction;
+            updateClearButtonVisibility();
         },
         getFilterText: () => filterText,
         setFilterText: (value) => {
             filterText = value;
+            updateClearButtonVisibility();
         },
         extraListeners: {
             showProjectEmployees: (e) => {
                 projectFilter = e.detail.projectId;
+                updateClearButtonVisibility();
                 renderEmployees();
             },
         },
     });
 
+    // Show/hide clear button on initial load
+    updateClearButtonVisibility();
+
     // Listen for column filter events
     window.addEventListener('applyColumnFilter', (e) => {
         const { column, value } = e.detail;
         applyColumnFilter(column, value);
+        updateClearButtonVisibility();
     });
+
+    // Reset filters button
+    const clearBtn = $('#clear-employee-filters-btn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            resetAllFilters();
+        });
+    }
 }
 
 function applyColumnFilter(column, value) {
@@ -285,6 +300,58 @@ function applyColumnFilter(column, value) {
     }
 
     renderEmployees();
+}
+
+function updateClearButtonVisibility() {
+    const clearBtn = $('#clear-employee-filters-btn');
+    if (clearBtn) {
+        const hasFilters = filterText ||
+            window.filter_name ||
+            window.filter_surname ||
+            window.filter_age ||
+            window.filter_position ||
+            window.filter_salary ||
+            window.filter_estimatedPayment ||
+            window.filter_project ||
+            window.filter_estimatedIncome ||
+            projectFilter ||
+            sortColumn;
+        clearBtn.style.display = hasFilters ? 'flex' : 'none';
+    }
+}
+
+function resetAllFilters() {
+    filterText = '';
+    sortColumn = null;
+    sortDirection = 'asc';
+    projectFilter = '';
+
+    // Clear all column-specific filters
+    const filterableColumns = ['name', 'surname', 'age', 'position', 'salary', 'estimatedPayment', 'project', 'estimatedIncome'];
+    filterableColumns.forEach((column) => {
+        window[`filter_${column}`] = '';
+    });
+
+    // Clear text input
+    const filterInput = $('#employee-filter-input');
+    if (filterInput) {
+        filterInput.value = '';
+    }
+
+    // Reset column filter icons
+    const thead = $('#employees-thead');
+    if (thead) {
+        const filterableHeaders = thead.querySelectorAll('th.filterable');
+        filterableHeaders.forEach((th) => {
+            const filterIcon = th.querySelector('.filter-icon');
+            if (filterIcon) {
+                filterIcon.style.color = '';
+            }
+        });
+    }
+
+    renderEmployees();
+    updateClearButtonVisibility();
 }
 
 export function handleAddEmployee(employeeData) {

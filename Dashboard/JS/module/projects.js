@@ -222,18 +222,32 @@ function initSortFilter() {
         setSortState: ({ column, direction }) => {
             sortColumn = column;
             sortDirection = direction;
+            updateClearButtonVisibility();
         },
         getFilterText: () => filterText,
         setFilterText: (value) => {
             filterText = value;
+            updateClearButtonVisibility();
         },
     });
+
+    // Show/hide clear button on initial load
+    updateClearButtonVisibility();
 
     // Listen for column filter events
     window.addEventListener('applyColumnFilter', (e) => {
         const { column, value } = e.detail;
         applyColumnFilter(column, value);
+        updateClearButtonVisibility();
     });
+
+    // Reset filters button
+    const clearBtn = $('#clear-project-filters-btn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            resetAllFilters();
+        });
+    }
 }
 
 function applyColumnFilter(column, value) {
@@ -262,6 +276,50 @@ function applyColumnFilter(column, value) {
     }
 
     renderProjects();
+}
+
+function updateClearButtonVisibility() {
+    const clearBtn = $('#clear-project-filters-btn');
+    if (clearBtn) {
+        const hasFilters = filterText ||
+            window.filter_companyName ||
+            window.filter_projectName ||
+            sortColumn;
+        clearBtn.style.display = hasFilters ? 'flex' : 'none';
+    }
+}
+
+function resetAllFilters() {
+    filterText = '';
+    sortColumn = null;
+    sortDirection = 'asc';
+
+    // Clear all column-specific filters
+    const filterableColumns = ['companyName', 'projectName'];
+    filterableColumns.forEach((column) => {
+        window[`filter_${column}`] = '';
+    });
+
+    // Clear text input
+    const filterInput = $('#project-filter-input');
+    if (filterInput) {
+        filterInput.value = '';
+    }
+
+    // Reset column filter icons
+    const thead = $('#projects-thead');
+    if (thead) {
+        const filterableHeaders = thead.querySelectorAll('th.filterable');
+        filterableHeaders.forEach((th) => {
+            const filterIcon = th.querySelector('.filter-icon');
+            if (filterIcon) {
+                filterIcon.style.color = '';
+            }
+        });
+    }
+
+    renderProjects();
+    updateClearButtonVisibility();
 }
 
 export function handleAddProject(projectData) {

@@ -299,12 +299,61 @@ th.sortable:hover {
 
 
 
+.filter-container {
+    position: relative;
+    display: inline-block;
+}
+
 .filter-input {
     padding: 8px 12px;
     border: 1px solid #ccc;
     border-radius: 6px;
     font-size: 14px;
     width: 200px;
+    padding-right: 30px;
+}
+
+.filter-clear-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    line-height: 1;
+    /* display: none; */
+}
+
+.filter-clear-btn:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.reset-filters-btn {
+    background: #f8f9fa;
+    color: #666;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    display: none;
+}
+
+.reset-filters-btn:hover {
+    background: #e9ecef;
+    color: #333;
 }
 
 .header-controls {
