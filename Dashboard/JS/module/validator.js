@@ -9,43 +9,99 @@ export function validateProject() {
     const projectBudget = $('#project-budget');
     const employeeCapacity = $('#employee-capacity');
     
+    // Project Name: required, min 3 chars, alphanumeric
     if (!projectName || !projectName.value.trim()) {
         showFieldError(projectName, 'Project Name is required');
         isValid = false;
-    } else if (!/^[a-zA-Zа-яА-ЯёЁ\s-]+$/.test(projectName.value.trim())) {
-        showFieldError(projectName, 'Project Name must contain only letters');
+    } else if (projectName.value.trim().length < 3) {
+        showFieldError(projectName, 'Project Name must be at least 3 characters');
+        isValid = false;
+    } else if (!/^[a-zA-Zа-яА-ЯёЁ0-9\s-]+$/.test(projectName.value.trim())) {
+        showFieldError(projectName, 'Project Name must be alphanumeric');
         isValid = false;
     }
     
+    // Company Name: required, min 2 chars, alphanumeric
     if (!companyName || !companyName.value.trim()) {
         showFieldError(companyName, 'Company Name is required');
         isValid = false;
-    } else if (!/^[a-zA-Zа-яА-ЯёЁ\s-]+$/.test(companyName.value.trim())) {
-        showFieldError(companyName, 'Company Name must contain only letters');
+    } else if (companyName.value.trim().length < 2) {
+        showFieldError(companyName, 'Company Name must be at least 2 characters');
+        isValid = false;
+    } else if (!/^[a-zA-Zа-яА-ЯёЁ0-9\s-]+$/.test(companyName.value.trim())) {
+        showFieldError(companyName, 'Company Name must be alphanumeric');
         isValid = false;
     }
     
+    // Budget: required, positive number, 2 decimal places
     if (!projectBudget || !projectBudget.value) {
         showFieldError(projectBudget, 'Budget is required');
         isValid = false;
-    } else if (parseFloat(projectBudget.value) <= 0) {
-        showFieldError(projectBudget, 'Budget must be greater than 0');
-        isValid = false;
+    } else {
+        const budgetValue = parseFloat(projectBudget.value);
+        if (isNaN(budgetValue) || budgetValue <= 0) {
+            showFieldError(projectBudget, 'Budget must be a positive number');
+            isValid = false;
+        } else {
+            // Check decimal places
+            const parts = projectBudget.value.split('.');
+            if (parts[1] && parts[1].length > 2) {
+                showFieldError(projectBudget, 'Budget must have maximum 2 decimal places');
+                isValid = false;
+            }
+        }
     }
     
+    // Employee Capacity: required, integer, minimum 1
     if (!employeeCapacity || !employeeCapacity.value) {
         showFieldError(employeeCapacity, 'Employee Capacity is required');
         isValid = false;
-    } else if (parseInt(employeeCapacity.value, 10) <= 0) {
-        showFieldError(employeeCapacity, 'Employee Capacity must be greater than 0');
-        isValid = false;
+    } else {
+        const capacityValue = parseInt(employeeCapacity.value, 10);
+        if (isNaN(capacityValue) || capacityValue < 1) {
+            showFieldError(employeeCapacity, 'Employee Capacity must be an integer ≥ 1');
+            isValid = false;
+        } else if (!Number.isInteger(parseFloat(employeeCapacity.value))) {
+            showFieldError(employeeCapacity, 'Employee Capacity must be an integer');
+            isValid = false;
+        }
     }
+    
+    updateSubmitButtonState('project', isValid);
     
     if (!isValid) {
         log('Project validation failed');
     }
     
     return isValid;
+}
+
+function updateSubmitButtonState(formType, isValid) {
+    const submitBtn = $('#submit-btn');
+    if (submitBtn) {
+        // Check if the correct form is visible
+        const projectFormFields = $('#project-form-fields');
+        const employeeFormFields = $('#employee-form-fields');
+        
+        let isRelevant = false;
+        if (formType === 'project' && projectFormFields && projectFormFields.style.display !== 'none') {
+            isRelevant = true;
+        } else if (formType === 'employee' && employeeFormFields && employeeFormFields.style.display !== 'none') {
+            isRelevant = true;
+        }
+        
+        if (isRelevant) {
+            submitBtn.disabled = !isValid;
+            // Optional: style disabled button
+            if (isValid) {
+                submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
+            } else {
+                submitBtn.style.opacity = '0.5';
+                submitBtn.style.cursor = 'not-allowed';
+            }
+        }
+    }
 }
 
 export function validateEmployee() {
@@ -153,6 +209,7 @@ function clearValidationErrors() {
 }
 
 export function setupInputRestrictions() {
+    // Project/Company names: alphanumeric only
     const letterFields = [
         'project-name',
         'company-name', 
@@ -163,30 +220,59 @@ export function setupInputRestrictions() {
     letterFields.forEach(id => {
         const field = $(`#${id}`);
         if (field) {
-            field.addEventListener('keydown', (e) => {
-                const key = e.key;
-                if (/[0-9]/.test(key)) {
-                    e.preventDefault();
-                    showFieldError(field, 'Numbers are not allowed');
-                }
-            });
-            
+            // Allow letters, numbers, spaces, hyphens
             field.addEventListener('input', (e) => {
                 const oldValue = e.target.value;
-                const newValue = oldValue.replace(/[0-9]/g, '');
+                const newValue = oldValue.replace(/[^a-zA-Zа-яА-ЯёЁ0-9\s-]/g, '');
                 if (oldValue !== newValue) {
                     e.target.value = newValue;
-                    showFieldError(field, 'Numbers are not allowed');
-                } else if (/^[a-zA-Zа-яА-ЯёЁ\s-]+$/.test(newValue) && newValue.length >= 3) {
-                    const error = field.parentElement.querySelector('.field-error');
-                    if (error && error.textContent === 'Numbers are not allowed') {
-                        error.remove();
-                        field.style.borderColor = '#ddd';
-                    }
                 }
             });
         }
     });
+    
+    // Budget: positive number, max 2 decimal places
+    const budgetField = $('#project-budget');
+    if (budgetField) {
+        budgetField.addEventListener('input', (e) => {
+            let value = e.target.value;
+            
+            // Remove non-numeric except decimal point
+            value = value.replace(/[^0-9.]/g, '');
+            
+            // Ensure only one decimal point
+            const parts = value.split('.');
+            if (parts.length > 2) {
+                value = parts[0] + '.' + parts.slice(1).join('');
+            }
+            
+            // Limit to 2 decimal places
+            if (parts[1] && parts[1].length > 2) {
+                value = parts[0] + '.' + parts[1].substring(0, 2);
+            }
+            
+            // Ensure positive (remove leading minus)
+            if (value.startsWith('-')) {
+                value = value.substring(1);
+            }
+            
+            e.target.value = value;
+        });
+    }
+    
+    // Employee Capacity: positive integer only
+    const capacityField = $('#employee-capacity');
+    if (capacityField) {
+        capacityField.addEventListener('input', (e) => {
+            let value = e.target.value;
+            
+            // Remove non-numeric
+            value = value.replace(/[^0-9]/g, '');
+            
+            // Ensure at least 1 when submitted (validation handles this)
+            e.target.value = value;
+        });
+    }
     
     setupRealTimeValidation();
 }

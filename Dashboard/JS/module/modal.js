@@ -213,9 +213,13 @@ export function initModal() {
         if (projectFormFields && projectFormFields.style.display !== 'none') {
             panelTitle.textContent = mode === 'edit' ? 'Edit Project' : 'Add New Project';
             submitBtn.textContent = mode === 'edit' ? 'Update Project' : 'Add Project';
+            // Run initial validation to set button state
+            validateProject();
         } else if (employeeFormFields && employeeFormFields.style.display !== 'none') {
             panelTitle.textContent = mode === 'edit' ? 'Edit Employee' : 'Add New Employee';
             submitBtn.textContent = mode === 'edit' ? 'Update Employee' : 'Add Employee';
+            // Run initial validation to set button state
+            validateEmployee();
         }
 
         log('Panel opened in ' + mode + ' mode');

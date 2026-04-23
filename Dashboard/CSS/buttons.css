@@ -14,9 +14,17 @@ button {
     border: none;
     box-shadow: 2px 2px 6px var(--color-box-shadow);
 }
-button:hover {
-    background: var(--color-hover-dark);
-    box-shadow: 0 4px 12px var(--color-box-shadow);
+button:disabled {
+    background: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+button:hover:disabled {
+    transform: none;
+    box-shadow: none;
+    background: #ccc;
 }
 
 .toggle-btn {
