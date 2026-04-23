@@ -117,6 +117,8 @@ function renderProjects() {
     const tbody = $('#projects-tbody');
     if (!tbody) return;
 
+    tbody.innerHTML = '';
+
     const projects = sortAndFilterProjects(getProjects());
     log('renderProjects: got ' + projects.length + ' projects');
     projects.forEach((project) => {

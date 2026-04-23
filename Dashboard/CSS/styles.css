@@ -36,27 +36,23 @@ body {
     transform: translateX(-280px);
 }
 
-
-
-
-
-#main-content.collapsed {
+.main-content.collapsed {
     margin-left: 0;
     width: 100%;
 }
-
-
 
 .month-selector {
     padding: 20px;
     border-bottom: 1px solid var(--color-border-bottom);
     margin-bottom: 20px;
 }
+
 .month-selector h3 {
     margin: 20px 0;
     color: var(--color-button);
     font-size: 18px;
 }
+
 select {
     width: 100%;
     padding: 10px 15px;
@@ -94,13 +90,13 @@ nav {
     /* transform: translateX(5px); */
 }
 
-#main-content {
+.main-content {
     margin-left: 280px;
     padding: 70px 30px;
     width: calc(100% - 280px);
     transition: margin-left 0.3s ease;
 }
-body.panel-collapsed #main-content {
+body.panel-collapsed .main-content {
     margin-left: 0;
     width: 100%;
 }
