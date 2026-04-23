@@ -30,6 +30,24 @@ function sortAndFilterEmployees(employees) {
         );
     }
 
+    // Apply column-specific filters
+    const filterableColumns = ['name', 'surname', 'age', 'position', 'salary', 'estimatedPayment', 'project', 'estimatedIncome'];
+    filterableColumns.forEach((column) => {
+        const columnFilter = window[`filter_${column}`];
+        if (columnFilter) {
+            result = result.filter((e) => {
+                let value;
+                if (column === 'project') {
+                    // Filter by project name instead of id
+                    value = getProjectNameById(e.project);
+                } else {
+                    value = e[column];
+                }
+                return value != null && value.toString().toLowerCase().includes(columnFilter);
+            });
+        }
+    });
+
     if (sortColumn) {
         result.sort((a, b) => {
             let valA, valB;
@@ -59,8 +77,8 @@ function sortAndFilterEmployees(employees) {
                     valB = b.salary;
                     break;
                 case 'project':
-                    valA = a.project || '';
-                    valB = b.project || '';
+                    valA = getProjectNameById(a.project);
+                    valB = getProjectNameById(b.project);
                     break;
                 case 'estimatedIncome':
                     valA = a.salary * ((20 - (a.vacationDays || 0)) / 20) * (a.fit || 1);
@@ -233,6 +251,40 @@ function initSortFilter() {
             },
         },
     });
+
+    // Listen for column filter events
+    window.addEventListener('applyColumnFilter', (e) => {
+        const { column, value } = e.detail;
+        applyColumnFilter(column, value);
+    });
+}
+
+function applyColumnFilter(column, value) {
+    const thead = $('#employees-thead');
+    if (!thead) return;
+
+    const th = thead.querySelector(`th[data-filter="${column}"]`);
+    if (!th) return;
+
+    const sortIcon = th.querySelector('.sort-icon');
+    const filterIcon = th.querySelector('.filter-icon');
+
+    if (sortIcon) {
+        sortIcon.textContent = value ? '↓' : '⇅';
+    }
+    if (filterIcon) {
+        filterIcon.textContent = value ? '⌕' : '⌕';
+        filterIcon.style.color = value ? '#1abc9c' : '';
+    }
+
+    // Store column-specific filter
+    if (value) {
+        window[`filter_${column}`] = value.toLowerCase();
+    } else {
+        window[`filter_${column}`] = '';
+    }
+
+    renderEmployees();
 }
 
 export function handleAddEmployee(employeeData) {

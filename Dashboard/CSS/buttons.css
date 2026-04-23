@@ -46,13 +46,13 @@ button:hover {
 
 .close-btn,
 .cancel-btn {
-    background: #e0e0e0;
+    background: var(--background-btn-close);
     color: #333;
 }
 
 .close-btn:hover,
 .cancel-btn:hover {
-    background: #d0d0d0;
+    background: var(--background-btn-close-hover);
 }
 
 .edit-btn,
@@ -73,25 +73,22 @@ button:hover {
     background: #c0392b;
 }
 .copy-btn {
-    background: #3498db;
+    background: var(--color-button-blue);
     color: white;
     border: none;
     padding: 5px 10px;
     border-radius: 4px;
 }
 
-.copy-btn:hover {
-    background: #2980b9;
+.copy-btn:hover,
+.assign-btn:hover  {
+    background: var(--color-hover-blue);
 }
 
 .assign-btn {
-    background: #3498db;
+    background: var(--color-button-blue);;
     padding: 5px 12px;
     font-size: 12px;
-}
-
-.assign-btn:hover {
-    background: #2980b9;
 }
 
 #employees-modal .edit-btn,
@@ -101,10 +98,10 @@ button:hover {
     margin-right: 5px;
 }
 #employees-modal .assign-unbtn {
-    background: #e67e22;
+    background:var(--color-button-orange);
 }
 #employees-modal .assign-unbtn:hover {
-    background: #d35400;
+    background: var(--color-hover-orange);
 }
 .open-btn {
     font-size: 24px;

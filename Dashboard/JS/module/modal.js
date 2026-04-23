@@ -10,11 +10,11 @@ function populateEmployeeProjectSelect() {
     const projectSelect = $('#employee-project');
     if (!projectSelect) return;
 
-    projectSelect.innerHTML = '<option value="">Select project</option>';
+    projectSelect.innerHTML = '<option value="">Unassigned</option>';
     const projects = getProjects();
     projects.forEach((project) => {
         const option = document.createElement('option');
-        option.value = project.projectName;
+        option.value = project.id;
         option.textContent = project.projectName;
         projectSelect.appendChild(option);
     });
@@ -41,7 +41,7 @@ function openEmployeesModal(projectId) {
 
     tbody.innerHTML = '';
     const allEmployees = getEmployees();
-    const employees = allEmployees.filter((e) => e.project === project.projectName);
+    const employees = allEmployees.filter((e) => e.project === project.id);
 
     if (employees.length === 0) {
         tbody.innerHTML =
@@ -282,6 +282,7 @@ export function initModal() {
                 age--;
             }
 
+            const projectSelect = $('#employee-project');
             const employeeData = {
                 name: name,
                 surname: surname,
@@ -292,7 +293,7 @@ export function initModal() {
                 capacity: 1,
                 fit: 1,
                 vacationDays: 0,
-                project: '',
+                project: projectSelect ? projectSelect.value : '',
             };
 
             if (editMode === 'edit' && editingId && window.editEmployeeCallback) {
@@ -376,6 +377,10 @@ export function initModal() {
         $('#employee-surname').value = employee.surname;
         $('#employee-age').value = employee.age;
         $('#employee-position').value = employee.position;
+        const projectSelect = $('#employee-project');
+        if (projectSelect) {
+            projectSelect.value = employee.project || '';
+        }
         $('#employee-salary').value = employee.salary;
     };
 }

@@ -11,4 +11,30 @@
     --color-side-panel: #2c3e50;
     --color-background: #34495e;
     --color-text-muted: #95a5a6;
+
+    --background-btn-close: #d0d0d0;
+    --background-btn-close-hover: #bfbfbf;
+}
+
+
+:root {
+  /* исходные цвета */
+  --color-button: #1abc9c;
+  --color-hover-dark: #16a085;
+
+  /* зелёный */
+  --color-button-green: #2ecc71;
+  --color-hover-green: #27ae60;
+
+  /* красный */
+  --color-button-red: #e74c3c;
+  --color-hover-red: #c0392b;
+
+  /* оранжевый */
+  --color-button-orange: #f39c12;
+  --color-hover-orange: #d68910;
+
+  /* голубой */
+  --color-button-blue: #3498db;
+  --color-hover-blue: #2980b9;
 }
