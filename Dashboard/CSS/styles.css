@@ -1,5 +1,7 @@
 @import 'variables.css';
 @import 'buttons.css';
+@import 'inlineEdit.css';
+
 * {
     box-sizing: border-box;
 }
@@ -459,15 +461,6 @@ th.sortable:hover {
 
 /* Employees Modal */
 
-.employees-modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 2000;
-}
 .employees-modal-backdrop.hidden {
     display: none;
 }
@@ -550,7 +543,8 @@ th.sortable:hover {
 /* Modal */
 #filter-backdrop,
 #assign-backdrop,
-#availability-backdrop {
+#availability-backdrop,
+.employees-modal-backdrop {
     position: fixed;
     top: 0;
     left: 0;

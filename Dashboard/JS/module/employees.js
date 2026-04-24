@@ -7,6 +7,7 @@ import {
     formatCurrency,
     escapeHtml,
 } from './dataStorage.js';
+import { initInlineEditListeners, setRenderCallback } from './inlineEdit.js';
 
 let sortColumn = null;
 let sortDirection = 'asc';
@@ -158,7 +159,6 @@ function renderEmployeeRow(employee) {
     const deleteBtn = tr.querySelector('.delete-btn');
     const availBtn = tr.querySelector('.availability-btn');
     const assignBtn = tr.querySelector('.assign-btn');
-    const pencilBtns = tr.querySelectorAll('.edit-pencil');
 
     availBtn.addEventListener('click', () => {
         log('Availability button clicked for employee: ' + employee.id);
@@ -168,16 +168,6 @@ function renderEmployeeRow(employee) {
     assignBtn.addEventListener('click', () => {
         log('Assign button clicked for employee: ' + employee.id);
         window.dispatchEvent(new CustomEvent('showAssignEmployee', { detail: { employeeId: employee.id } }));
-    });
-
-    // Handle pencil click for inline editing
-    pencilBtns.forEach((pencil) => {
-        pencil.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const field = pencil.dataset.field;
-            const employeeId = pencil.dataset.id;
-            handleInlineEdit(employeeId, field, employee);
-        });
     });
 
     editBtn.addEventListener('click', () => {
@@ -228,7 +218,11 @@ export function initEmployees() {
     log('addEmployeeCallback registered: ' + typeof window.addEmployeeCallback);
     log('editEmployeeCallback registered: ' + typeof window.editEmployeeCallback);
 
+    // Set render callback for inline edit
+    setRenderCallback(renderEmployees);
+
     initSortFilter();
+    initInlineEditListeners();
     renderEmployees();
     log('Employees module initialized');
 }
@@ -286,15 +280,9 @@ function initSortFilter() {
         updateEmployee(employeeId, employeeData);
         renderEmployees();
     });
-
-    // Reset filters button
-    const clearBtn = $('#clear-employee-filters-btn');
-    if (clearBtn) {
-        clearBtn.addEventListener('click', () => {
-            resetAllFilters();
-        });
-    }
 }
+
+export { getEmployees, renderEmployees };
 
 function applyColumnFilter(column, value) {
     const thead = $('#employees-thead');
@@ -374,83 +362,4 @@ export function handleAddEmployee(employeeData) {
     log(`Employee added to storage: ${newEmployee.id}`);
     renderEmployees();
     log(`Employee added: ${newEmployee.name} ${newEmployee.surname}`);
-}
-
-export { getEmployees, renderEmployees };
-
-function handleInlineEdit(employeeId, field, employee) {
-    log(`Inline edit started for employee ${employeeId}, field: ${field}`);
-    
-    // Find the row
-    const row = $(`tr[data-id="${employeeId}"]`);
-    if (!row) return;
-    
-    // Get the cell
-    const cell = row.querySelector(field === 'position' ? '.position-cell' : '.salary-cell');
-    if (!cell) return;
-    
-    // Get current value
-    const currentValue = field === 'position' ? employee.position : employee.salary;
-    
-    // Create input element
-    let input;
-    if (field === 'position') {
-        // Create dropdown for position
-        input = document.createElement('select');
-        input.className = 'edit-input';
-        
-        const positions = ['Junior', 'Middle', 'Senior', 'Lead', 'Architect', 'BO'];
-        positions.forEach(pos => {
-            const option = document.createElement('option');
-            option.value = pos;
-            option.textContent = pos;
-            if (pos === currentValue) {
-                option.selected = true;
-            }
-            input.appendChild(option);
-        });
-    } else {
-        // Create number input for salary
-        input = document.createElement('input');
-        input.type = 'number';
-        input.className = 'edit-input';
-        input.value = currentValue;
-        input.step = '0.01';
-        input.min = '0';
-    }
-    
-    // Replace content with input
-    const pencil = cell.querySelector('.edit-pencil');
-    if (pencil) pencil.style.display = 'none';
-    
-    cell.innerHTML = '';
-    cell.appendChild(input);
-    input.focus();
-    
-    // Save on blur or enter
-    const saveEdit = () => {
-        const newValue = field === 'position' ? input.value : parseFloat(input.value);
-        
-        if (field === 'position' && newValue) {
-            const updatedEmployee = { ...employee, position: newValue };
-            window.dispatchEvent(new CustomEvent('inlineEditEmployee', {
-                detail: { employeeId, employeeData: updatedEmployee }
-            }));
-        } else if (field === 'salary' && newValue >= 0) {
-            const updatedEmployee = { ...employee, salary: newValue };
-            window.dispatchEvent(new CustomEvent('inlineEditEmployee', {
-                detail: { employeeId, employeeData: updatedEmployee }
-            }));
-        }
-    };
-    
-    input.addEventListener('blur', saveEdit);
-    input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            saveEdit();
-        } else if (e.key === 'Escape') {
-            // Cancel - restore original value
-            renderEmployees();
-        }
-    });
 }
