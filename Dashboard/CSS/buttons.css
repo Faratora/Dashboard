@@ -145,13 +145,7 @@ button:hover:disabled {
 }
 
 
-
-
-
-
-
 /* Availability Modal */
-
 #availability-modal .nav-btn {
     background: #3498db;
     color: white;
@@ -164,6 +158,34 @@ button:hover:disabled {
 
 #availability-modal .nav-btn:hover {
     background: #2980b9;
+}
+
+/* Edit pencil icon */
+.edit-pencil {
+    display: none;
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #3498db;
+    transition: color 0.2s;
+    vertical-align: middle;
+}
+
+.edit-pencil:hover {
+    color: #2980b9;
+}
+
+.position-cell:hover .edit-pencil,
+.salary-cell:hover .edit-pencil {
+    display: inline-block;
+}
+
+.edit-input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid #3498db;
+    border-radius: 4px;
+    font-size: 14px;
 }
 
 
