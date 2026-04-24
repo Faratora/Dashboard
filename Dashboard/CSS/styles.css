@@ -547,8 +547,10 @@ th.sortable:hover {
     border-top: 1px solid #ddd;
 }
 
-/* Filter Modal */
-#filter-backdrop {
+/* Modal */
+#filter-backdrop,
+#assign-backdrop,
+#availability-backdrop {
     position: fixed;
     top: 0;
     left: 0;
@@ -558,11 +560,20 @@ th.sortable:hover {
     z-index: 2000;
 }
 
-#filter-backdrop.hidden {
+#availability-backdrop.hidden,
+#filter-backdrop.hidden,
+#assign-backdrop.hidden,
+#filter-modal.hidden,
+#assign-modal.hidden,
+#assign-calculations-container.hidden,
+#assign-sliders-container.hidden,
+#availability-modal.hidden {
     display: none;
 }
 
-#filter-modal {
+#filter-modal,
+#assign-modal,
+#availability-modal {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -576,27 +587,38 @@ th.sortable:hover {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
-#filter-modal.hidden {
-    display: none;
-}
 
-#filter-modal .modal-header {
+#filter-modal .modal-header,
+#assign-modal .modal-header,
+#availability-modal .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
 }
 
-#filter-modal .modal-header h2 {
+#filter-modal .modal-header h2,
+#assign-modal .modal-header h2,
+#availability-modal .modal-header h2  {
     margin: 0;
     color: #1a1a2e;
     font-size: 22px;
 }
 
-#filter-modal .modal-body {
+#filter-modal .modal-body,
+#assign-modal .modal-body,
+#availability-modal .modal-body {
     margin-bottom: 20px;
 }
 
+#filter-modal .modal-footer,
+#assign-modal .modal-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* Filter Modal */
 #filter-modal .modal-body input {
     width: 100%;
     padding: 12px 15px;
@@ -612,8 +634,166 @@ th.sortable:hover {
     box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.1);
 }
 
-#filter-modal .modal-footer {
+
+
+
+/* Assign Modal */
+#assign-modal .assign-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+#assign-modal .assign-info h3 {
+    margin: 0 0 10px 0;
+    color: #1a1a2e;
+    font-size: 18px;
+}
+
+#assign-modal .assign-info p {
+    margin: 5px 0;
+    color: #666;
+    font-size: 14px;
+}
+
+#assign-modal .form-group {
+    margin-bottom: 20px;
+}
+
+#assign-modal .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 500;
+}
+
+#assign-modal .form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+#assign-modal .form-group input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+}
+
+#assign-modal .assign-calculations {
+    background: #e8f5e9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+#assign-modal .assign-calculations p {
+    margin: 8px 0;
+    color: #2e7d32;
+    font-size: 14px;
+}
+
+#assign-modal .assign-calculations p:last-child {
+    margin-bottom: 0;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Availability Modal */
+#availability-modal {
+    min-width: 400px;
+    max-width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+#availability-modal .availability-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+#availability-modal .availability-info p {
+    margin: 8px 0;
+    color: #333;
+    font-size: 14px;
+}
+
+#availability-modal .availability-info p:first-child {
+    font-weight: bold;
+    color: #1a1a2e;
+    font-size: 16px;
+}
+
+#availability-modal .availability-calendar {
+    margin-top: 20px;
+}
+
+#availability-modal .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+#availability-modal .calendar-header h3 {
+    margin: 0;
+    color: #1a1a2e;
+    font-size: 16px;
+}
+#availability-modal .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+#availability-modal .calendar-day-header {
+    text-align: center;
+    font-weight: bold;
+    padding: 8px;
+    color: #666;
+    font-size: 12px;
+}
+
+#availability-modal .calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#availability-modal .calendar-day:hover {
+    background: #e0e0e0;
+}
+
+#availability-modal .calendar-day.vacation {
+    background: #e74c3c;
+    color: white;
+}
+
+#availability-modal .calendar-day.weekend {
+    background: #f0f0f0;
+    color: #999;
+}
+
+#availability-modal .calendar-day.selected {
+    background: #3498db;
+    color: white;
+}
+
+#availability-modal .modal-footer {
     display: flex;
     gap: 10px;
     justify-content: flex-end;
+}
+
+body.panel-collapsed #open-btn {
+    display: block;
 }

@@ -36,10 +36,10 @@ function openEmployeesModal(projectId) {
     const project = projects.find((p) => p.id === projectId);
 
     if (project) {
-       log(`Opening employees modal for project: ${project.projectName}`);
+        log(`Opening employees modal for project: ${project.projectName}`);
         modalTitle.textContent = `Employees on ${project.projectName}`;
     }
-// ${project.projectName}
+    // ${project.projectName}
     tbody.innerHTML = '';
     const allEmployees = getEmployees();
     const employees = allEmployees.filter((e) => e.project === project.id);
@@ -52,25 +52,25 @@ function openEmployeesModal(projectId) {
             const capacity = employee.capacity || 1;
             const fit = employee.fit || 1;
             const vacationDays = employee.vacationDays || 0;
-            
+
             // Vacation coefficient: (20 - vacationDays) / 20
             const vacationCoefficient = (20 - vacationDays) / 20;
-            
+
             // Effective capacity: capacity × fit × vacation coefficient (3 decimal places)
             const effectiveCapacity = capacity * fit * vacationCoefficient;
-            
+
             // Get project budget for revenue calculation
             const budget = project.budget || 0;
             const totalCapacity = project.employeeCapacity || 0;
-            
+
             // Capacity for revenue = max(project capacity, sum of effective capacities of all employees)
             // We'll calculate this after summing all effective capacities
             // For now, calculate revenue per effective capacity unit
             // Revenue = (budget / capacityForRevenue) × effectiveCapacity
-            
+
             // Cost: based on assigned capacity (salary)
             const cost = employee.salary || 0;
-            
+
             // Revenue allocation: proportional to effective capacity
             // We need total effective capacity of all employees in this project
             const totalEffectiveCapacity = employees.reduce((sum, emp) => {
@@ -79,17 +79,17 @@ function openEmployeesModal(projectId) {
                 const vac = emp.vacationDays || 0;
                 return sum + cap * f * ((20 - vac) / 20);
             }, 0);
-            
+
             const capacityForRevenue = Math.max(totalCapacity, totalEffectiveCapacity);
             let revenue = 0;
             if (capacityForRevenue > 0) {
                 const revenuePerUnit = budget / capacityForRevenue;
                 revenue = revenuePerUnit * effectiveCapacity;
             }
-            
+
             // Profit = revenue - cost
             const profit = revenue - cost;
-            
+
             // Profit color class
             const profitClass = profit >= 0 ? 'profit-positive' : 'profit-negative';
 
@@ -198,11 +198,33 @@ export function initModal() {
     const openFilterModal = (column, headerText) => {
         currentFilterColumn = column;
         const filterModalTitle = $('#filter-modal-title');
+        
+        // Format column name for display
+        const columnName = column.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+        
         if (filterModalTitle) {
-            filterModalTitle.textContent = headerText || `Filter by ${column}`;
+            filterModalTitle.textContent = `Filter by ${columnName}`;
         }
-        filterInput.value = '';
-        filterInput.focus();
+        
+        if (filterInput) {
+            // Set dynamic placeholder
+            const placeholders = {
+                companyName: 'Filter by Company Name...',
+                projectName: 'Filter by Project Name...',
+                name: 'Filter by Name...',
+                surname: 'Filter by Surname...',
+                age: 'Filter by Age...',
+                position: 'Filter by Position...',
+                salary: 'Filter by Salary...',
+                estimatedPayment: 'Filter by Estimated Payment...',
+                project: 'Filter by Project...',
+                estimatedIncome: 'Filter by Estimated Income...',
+            };
+            filterInput.placeholder = placeholders[column] || `Filter by ${columnName}...`;
+            filterInput.value = window[`filter_${column}`] || '';
+            filterInput.focus();
+        }
+
         filterBackdrop.classList.remove('hidden');
         filterModal.classList.remove('hidden');
     };
@@ -217,7 +239,7 @@ export function initModal() {
         const filterValue = filterInput.value.trim();
         if (currentFilterColumn) {
             const filterEvent = new CustomEvent('applyColumnFilter', {
-                detail: { column: currentFilterColumn, value: filterValue }
+                detail: { column: currentFilterColumn, value: filterValue },
             });
             window.dispatchEvent(filterEvent);
         }
@@ -415,21 +437,21 @@ export function initModal() {
     }
 
     window.openAddProjectModal = () => openPanel('add');
-window.openAddProjectEditModal = (project) => {
-    // Ensure project form fields are visible
-    const projectFormFields = $('#project-form-fields');
-    const employeeFormFields = $('#employee-form-fields');
-    if (projectFormFields && employeeFormFields) {
-        projectFormFields.style.display = 'block';
-        employeeFormFields.style.display = 'none';
-    }
-    openPanel('edit');
-    editingId = project.id;
-    $('#project-name').value = project.projectName;
-    $('#company-name').value = project.companyName;
-    $('#project-budget').value = project.budget;
-    $('#employee-capacity').value = project.employeeCapacity;
-};
+    window.openAddProjectEditModal = (project) => {
+        // Ensure project form fields are visible
+        const projectFormFields = $('#project-form-fields');
+        const employeeFormFields = $('#employee-form-fields');
+        if (projectFormFields && employeeFormFields) {
+            projectFormFields.style.display = 'block';
+            employeeFormFields.style.display = 'none';
+        }
+        openPanel('edit');
+        editingId = project.id;
+        $('#project-name').value = project.projectName;
+        $('#company-name').value = project.companyName;
+        $('#project-budget').value = project.budget;
+        $('#employee-capacity').value = project.employeeCapacity;
+    };
     window.openAddEmployeeModal = () => {
         populateEmployeeProjectSelect();
         openPanel('add');
@@ -468,6 +490,8 @@ window.openAddProjectEditModal = (project) => {
     const assignFitValue = $('#assign-fit-value');
     const assignEffectiveCapacity = $('#assign-effective-capacity');
     const assignPredictedCapacity = $('#assign-predicted-capacity');
+    const assignCalculationsContainer = $('#assign-calculations-container');
+    const assignSlidersContainer = $('#assign-sliders-container');
     const assignConfirmBtn = $('#assign-btn-confirm');
     const assignCancelBtn = $('#assign-btn-cancel');
     const assignModalClose = $('#assign-modal-close');
@@ -489,6 +513,22 @@ window.openAddProjectEditModal = (project) => {
         if (assignAvailableCapacity) {
             const available = Math.max(0, 1.5 - currentTotalCapacity);
             assignAvailableCapacity.textContent = `Available capacity: ${available.toFixed(2)}`;
+        }
+
+        // Show sliders and calculations only if project is selected
+        if (assignSlidersContainer) {
+            if (assignProjectSelect && assignProjectSelect.value) {
+                assignSlidersContainer.classList.remove('hidden');
+            } else {
+                assignSlidersContainer.classList.add('hidden');
+            }
+        }
+        if (assignCalculationsContainer) {
+            if (assignProjectSelect && assignProjectSelect.value) {
+                assignCalculationsContainer.classList.remove('hidden');
+            } else {
+                assignCalculationsContainer.classList.add('hidden');
+            }
         }
     };
 
@@ -530,6 +570,14 @@ window.openAddProjectEditModal = (project) => {
             });
         }
 
+        // Hide sliders and calculations by default
+        if (assignSlidersContainer) {
+            assignSlidersContainer.classList.add('hidden');
+        }
+        if (assignCalculationsContainer) {
+            assignCalculationsContainer.classList.add('hidden');
+        }
+
         updateAssignCalculations();
 
         if (assignBackdrop) assignBackdrop.classList.remove('hidden');
@@ -554,13 +602,15 @@ window.openAddProjectEditModal = (project) => {
             ...currentAssignEmployee,
             capacity: assignedCapacity,
             fit: fitCoefficient,
-            assignedCapacity: currentTotalCapacity + (assignedCapacity * fitCoefficient),
+            assignedCapacity: currentTotalCapacity + assignedCapacity * fitCoefficient,
             project: project,
         };
 
-        window.dispatchEvent(new CustomEvent('assignEmployee', {
-            detail: { employeeId: currentAssignEmployeeId, employeeData: updatedEmployee }
-        }));
+        window.dispatchEvent(
+            new CustomEvent('assignEmployee', {
+                detail: { employeeId: currentAssignEmployeeId, employeeData: updatedEmployee },
+            })
+        );
 
         closeAssignModal();
     };
@@ -570,6 +620,9 @@ window.openAddProjectEditModal = (project) => {
     }
     if (assignFitSlider) {
         assignFitSlider.addEventListener('input', updateAssignCalculations);
+    }
+    if (assignProjectSelect) {
+        assignProjectSelect.addEventListener('change', updateAssignCalculations);
     }
     if (assignConfirmBtn) {
         assignConfirmBtn.addEventListener('click', handleAssignConfirm);
@@ -611,8 +664,20 @@ window.openAddProjectEditModal = (project) => {
     let selectedVacationDays = [];
     let originalVacationDays = [];
 
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
-                        'July', 'August', 'September', 'October', 'November', 'December'];
+    const monthNames = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+    ];
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     const getWorkingDays = (month, year) => {
@@ -675,7 +740,7 @@ window.openAddProjectEditModal = (project) => {
             dayCell.addEventListener('click', () => {
                 if (dayCell.classList.contains('vacation')) {
                     dayCell.classList.remove('vacation');
-                    selectedVacationDays = selectedVacationDays.filter(d => d !== dateString);
+                    selectedVacationDays = selectedVacationDays.filter((d) => d !== dateString);
                 } else if (!dayCell.classList.contains('weekend')) {
                     dayCell.classList.add('vacation');
                     selectedVacationDays.push(dateString);
@@ -722,8 +787,8 @@ window.openAddProjectEditModal = (project) => {
         }
 
         // Get vacation days for current employee and save original
-        originalVacationDays = Array.isArray(currentAvailabilityEmployee.vacationDays) 
-            ? [...currentAvailabilityEmployee.vacationDays] 
+        originalVacationDays = Array.isArray(currentAvailabilityEmployee.vacationDays)
+            ? [...currentAvailabilityEmployee.vacationDays]
             : [];
         selectedVacationDays = [...originalVacationDays];
 
@@ -756,9 +821,11 @@ window.openAddProjectEditModal = (project) => {
             vacationDays: selectedVacationDays,
         };
 
-        window.dispatchEvent(new CustomEvent('setVacation', {
-            detail: { employeeId: currentAvailabilityEmployeeId, employeeData: updatedEmployee }
-        }));
+        window.dispatchEvent(
+            new CustomEvent('setVacation', {
+                detail: { employeeId: currentAvailabilityEmployeeId, employeeData: updatedEmployee },
+            })
+        );
 
         closeAvailabilityModal();
     };
@@ -817,7 +884,7 @@ window.openAddProjectEditModal = (project) => {
 
         // Parse and sort dates
         const sortedDays = [...days].sort((a, b) => new Date(a) - new Date(b));
-        
+
         // Group consecutive days into ranges
         const ranges = [];
         let rangeStart = sortedDays[0];
@@ -849,7 +916,7 @@ window.openAddProjectEditModal = (project) => {
         const endDate = new Date(end);
         const day = startDate.getDate();
         const month = String(startDate.getMonth() + 1).padStart(2, '0');
-        
+
         if (startDate.getTime() === endDate.getTime()) {
             return `${day}.${month}`;
         } else {
