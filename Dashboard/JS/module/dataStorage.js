@@ -178,7 +178,56 @@ export function getEmployees() {
     const period = getCurrentPeriod();
     log('getEmployees called for period: ' + period);
     const monthData = getMonthData();
-    return [...monthData.employees];
+    const employees = [...monthData.employees];
+
+    // Calculate estimatedIncome for each employee
+    const projects = getProjects();
+
+    return employees.map((emp) => {
+        if (!emp.project) {
+            return { ...emp, estimatedIncome: 0, estimatedPayment: emp.salary };
+        }
+
+        const project = projects.find((p) => p.projectName === emp.project);
+        if (!project) {
+            return { ...emp, estimatedIncome: 0, estimatedPayment: emp.salary };
+        }
+
+        // Calculate total effective capacity for the project
+        const projectEmployees = employees.filter((e) => e.project === emp.project);
+        const totalEffectiveCapacity = projectEmployees.reduce((sum, e) => {
+            const capacity = e.capacity || 1;
+            const fit = e.fit || 1;
+            const vacationDaysCount = Array.isArray(e.vacationDays) ? e.vacationDays.length : (e.vacationDays || 0);
+            const vacation = (20 - vacationDaysCount) / 20;
+            return sum + capacity * fit * vacation;
+        }, 0);
+
+        // Capacity for revenue = max(project capacity, total effective capacity used)
+        const projectCapacity = project.employeeCapacity || 0;
+        const capacityForRevenue = Math.max(projectCapacity, totalEffectiveCapacity);
+
+        // If no capacity, no revenue
+        if (capacityForRevenue === 0) {
+            return { ...emp, estimatedIncome: 0, estimatedPayment: emp.salary };
+        }
+
+        // Revenue per effective capacity = budget ÷ capacity for revenue
+        const revenuePerEffectiveCapacity = project.budget / capacityForRevenue;
+
+        // Calculate this employee's effective capacity
+        const empCapacity = emp.capacity || 1;
+        const empFit = emp.fit || 1;
+        const empVacationDaysCount = Array.isArray(emp.vacationDays) ? emp.vacationDays.length : (emp.vacationDays || 0);
+        const empVacation = (20 - empVacationDaysCount) / 20;
+        const empEffectiveCapacity = empCapacity * empFit * empVacation;
+
+        // Employee's revenue = revenue per effective capacity × employee's effective capacity
+        const estimatedIncome = revenuePerEffectiveCapacity * empEffectiveCapacity;
+        const estimatedPayment = emp.salary;
+
+        return { ...emp, estimatedIncome, estimatedPayment };
+    });
 }
 
 export { formatCurrency, escapeHtml };

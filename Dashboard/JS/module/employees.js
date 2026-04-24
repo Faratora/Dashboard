@@ -70,8 +70,8 @@ function sortAndFilterEmployees(employees) {
                     valB = getProjectNameById(b.project);
                     break;
                 case 'estimatedIncome':
-                    valA = a.salary * ((20 - (a.vacationDays || 0)) / 20) * (a.fit || 1);
-                    valB = b.salary * ((20 - (b.vacationDays || 0)) / 20) * (b.fit || 1);
+                    valA = a.estimatedIncome || 0;
+                    valB = b.estimatedIncome || 0;
                     break;
                 default:
                     return 0;

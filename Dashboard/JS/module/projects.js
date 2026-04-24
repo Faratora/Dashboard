@@ -24,14 +24,37 @@ function calculateUsedCapacity(projectId) {
     }, 0);
 }
 
-function calculateEstimatedIncome(projectId, budget) {
+function calculateEstimatedIncome(projectName, budget) {
     const employees = getEmployees();
-    const projectEmployees = employees.filter((e) => e.project === projectId);
+    const projectEmployees = employees.filter((e) => e.project === projectName);
 
-    const totalSalary = projectEmployees.reduce((sum, emp) => sum + (emp.salary || 0), 0);
+    // Calculate total effective capacity used
+    const totalEffectiveCapacity = projectEmployees.reduce((sum, emp) => {
+        const capacity = emp.capacity || 1;
+        const fit = emp.fit || 1;
+        const vacationDaysCount = Array.isArray(emp.vacationDays) ? emp.vacationDays.length : (emp.vacationDays || 0);
+        const vacation = (20 - vacationDaysCount) / 20;
+        return sum + capacity * fit * vacation;
+    }, 0);
 
-    const profitMargin = budget > 0 ? (budget - totalSalary) / budget : 0;
-    return totalSalary * profitMargin;
+    // Get project capacity from employeeCapacity field (project doesn't have separate capacity)
+    const projectCapacity = 0;
+
+    // Capacity for revenue = max(project capacity, total effective capacity used)
+    const capacityForRevenue = Math.max(projectCapacity, totalEffectiveCapacity);
+
+    // If no capacity, no revenue
+    if (capacityForRevenue === 0) {
+        return 0;
+    }
+
+    // Revenue per effective capacity = budget ÷ capacity for revenue
+    const revenuePerEffectiveCapacity = budget / capacityForRevenue;
+
+    // Total revenue = revenue per effective capacity × total effective capacity used
+    const totalRevenue = revenuePerEffectiveCapacity * totalEffectiveCapacity;
+
+    return totalRevenue;
 }
 
 function sortAndFilterProjects(projects) {
@@ -70,8 +93,8 @@ function sortAndFilterProjects(projects) {
                     valB = b.employeeCapacity;
                     break;
                 case 'estimatedIncome':
-                    valA = calculateEstimatedIncome(a.id, a.budget);
-                    valB = calculateEstimatedIncome(b.id, b.budget);
+                    valA = calculateEstimatedIncome(a.projectName, a.budget);
+                    valB = calculateEstimatedIncome(b.projectName, b.budget);
                     break;
                 default:
                     return 0;
@@ -122,11 +145,11 @@ function renderProjectRow(project) {
     const tbody = $('#projects-tbody');
     if (!tbody) return;
 
-    const usedCapacity = calculateUsedCapacity(project.id);
+    const usedCapacity = calculateUsedCapacity(project.projectName);
     const totalCapacity = project.employeeCapacity || 0;
-    const estimatedIncome = calculateEstimatedIncome(project.id, project.budget);
+    const estimatedIncome = calculateEstimatedIncome(project.projectName, project.budget);
     const overCapacity = usedCapacity > totalCapacity;
-    const employeeCount = getEmployees().filter((e) => e.project === project.id).length;
+    const employeeCount = getEmployees().filter((e) => e.project === project.projectName).length;
 
     const incomeClass = estimatedIncome > 0 ? 'income-positive' : estimatedIncome < 0 ? 'income-negative' : '';
     const capacityClass = overCapacity ? 'over-capacity' : '';
