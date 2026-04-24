@@ -589,4 +589,219 @@ window.openAddProjectEditModal = (project) => {
         log('Opening assign modal for employee: ' + employeeId);
         openAssignModal(employeeId);
     });
+
+    // Availability Modal
+    const availabilityBackdrop = $('#availability-backdrop');
+    const availabilityModal = $('#availability-modal');
+    const availabilityModalTitle = $('#availability-modal-title');
+    const availabilityMonth = $('#availability-month');
+    const availabilityWorkingDays = $('#availability-working-days');
+    const availabilityVacationDays = $('#availability-vacation-days');
+    const calendarMonthYear = $('#calendar-month-year');
+    const calendarGrid = $('#calendar-grid');
+    const prevMonthBtn = $('#prev-month-btn');
+    const nextMonthBtn = $('#next-month-btn');
+    const setVacationBtn = $('#set-vacation-btn');
+    const availabilityModalClose = $('#availability-modal-close');
+
+    let currentAvailabilityEmployeeId = null;
+    let currentAvailabilityEmployee = null;
+    let currentCalendarMonth = null;
+    let currentCalendarYear = null;
+    let selectedVacationDays = [];
+
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                        'July', 'August', 'September', 'October', 'November', 'December'];
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    const getWorkingDays = (month, year) => {
+        let count = 0;
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = new Date(year, month, day);
+            const dayOfWeek = date.getDay();
+            if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+                count++;
+            }
+        }
+        return count;
+    };
+
+    const renderCalendar = () => {
+        if (!calendarGrid) return;
+
+        calendarGrid.innerHTML = '';
+
+        // Add day headers
+        dayNames.forEach((day) => {
+            const dayHeader = document.createElement('div');
+            dayHeader.className = 'calendar-day-header';
+            dayHeader.textContent = day;
+            calendarGrid.appendChild(dayHeader);
+        });
+
+        const firstDay = new Date(currentCalendarYear, currentCalendarMonth, 1);
+        const daysInMonth = new Date(currentCalendarYear, currentCalendarMonth + 1, 0).getDate();
+        const startDay = firstDay.getDay();
+
+        // Empty cells for days before the first day
+        for (let i = 0; i < startDay; i++) {
+            const emptyCell = document.createElement('div');
+            calendarGrid.appendChild(emptyCell);
+        }
+
+        // Day cells
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayCell = document.createElement('div');
+            dayCell.className = 'calendar-day';
+            dayCell.textContent = day;
+
+            const date = new Date(currentCalendarYear, currentCalendarMonth, day);
+            const dayOfWeek = date.getDay();
+            const dateString = `${currentCalendarYear}-${String(currentCalendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+            // Weekend
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                dayCell.classList.add('weekend');
+            }
+
+            // Vacation day
+            if (selectedVacationDays.includes(dateString)) {
+                dayCell.classList.add('vacation');
+            }
+
+            dayCell.addEventListener('click', () => {
+                if (dayCell.classList.contains('vacation')) {
+                    dayCell.classList.remove('vacation');
+                    selectedVacationDays = selectedVacationDays.filter(d => d !== dateString);
+                } else if (!dayCell.classList.contains('weekend')) {
+                    dayCell.classList.add('vacation');
+                    selectedVacationDays.push(dateString);
+                }
+                updateVacationCount();
+            });
+
+            calendarGrid.appendChild(dayCell);
+        }
+
+        if (calendarMonthYear) {
+            calendarMonthYear.textContent = `${monthNames[currentCalendarMonth]} ${currentCalendarYear}`;
+        }
+    };
+
+    const openAvailabilityModal = (employeeId) => {
+        const employees = getEmployees();
+        currentAvailabilityEmployee = employees.find((e) => e.id === employeeId);
+        currentAvailabilityEmployeeId = employeeId;
+
+        if (!currentAvailabilityEmployee) return;
+
+        // Set employee name
+        if (availabilityModalTitle) {
+            availabilityModalTitle.textContent = `${currentAvailabilityEmployee.name} ${currentAvailabilityEmployee.surname} - Availability`;
+        }
+
+        // Get current period
+        const monthSelect = $('#month-select');
+        const yearSelect = $('#year-select');
+        const currentMonth = parseInt(monthSelect?.value || 4) - 1; // April by default
+        const currentYear = parseInt(yearSelect?.value || 2026);
+
+        currentCalendarMonth = currentMonth;
+        currentCalendarYear = currentYear;
+
+        // Set month info
+        if (availabilityMonth) {
+            availabilityMonth.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+        }
+
+        const workingDays = getWorkingDays(currentMonth, currentYear);
+        if (availabilityWorkingDays) {
+            availabilityWorkingDays.textContent = `Working Days: ${workingDays}/${workingDays} days`;
+        }
+
+        // Get vacation days for current employee
+        selectedVacationDays = Array.isArray(currentAvailabilityEmployee.vacationDays) 
+            ? currentAvailabilityEmployee.vacationDays 
+            : [];
+
+        if (availabilityVacationDays) {
+            availabilityVacationDays.textContent = `Vacation Days: ${selectedVacationDays.length} days selected`;
+        }
+
+        renderCalendar();
+
+        if (availabilityBackdrop) availabilityBackdrop.classList.remove('hidden');
+        if (availabilityModal) availabilityModal.classList.remove('hidden');
+    };
+
+    const closeAvailabilityModal = () => {
+        if (availabilityBackdrop) availabilityBackdrop.classList.add('hidden');
+        if (availabilityModal) availabilityModal.classList.add('hidden');
+        currentAvailabilityEmployeeId = null;
+        currentAvailabilityEmployee = null;
+    };
+
+    const handleSetVacation = () => {
+        if (!currentAvailabilityEmployee) return;
+
+        const updatedEmployee = {
+            ...currentAvailabilityEmployee,
+            vacationDays: selectedVacationDays,
+        };
+
+        window.dispatchEvent(new CustomEvent('setVacation', {
+            detail: { employeeId: currentAvailabilityEmployeeId, employeeData: updatedEmployee }
+        }));
+
+        closeAvailabilityModal();
+    };
+
+    if (prevMonthBtn) {
+        prevMonthBtn.addEventListener('click', () => {
+            currentCalendarMonth--;
+            if (currentCalendarMonth < 0) {
+                currentCalendarMonth = 11;
+                currentCalendarYear--;
+            }
+            renderCalendar();
+            updateVacationCount();
+        });
+    }
+
+    if (nextMonthBtn) {
+        nextMonthBtn.addEventListener('click', () => {
+            currentCalendarMonth++;
+            if (currentCalendarMonth > 11) {
+                currentCalendarMonth = 0;
+                currentCalendarYear++;
+            }
+            renderCalendar();
+            updateVacationCount();
+        });
+    }
+
+    if (setVacationBtn) {
+        setVacationBtn.addEventListener('click', handleSetVacation);
+    }
+
+    if (availabilityModalClose) {
+        availabilityModalClose.addEventListener('click', closeAvailabilityModal);
+    }
+
+    if (availabilityBackdrop) {
+        availabilityBackdrop.addEventListener('click', closeAvailabilityModal);
+    }
+
+    const updateVacationCount = () => {
+        if (availabilityVacationDays) {
+            availabilityVacationDays.textContent = `Vacation Days: ${selectedVacationDays.length} days selected`;
+        }
+    };
+
+    window.addEventListener('showAvailabilityCalendar', (e) => {
+        const { employeeId } = e.detail;
+        log('Opening availability calendar for employee: ' + employeeId);
+        openAvailabilityModal(employeeId);
+    });
 }

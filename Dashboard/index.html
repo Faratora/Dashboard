@@ -265,6 +265,33 @@
 			</div>
 		</div>
 
+		<!-- Availability Modal -->
+		<div id="availability-backdrop" class="hidden"></div>
+		<div id="availability-modal" class="hidden">
+			<div class="modal-header">
+				<h2 id="availability-modal-title"></h2>
+				<button type="button" class="modal-close" id="availability-modal-close">&times;</button>
+			</div>
+			<div class="modal-body">
+				<div class="availability-info">
+					<p id="availability-month"></p>
+					<p id="availability-working-days"></p>
+					<p id="availability-vacation-days"></p>
+				</div>
+				<div class="availability-calendar">
+					<div class="calendar-header">
+						<button id="prev-month-btn" class="nav-btn">&lt;</button>
+						<h3 id="calendar-month-year"></h3>
+						<button id="next-month-btn" class="nav-btn">&gt;</button>
+					</div>
+					<div class="calendar-grid" id="calendar-grid"></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="set-vacation-btn" class="apply-btn">Set Vacation</button>
+				</div>
+			</div>
+		</div>
+
 
 		<script type="module" src="./JS/main.js"></script>
 </body>

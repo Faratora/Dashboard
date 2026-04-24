@@ -161,6 +161,7 @@ function renderEmployeeRow(employee) {
 
     availBtn.addEventListener('click', () => {
         log('Availability button clicked for employee: ' + employee.id);
+        window.dispatchEvent(new CustomEvent('showAvailabilityCalendar', { detail: { employeeId: employee.id } }));
     });
 
     assignBtn.addEventListener('click', () => {
@@ -254,6 +255,14 @@ function initSortFilter() {
     window.addEventListener('assignEmployee', (e) => {
         const { employeeId, employeeData } = e.detail;
         log('Assigning employee: ' + employeeId);
+        updateEmployee(employeeId, employeeData);
+        renderEmployees();
+    });
+
+    // Listen for set vacation event
+    window.addEventListener('setVacation', (e) => {
+        const { employeeId, employeeData } = e.detail;
+        log('Setting vacation for employee: ' + employeeId);
         updateEmployee(employeeId, employeeData);
         renderEmployees();
     });
