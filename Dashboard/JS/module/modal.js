@@ -679,6 +679,7 @@ window.openAddProjectEditModal = (project) => {
                     selectedVacationDays.push(dateString);
                 }
                 updateVacationCount();
+                updateWorkingDays();
             });
 
             calendarGrid.appendChild(dayCell);
@@ -725,6 +726,9 @@ window.openAddProjectEditModal = (project) => {
             ? currentAvailabilityEmployee.vacationDays 
             : [];
 
+        // Update working days to reflect vacation selection
+        updateWorkingDays();
+
         if (availabilityVacationDays) {
             availabilityVacationDays.textContent = `Vacation Days: ${selectedVacationDays.length} days selected`;
         }
@@ -767,6 +771,7 @@ window.openAddProjectEditModal = (project) => {
             renderCalendar();
             updateVacationCount();
             updateWorkingDays();
+            updateMonthInfo();
         });
     }
 
@@ -780,6 +785,7 @@ window.openAddProjectEditModal = (project) => {
             renderCalendar();
             updateVacationCount();
             updateWorkingDays();
+            updateMonthInfo();
         });
     }
 
@@ -797,16 +803,23 @@ window.openAddProjectEditModal = (project) => {
 
     const updateVacationCount = () => {
         if (availabilityVacationDays) {
-            const totalDays = getWorkingDays(currentCalendarMonth, currentCalendarYear);
-            availabilityVacationDays.textContent = `Vacation Days: ${selectedVacationDays.length}/${totalDays} days selected`;
+            availabilityVacationDays.textContent = `Vacation Days: ${selectedVacationDays.length} days selected`;
         }
     };
 
     const updateWorkingDays = () => {
         if (availabilityWorkingDays) {
-            const workingDays = getWorkingDays(currentCalendarMonth, currentCalendarYear);
-            availabilityWorkingDays.textContent = `Working Days: ${workingDays}/${workingDays} days`;
+            const totalDays = getWorkingDays(currentCalendarMonth, currentCalendarYear);
+            const remainingDays = totalDays - selectedVacationDays.length;
+            availabilityWorkingDays.textContent = `Working Days: ${remainingDays}/${totalDays} days`;
         }
+    };
+
+    const updateMonthInfo = () => {
+        if (availabilityMonth) {
+            availabilityMonth.textContent = `${monthNames[currentCalendarMonth]} ${currentCalendarYear}`;
+        }
+        updateWorkingDays();
     };
 
     window.addEventListener('showAvailabilityCalendar', (e) => {
