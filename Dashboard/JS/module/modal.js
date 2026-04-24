@@ -766,6 +766,7 @@ window.openAddProjectEditModal = (project) => {
             }
             renderCalendar();
             updateVacationCount();
+            updateWorkingDays();
         });
     }
 
@@ -778,6 +779,7 @@ window.openAddProjectEditModal = (project) => {
             }
             renderCalendar();
             updateVacationCount();
+            updateWorkingDays();
         });
     }
 
@@ -795,7 +797,15 @@ window.openAddProjectEditModal = (project) => {
 
     const updateVacationCount = () => {
         if (availabilityVacationDays) {
-            availabilityVacationDays.textContent = `Vacation Days: ${selectedVacationDays.length} days selected`;
+            const totalDays = getWorkingDays(currentCalendarMonth, currentCalendarYear);
+            availabilityVacationDays.textContent = `Vacation Days: ${selectedVacationDays.length}/${totalDays} days selected`;
+        }
+    };
+
+    const updateWorkingDays = () => {
+        if (availabilityWorkingDays) {
+            const workingDays = getWorkingDays(currentCalendarMonth, currentCalendarYear);
+            availabilityWorkingDays.textContent = `Working Days: ${workingDays}/${workingDays} days`;
         }
     };
 
