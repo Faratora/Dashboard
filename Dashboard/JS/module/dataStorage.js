@@ -163,7 +163,9 @@ export function updateEmployee(id, employeeData) {
                 salary: parseFloat(employeeData.salary) || 0,
                 capacity: parseFloat(employeeData.capacity) || 1,
                 fit: parseFloat(employeeData.fit) || 1,
-                vacationDays: parseInt(employeeData.vacationDays) || 0,
+                vacationDays: Array.isArray(employeeData.vacationDays) 
+                    ? employeeData.vacationDays 
+                    : parseInt(employeeData.vacationDays) || 0,
                 project: employeeData.project || '',
                 assignedCapacity: parseFloat(employeeData.assignedCapacity) || 0,
             };

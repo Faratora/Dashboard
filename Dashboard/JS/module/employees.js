@@ -263,6 +263,7 @@ function initSortFilter() {
     window.addEventListener('setVacation', (e) => {
         const { employeeId, employeeData } = e.detail;
         log('Setting vacation for employee: ' + employeeId);
+        log('Vacation days:', employeeData.vacationDays);
         updateEmployee(employeeId, employeeData);
         renderEmployees();
     });

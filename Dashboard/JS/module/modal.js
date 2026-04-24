@@ -609,6 +609,7 @@ window.openAddProjectEditModal = (project) => {
     let currentCalendarMonth = null;
     let currentCalendarYear = null;
     let selectedVacationDays = [];
+    let originalVacationDays = [];
 
     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
                         'July', 'August', 'September', 'October', 'November', 'December'];
@@ -666,7 +667,8 @@ window.openAddProjectEditModal = (project) => {
             }
 
             // Vacation day
-            if (selectedVacationDays.includes(dateString)) {
+            const isVacation = selectedVacationDays.includes(dateString);
+            if (isVacation) {
                 dayCell.classList.add('vacation');
             }
 
@@ -697,6 +699,9 @@ window.openAddProjectEditModal = (project) => {
 
         if (!currentAvailabilityEmployee) return;
 
+        log('Opening availability modal for employee: ' + employeeId);
+        log('Employee vacationDays:', currentAvailabilityEmployee.vacationDays);
+
         // Set employee name
         if (availabilityModalTitle) {
             availabilityModalTitle.textContent = `${currentAvailabilityEmployee.name} ${currentAvailabilityEmployee.surname} - Availability`;
@@ -716,15 +721,13 @@ window.openAddProjectEditModal = (project) => {
             availabilityMonth.textContent = `${monthNames[currentMonth]} ${currentYear}`;
         }
 
-        const workingDays = getWorkingDays(currentMonth, currentYear);
-        if (availabilityWorkingDays) {
-            availabilityWorkingDays.textContent = `Working Days: ${workingDays}/${workingDays} days`;
-        }
-
-        // Get vacation days for current employee
-        selectedVacationDays = Array.isArray(currentAvailabilityEmployee.vacationDays) 
-            ? currentAvailabilityEmployee.vacationDays 
+        // Get vacation days for current employee and save original
+        originalVacationDays = Array.isArray(currentAvailabilityEmployee.vacationDays) 
+            ? [...currentAvailabilityEmployee.vacationDays] 
             : [];
+        selectedVacationDays = [...originalVacationDays];
+
+        log('Loaded vacation days:', selectedVacationDays);
 
         // Update working days to reflect vacation selection
         updateWorkingDays();
@@ -748,6 +751,8 @@ window.openAddProjectEditModal = (project) => {
 
     const handleSetVacation = () => {
         if (!currentAvailabilityEmployee) return;
+
+        log('Setting vacation days:', selectedVacationDays);
 
         const updatedEmployee = {
             ...currentAvailabilityEmployee,
