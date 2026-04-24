@@ -731,10 +731,7 @@ window.openAddProjectEditModal = (project) => {
 
         // Update working days to reflect vacation selection
         updateWorkingDays();
-
-        if (availabilityVacationDays) {
-            availabilityVacationDays.textContent = `Vacation Days: ${selectedVacationDays.length} days selected`;
-        }
+        updateVacationCount();
 
         renderCalendar();
 
@@ -808,7 +805,57 @@ window.openAddProjectEditModal = (project) => {
 
     const updateVacationCount = () => {
         if (availabilityVacationDays) {
-            availabilityVacationDays.textContent = `Vacation Days: ${selectedVacationDays.length} days selected`;
+            const vacationText = formatVacationDays(selectedVacationDays);
+            availabilityVacationDays.textContent = `Vacation Days: ${vacationText}`;
+        }
+    };
+
+    const formatVacationDays = (days) => {
+        if (!days || days.length === 0) {
+            return '0 days selected';
+        }
+
+        // Parse and sort dates
+        const sortedDays = [...days].sort((a, b) => new Date(a) - new Date(b));
+        
+        // Group consecutive days into ranges
+        const ranges = [];
+        let rangeStart = sortedDays[0];
+        let rangeEnd = sortedDays[0];
+
+        for (let i = 1; i < sortedDays.length; i++) {
+            const currentDate = new Date(sortedDays[i]);
+            const prevDate = new Date(rangeEnd);
+            const diff = (currentDate - prevDate) / (1000 * 60 * 60 * 24);
+
+            if (diff === 1) {
+                // Consecutive day
+                rangeEnd = sortedDays[i];
+            } else {
+                // Gap found, save previous range
+                ranges.push(formatRange(rangeStart, rangeEnd));
+                rangeStart = sortedDays[i];
+                rangeEnd = sortedDays[i];
+            }
+        }
+        // Push last range
+        ranges.push(formatRange(rangeStart, rangeEnd));
+
+        return ranges.join(', ');
+    };
+
+    const formatRange = (start, end) => {
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+        const day = startDate.getDate();
+        const month = String(startDate.getMonth() + 1).padStart(2, '0');
+        
+        if (startDate.getTime() === endDate.getTime()) {
+            return `${day}.${month}`;
+        } else {
+            const endDay = endDate.getDate();
+            const endMonth = String(endDate.getMonth() + 1).padStart(2, '0');
+            return `${day}.${month}-${endDay}.${endMonth}`;
         }
     };
 
