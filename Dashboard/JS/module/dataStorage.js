@@ -125,6 +125,7 @@ export function addEmployee(employeeData) {
         fit: parseFloat(employeeData.fit) || 1,
         vacationDays: parseInt(employeeData.vacationDays) || 0,
         project: employeeData.project || '',
+        assignedCapacity: 0,
         estimatedPayment: 0,
         estimatedIncome: 0,
     };
@@ -164,6 +165,7 @@ export function updateEmployee(id, employeeData) {
                 fit: parseFloat(employeeData.fit) || 1,
                 vacationDays: parseInt(employeeData.vacationDays) || 0,
                 project: employeeData.project || '',
+                assignedCapacity: parseFloat(employeeData.assignedCapacity) || 0,
             };
             saveData(data);
             return data.monthlyData[period].employees[index];

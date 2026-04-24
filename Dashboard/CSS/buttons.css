@@ -143,6 +143,125 @@ button:hover:disabled {
 .availability-btn:hover {
     background: #5c0e55;
 }
+
+/* Assign Modal */
+#assign-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+}
+
+#assign-backdrop.hidden {
+    display: none;
+}
+
+#assign-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    z-index: 2001;
+    min-width: 400px;
+    max-width: 90%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+#assign-modal.hidden {
+    display: none;
+}
+
+#assign-modal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#assign-modal .modal-header h2 {
+    margin: 0;
+    color: #1a1a2e;
+    font-size: 22px;
+}
+
+#assign-modal .modal-body {
+    margin-bottom: 20px;
+}
+
+#assign-modal .assign-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+#assign-modal .assign-info h3 {
+    margin: 0 0 10px 0;
+    color: #1a1a2e;
+    font-size: 18px;
+}
+
+#assign-modal .assign-info p {
+    margin: 5px 0;
+    color: #666;
+    font-size: 14px;
+}
+
+#assign-modal .form-group {
+    margin-bottom: 20px;
+}
+
+#assign-modal .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 500;
+}
+
+#assign-modal .form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+#assign-modal .form-group input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+}
+
+#assign-modal .assign-calculations {
+    background: #e8f5e9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+#assign-modal .assign-calculations p {
+    margin: 8px 0;
+    color: #2e7d32;
+    font-size: 14px;
+}
+
+#assign-modal .assign-calculations p:last-child {
+    margin-bottom: 0;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+#assign-modal .modal-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
 body.panel-collapsed #open-btn {
     display: block;
 }

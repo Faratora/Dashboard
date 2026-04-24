@@ -434,24 +434,159 @@ window.openAddProjectEditModal = (project) => {
         populateEmployeeProjectSelect();
         openPanel('add');
     };
-window.openAddEmployeeEditModal = (employee) => {
-    // Ensure employee form fields are visible
-    const projectFormFields = $('#project-form-fields');
-    const employeeFormFields = $('#employee-form-fields');
-    if (projectFormFields && employeeFormFields) {
-        projectFormFields.style.display = 'none';
-        employeeFormFields.style.display = 'block';
+    window.openAddEmployeeEditModal = (employee) => {
+        // Ensure employee form fields are visible
+        const projectFormFields = $('#project-form-fields');
+        const employeeFormFields = $('#employee-form-fields');
+        if (projectFormFields && employeeFormFields) {
+            projectFormFields.style.display = 'none';
+            employeeFormFields.style.display = 'block';
+        }
+        openPanel('edit');
+        editingId = employee.id;
+        $('#employee-name').value = employee.name;
+        $('#employee-surname').value = employee.surname;
+        $('#employee-age').value = employee.age;
+        $('#employee-position').value = employee.position;
+        const projectSelect = $('#employee-project');
+        if (projectSelect) {
+            projectSelect.value = employee.project || '';
+        }
+        $('#employee-salary').value = employee.salary;
+    };
+
+    // Assign Employee Modal
+    const assignBackdrop = $('#assign-backdrop');
+    const assignModal = $('#assign-modal');
+    const assignEmployeeName = $('#assign-employee-name');
+    const assignCurrentCapacity = $('#assign-current-capacity');
+    const assignAvailableCapacity = $('#assign-available-capacity');
+    const assignProjectSelect = $('#assign-project-select');
+    const assignCapacitySlider = $('#assign-capacity-slider');
+    const assignCapacityValue = $('#assign-capacity-value');
+    const assignFitSlider = $('#assign-fit-slider');
+    const assignFitValue = $('#assign-fit-value');
+    const assignEffectiveCapacity = $('#assign-effective-capacity');
+    const assignPredictedCapacity = $('#assign-predicted-capacity');
+    const assignConfirmBtn = $('#assign-btn-confirm');
+    const assignCancelBtn = $('#assign-btn-cancel');
+    const assignModalClose = $('#assign-modal-close');
+
+    let currentAssignEmployeeId = null;
+    let currentAssignEmployee = null;
+    let currentTotalCapacity = 0;
+
+    const updateAssignCalculations = () => {
+        const assignedCapacity = parseFloat(assignCapacitySlider.value) || 0;
+        const fitCoefficient = parseFloat(assignFitSlider.value) || 1;
+        const effectiveCapacity = assignedCapacity * fitCoefficient;
+        const predictedTotal = currentTotalCapacity + effectiveCapacity;
+
+        if (assignCapacityValue) assignCapacityValue.textContent = assignedCapacity.toFixed(1);
+        if (assignFitValue) assignFitValue.textContent = fitCoefficient.toFixed(1);
+        if (assignEffectiveCapacity) assignEffectiveCapacity.textContent = effectiveCapacity.toFixed(3);
+        if (assignPredictedCapacity) assignPredictedCapacity.textContent = predictedTotal.toFixed(2);
+        if (assignAvailableCapacity) {
+            const available = Math.max(0, 1.5 - currentTotalCapacity);
+            assignAvailableCapacity.textContent = `Available capacity: ${available.toFixed(2)}`;
+        }
+    };
+
+    const openAssignModal = (employeeId) => {
+        const employees = getEmployees();
+        currentAssignEmployee = employees.find((e) => e.id === employeeId);
+        currentAssignEmployeeId = employeeId;
+
+        if (!currentAssignEmployee) return;
+
+        currentTotalCapacity = parseFloat(currentAssignEmployee.assignedCapacity || 0);
+
+        if (assignEmployeeName) {
+            assignEmployeeName.textContent = `${currentAssignEmployee.name} ${currentAssignEmployee.surname}`;
+        }
+
+        if (assignCurrentCapacity) {
+            assignCurrentCapacity.textContent = `Current total capacity: ${currentTotalCapacity.toFixed(2)} / 1.5`;
+        }
+
+        if (assignCapacitySlider) {
+            assignCapacitySlider.value = currentAssignEmployee.capacity || 0.5;
+        }
+        if (assignFitSlider) {
+            assignFitSlider.value = currentAssignEmployee.fit || 1.0;
+        }
+
+        if (assignProjectSelect) {
+            const projects = getProjects();
+            assignProjectSelect.innerHTML = '<option value="">-- Select Project --</option>';
+            projects.forEach((project) => {
+                const option = document.createElement('option');
+                option.value = project.projectName;
+                option.textContent = project.projectName;
+                if (currentAssignEmployee.project === project.projectName) {
+                    option.selected = true;
+                }
+                assignProjectSelect.appendChild(option);
+            });
+        }
+
+        updateAssignCalculations();
+
+        if (assignBackdrop) assignBackdrop.classList.remove('hidden');
+        if (assignModal) assignModal.classList.remove('hidden');
+    };
+
+    const closeAssignModal = () => {
+        if (assignBackdrop) assignBackdrop.classList.add('hidden');
+        if (assignModal) assignModal.classList.add('hidden');
+        currentAssignEmployeeId = null;
+        currentAssignEmployee = null;
+    };
+
+    const handleAssignConfirm = () => {
+        if (!currentAssignEmployee) return;
+
+        const assignedCapacity = parseFloat(assignCapacitySlider.value) || 0;
+        const fitCoefficient = parseFloat(assignFitSlider.value) || 1;
+        const project = assignProjectSelect.value;
+
+        const updatedEmployee = {
+            ...currentAssignEmployee,
+            capacity: assignedCapacity,
+            fit: fitCoefficient,
+            assignedCapacity: currentTotalCapacity + (assignedCapacity * fitCoefficient),
+            project: project,
+        };
+
+        window.dispatchEvent(new CustomEvent('assignEmployee', {
+            detail: { employeeId: currentAssignEmployeeId, employeeData: updatedEmployee }
+        }));
+
+        closeAssignModal();
+    };
+
+    if (assignCapacitySlider) {
+        assignCapacitySlider.addEventListener('input', updateAssignCalculations);
     }
-    openPanel('edit');
-    editingId = employee.id;
-    $('#employee-name').value = employee.name;
-    $('#employee-surname').value = employee.surname;
-    $('#employee-age').value = employee.age;
-    $('#employee-position').value = employee.position;
-    const projectSelect = $('#employee-project');
-    if (projectSelect) {
-        projectSelect.value = employee.project || '';
+    if (assignFitSlider) {
+        assignFitSlider.addEventListener('input', updateAssignCalculations);
     }
-    $('#employee-salary').value = employee.salary;
-};
+    if (assignConfirmBtn) {
+        assignConfirmBtn.addEventListener('click', handleAssignConfirm);
+    }
+    if (assignCancelBtn) {
+        assignCancelBtn.addEventListener('click', closeAssignModal);
+    }
+    if (assignModalClose) {
+        assignModalClose.addEventListener('click', closeAssignModal);
+    }
+    if (assignBackdrop) {
+        assignBackdrop.addEventListener('click', closeAssignModal);
+    }
+
+    window.addEventListener('showAssignEmployee', (e) => {
+        const { employeeId } = e.detail;
+        log('Opening assign modal for employee: ' + employeeId);
+        openAssignModal(employeeId);
+    });
 }

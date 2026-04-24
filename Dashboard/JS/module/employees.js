@@ -129,6 +129,9 @@ function renderEmployeeRow(employee) {
     if (!tbody) return;
 
     const availability = calculateAvailability(employee);
+    const effectiveCapacity = (employee.capacity || 1) * (employee.fit || 1) * ((20 - (employee.vacationDays || 0)) / 20);
+    const assignedCapacity = parseFloat(employee.assignedCapacity) || 0;
+    const isAssignDisabled = assignedCapacity >= 1.5;
 
     const tr = document.createElement('tr');
     tr.dataset.id = employee.id;
@@ -142,9 +145,8 @@ function renderEmployeeRow(employee) {
         <td>${escapeHtml(employee.project || '-')}</td>
         <td>${formatCurrency(employee.estimatedIncome)}</td>
         <td>
-            
             <button class="availability-btn" data-id="${employee.id}">Availability</button>
-            <button class="assign-btn" data-id="${employee.id}">Assign</button>
+            <button class="assign-btn" data-id="${employee.id}" ${isAssignDisabled ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>Assign</button>
             <button class="edit-btn" data-id="${employee.id}">Edit</button>
             <button class="delete-btn" data-id="${employee.id}">Delete</button>
         </td>
@@ -246,6 +248,14 @@ function initSortFilter() {
         const { column, value } = e.detail;
         applyColumnFilter(column, value);
         updateClearButtonVisibility();
+    });
+
+    // Listen for assign employee event
+    window.addEventListener('assignEmployee', (e) => {
+        const { employeeId, employeeData } = e.detail;
+        log('Assigning employee: ' + employeeId);
+        updateEmployee(employeeId, employeeData);
+        renderEmployees();
     });
 
     // Reset filters button
