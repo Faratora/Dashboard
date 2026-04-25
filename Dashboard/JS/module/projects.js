@@ -164,8 +164,8 @@ function sortAndFilterProjects(projects) {
                     valB = b.employeeCapacity;
                     break;
                 case 'estimatedIncome':
-                    valA = calculateEstimatedIncome(a.projectName, a.budget);
-                    valB = calculateEstimatedIncome(b.projectName, b.budget);
+                    valA = calculateProjectProfit(a.projectName, a.budget);
+                    valB = calculateProjectProfit(b.projectName, b.budget);
                     break;
                 default:
                     return 0;
@@ -218,11 +218,11 @@ function renderProjectRow(project) {
 
     const usedCapacity = calculateUsedCapacity(project.projectName);
     const totalCapacity = project.employeeCapacity || 0;
-    const estimatedIncome = calculateEstimatedIncome(project.projectName, project.budget);
-    const overCapacity = usedCapacity > totalCapacity;
     const employeeCount = getEmployees().filter((e) => e.project === project.projectName).length;
+    const projectProfit = calculateProjectProfit(project.projectName, project.budget);
+    const overCapacity = usedCapacity > totalCapacity;
 
-    const incomeClass = estimatedIncome > 0 ? 'income-positive' : estimatedIncome < 0 ? 'income-negative' : '';
+    const incomeClass = projectProfit > 0 ? 'income-positive' : projectProfit < 0 ? 'income-negative' : '';
     const capacityClass = overCapacity ? 'over-capacity' : '';
 
     const tr = document.createElement('tr');
@@ -233,7 +233,7 @@ function renderProjectRow(project) {
         <td>${formatCurrency(project.budget)}</td>
         <td class="${capacityClass}">${usedCapacity.toFixed(1)}/${totalCapacity}</td>
         <td><button class="show-employees-btn" data-id="${project.id}">Show Employees (${employeeCount})</button></td>
-        <td class="${incomeClass}">${formatCurrency(estimatedIncome)}</td>
+        <td class="${incomeClass}">${formatCurrency(projectProfit)}</td>
         <td>
             <button class="edit-btn" data-id="${project.id}">Edit</button>
             <button class="delete-btn" data-id="${project.id}">Delete</button>

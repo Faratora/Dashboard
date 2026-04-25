@@ -7,6 +7,9 @@ import {
     getProjects,
     formatCurrency,
     escapeHtml,
+    getCurrentPeriod,
+    getWeekdaysInMonth,
+    getWeekdayVacationDays,
 } from './dataStorage.js';
 import { initInlineEditListeners, setRenderCallback } from './inlineEdit.js';
 
@@ -120,25 +123,39 @@ function renderEmployees() {
     });
 }
 
-function calculateAvailability(employee) {
-    const vacation = employee.vacationDays || 0;
-    const fit = employee.fit || 1;
-    return ((20 - vacation) / 20) * fit * 100;
-}
-
 function renderEmployeeRow(employee) {
     const tbody = $('#employees-tbody');
     if (!tbody) return;
 
-    const availability = calculateAvailability(employee);
-    const effectiveCapacity = (employee.capacity || 1) * (employee.fit || 1) * ((20 - (employee.vacationDays || 0)) / 20);
     const assignedCapacity = parseFloat(employee.assignedCapacity) || 0;
     const isAssignDisabled = assignedCapacity >= 1.5;
 
-    // Count employees in the same project
+    // Count employees in the same project and calculate project capacity usage
     const allEmployees = getEmployees();
+    let projectUsedCapacity = 0;
+    let projectTotalCapacity = 0;
     const projectEmployees = employee.project ? allEmployees.filter(e => e.project === employee.project) : [];
     const projectEmployeeCount = projectEmployees.length;
+    
+    if (employee.project) {
+        const projects = getProjects();
+        const project = projects.find(p => p.projectName === employee.project);
+        projectTotalCapacity = project ? project.employeeCapacity || 0 : 0;
+        
+        const period = getCurrentPeriod();
+        const [currentYear, currentMonth] = period.split('-').map(Number);
+        const weekdaysInMonth = getWeekdaysInMonth();
+        
+        projectUsedCapacity = projectEmployees.reduce((sum, emp) => {
+            const capacity = emp.capacity || 1;
+            const fit = emp.fit || 1;
+            const weekdayVacations = getWeekdayVacationDays(emp.vacationDays || [], currentYear, currentMonth);
+            const vacationCoefficient = weekdaysInMonth > 0 
+                ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth 
+                : 0;
+            return sum + capacity * fit * vacationCoefficient;
+        }, 0);
+    }
 
     const tr = document.createElement('tr');
     tr.dataset.id = employee.id;
@@ -152,7 +169,7 @@ function renderEmployeeRow(employee) {
         <td>
             <span class="project-cell">
                 <span class="project-name">${escapeHtml(employee.project || '-')}</span>
-                ${employee.project ? `<button class="show-assignments-btn" data-project="${employee.project}">Show Assignments (${projectEmployeeCount})</button>` : ''}
+                ${employee.project ? `<button class="show-assignments-btn" data-project="${employee.project}">Show Assignments (${projectEmployeeCount}) ${projectUsedCapacity.toFixed(1)}/${projectTotalCapacity}</button>` : ''}
             </span>
         </td>
         <td>${formatCurrency(employee.estimatedIncome)}</td>
@@ -330,6 +347,13 @@ function initSortFilter() {
         const { employeeId, employeeData } = e.detail;
         log('Inline editing employee: ' + employeeId);
         updateEmployee(employeeId, employeeData);
+        renderEmployees();
+    });
+
+    // Reset project filter when closing employees modal
+    window.addEventListener('closeProjectEmployeesModal', () => {
+        projectFilter = '';
+        updateClearButtonVisibility();
         renderEmployees();
     });
 }

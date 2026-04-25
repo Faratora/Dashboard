@@ -94,15 +94,22 @@ button:hover:disabled {
     border-radius: 4px;
 }
 
-.copy-btn:hover,
-.assign-btn:hover  {
-    background: var(--color-hover-blue);
-}
-
-.assign-btn {
-    background: var(--color-button-blue);;
+.assign-btn,
+.show-employees-btn,
+.change-btn,
+.show-assignments-btn {
+    background: var(--color-button-blue);
     padding: 5px 12px;
     font-size: 12px;
+}
+
+.copy-btn:hover,
+.assign-btn:hover,
+.show-employees-btn:hover,
+.change-btn:hover,
+.show-assignments-btn:hover,
+#availability-modal .nav-btn:hover {
+    background: var(--color-hover-blue);
 }
 
 #employees-modal .edit-btn,
@@ -129,19 +136,9 @@ button:hover:disabled {
 .open-btn.hidden {
     display: none !important;
 }
-.show-employees-btn,
-.change-btn,
-.show-assignments-btn {
-    background: #3498db;
-    padding: 5px 12px;
-    font-size: 12px;
-}
 
-.show-employees-btn:hover,
-.change-btn:hover,
-.show-assignments-btn:hover {
-    background: #2980b9;
-}
+
+
 .availability-btn {
     background: #e215d1;
     padding: 5px 12px;
@@ -164,9 +161,7 @@ button:hover:disabled {
     font-size: 16px;
 }
 
-#availability-modal .nav-btn:hover {
-    background: #2980b9;
-}
+ 
 
 
 

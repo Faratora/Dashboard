@@ -212,6 +212,8 @@ function closeEmployeesModal() {
         modal.classList.add('hidden');
         document.body.style.overflow = '';
         currentProjectId = null;
+        // Clear project filter in employees table
+        window.dispatchEvent(new CustomEvent('closeProjectEmployeesModal'));
     }
 }
 
