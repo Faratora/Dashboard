@@ -125,8 +125,8 @@ function openEmployeesModal(projectId) {
             // Employee revenue = revenuePerEffectiveCapacity × employeeEffectiveCapacity
             const revenue = revenuePerUnit * effectiveCapacity;
 
-            // Cost: based on assigned capacity (salary)
-            const cost = employee.salary || 0;
+            // Cost: salary × max(0.5, capacity) for assigned employees
+            const cost = (employee.salary || 0) * Math.max(0.5, capacity);
 
             // Profit = revenue - cost
             const profit = revenue - cost;
