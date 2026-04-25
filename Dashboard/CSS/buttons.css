@@ -124,14 +124,16 @@ button:hover:disabled {
     display: none !important;
 }
 .show-employees-btn,
-.change-btn {
+.change-btn,
+.show-assignments-btn {
     background: #3498db;
     padding: 5px 12px;
     font-size: 12px;
 }
 
 .show-employees-btn:hover,
-.change-btn:hover {
+.change-btn:hover,
+.show-assignments-btn:hover {
     background: #2980b9;
 }
 .availability-btn {

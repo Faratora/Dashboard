@@ -4,6 +4,7 @@ import {
     deleteEmployee,
     updateEmployee,
     getEmployees,
+    getProjects,
     formatCurrency,
     escapeHtml,
 } from './dataStorage.js';
@@ -134,6 +135,11 @@ function renderEmployeeRow(employee) {
     const assignedCapacity = parseFloat(employee.assignedCapacity) || 0;
     const isAssignDisabled = assignedCapacity >= 1.5;
 
+    // Count employees in the same project
+    const allEmployees = getEmployees();
+    const projectEmployees = employee.project ? allEmployees.filter(e => e.project === employee.project) : [];
+    const projectEmployeeCount = projectEmployees.length;
+
     const tr = document.createElement('tr');
     tr.dataset.id = employee.id;
     tr.innerHTML = `
@@ -143,7 +149,12 @@ function renderEmployeeRow(employee) {
         <td class="position-cell">${escapeHtml(employee.position)}<span class="edit-pencil" data-field="position" data-id="${employee.id}">✎</span></td>
         <td class="salary-cell">${formatCurrency(employee.salary)}<span class="edit-pencil" data-field="salary" data-id="${employee.id}">✎</span></td>
         <td>${formatCurrency(employee.estimatedPayment)}</td>
-        <td>${escapeHtml(employee.project || '-')}</td>
+        <td>
+            <span class="project-cell">
+                <span class="project-name">${escapeHtml(employee.project || '-')}</span>
+                ${employee.project ? `<button class="show-assignments-btn" data-project="${employee.project}">Show Assignments (${projectEmployeeCount})</button>` : ''}
+            </span>
+        </td>
         <td>${formatCurrency(employee.estimatedIncome)}</td>
         <td>
             <button class="availability-btn" data-id="${employee.id}">Availability</button>
@@ -159,6 +170,7 @@ function renderEmployeeRow(employee) {
     const deleteBtn = tr.querySelector('.delete-btn');
     const availBtn = tr.querySelector('.availability-btn');
     const assignBtn = tr.querySelector('.assign-btn');
+    const showAssignmentsBtn = tr.querySelector('.show-assignments-btn');
 
     availBtn.addEventListener('click', () => {
         log('Availability button clicked for employee: ' + employee.id);
@@ -169,6 +181,18 @@ function renderEmployeeRow(employee) {
         log('Assign button clicked for employee: ' + employee.id);
         window.dispatchEvent(new CustomEvent('showAssignEmployee', { detail: { employeeId: employee.id } }));
     });
+
+    if (showAssignmentsBtn) {
+        showAssignmentsBtn.addEventListener('click', () => {
+            log('Show assignments button clicked for project: ' + employee.project);
+            // Look up project by name to get its id for the event
+            const projects = getProjects();
+            const project = projects.find(p => p.projectName === employee.project);
+            if (project) {
+                window.dispatchEvent(new CustomEvent('showProjectEmployees', { detail: { projectId: project.id } }));
+            }
+        });
+    }
 
     editBtn.addEventListener('click', () => {
         log('Edit button clicked for employee: ' + employee.id);
