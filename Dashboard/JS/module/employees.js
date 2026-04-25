@@ -290,6 +290,14 @@ function initSortFilter() {
         },
     });
 
+    // Reset filters button
+    const clearBtn = $('#clear-employee-filters-btn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            resetAllFilters();
+        });
+    }
+
     // Show/hide clear button on initial load
     updateClearButtonVisibility();
 
