@@ -1,10 +1,50 @@
 import { $, log } from './utils.js';
 import { validateProject, validateEmployee } from './validator.js';
-import { getProjects, getEmployees } from './dataStorage.js';
+import { getProjects, getEmployees, getCurrentPeriod } from './dataStorage.js';
 
 let editMode = null;
 let editingId = null;
 let currentProjectId = null;
+
+// Calculate weekdays in the current month
+function getWeekdaysInMonth() {
+    const period = getCurrentPeriod();
+    const [year, month] = period.split('-').map(Number);
+    // month is 1-indexed in our data, but Date expects 0-indexed
+    const date = new Date(year, month - 1, 1);
+    const daysInMonth = new Date(year, month, 0).getDate();
+    
+    let weekdays = 0;
+    for (let day = 1; day <= daysInMonth; day++) {
+        date.setDate(day);
+        const dayOfWeek = date.getDay();
+        // 0 = Sunday, 6 = Saturday
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+            weekdays++;
+        }
+    }
+    return weekdays;
+}
+
+// Count vacation days that fall on weekdays in the current month
+function getWeekdayVacationDays(vacationDays, year, month) {
+    if (!Array.isArray(vacationDays) || vacationDays.length === 0) {
+        return 0;
+    }
+    let weekdayVacations = 0;
+    for (const vacDay of vacationDays) {
+        const vacDate = new Date(vacDay);
+        // Check if this vacation day is in the current month
+        if (vacDate.getFullYear() === year && vacDate.getMonth() + 1 === month) {
+            const dayOfWeek = vacDate.getDay();
+            // Only count if it's a weekday (Mon-Fri)
+            if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+                weekdayVacations++;
+            }
+        }
+    }
+    return weekdayVacations;
+}
 
 function populateEmployeeProjectSelect() {
     const projectSelect = $('#employee-project');
@@ -14,7 +54,7 @@ function populateEmployeeProjectSelect() {
     const projects = getProjects();
     projects.forEach((project) => {
         const option = document.createElement('option');
-        option.value = project.id;
+        option.value = project.projectName;
         option.textContent = project.projectName;
         projectSelect.appendChild(option);
     });
@@ -42,7 +82,12 @@ function openEmployeesModal(projectId) {
     // ${project.projectName}
     tbody.innerHTML = '';
     const allEmployees = getEmployees();
-    const employees = allEmployees.filter((e) => e.project === project.id);
+    const employees = allEmployees.filter((e) => e.project === project.projectName);
+
+    // Get current period for weekday calculations
+    const period = getCurrentPeriod();
+    const [currentYear, currentMonth] = period.split('-').map(Number);
+    const weekdaysInMonth = getWeekdaysInMonth();
 
     if (employees.length === 0) {
         tbody.innerHTML =
@@ -51,33 +96,32 @@ function openEmployeesModal(projectId) {
         employees.forEach((employee) => {
             const capacity = employee.capacity || 1;
             const fit = employee.fit || 1;
-            const vacationDays = employee.vacationDays || 0;
+            const vacationDays = employee.vacationDays || [];
 
-            // Vacation coefficient: (20 - vacationDays) / 20
-            const vacationCoefficient = (20 - vacationDays) / 20;
+            // Vacation coefficient: (weekdaysInMonth - weekdayVacationDays) / weekdaysInMonth
+            const weekdayVacationDays = getWeekdayVacationDays(vacationDays, currentYear, currentMonth);
+            const vacationCoefficient = weekdaysInMonth > 0 
+                ? (weekdaysInMonth - weekdayVacationDays) / weekdaysInMonth 
+                : 0;
 
             // Effective capacity: capacity × fit × vacation coefficient (3 decimal places)
-            const effectiveCapacity = capacity * fit * vacationCoefficient;
+            const effectiveCapacity = Number((capacity * fit * vacationCoefficient).toFixed(3));
 
             // Get project budget for revenue calculation
             const budget = project.budget || 0;
             const totalCapacity = project.employeeCapacity || 0;
 
             // Capacity for revenue = max(project capacity, sum of effective capacities of all employees)
-            // We'll calculate this after summing all effective capacities
-            // For now, calculate revenue per effective capacity unit
-            // Revenue = (budget / capacityForRevenue) × effectiveCapacity
-
-            // Cost: based on assigned capacity (salary)
-            const cost = employee.salary || 0;
-
-            // Revenue allocation: proportional to effective capacity
             // We need total effective capacity of all employees in this project
             const totalEffectiveCapacity = employees.reduce((sum, emp) => {
                 const cap = emp.capacity || 1;
                 const f = emp.fit || 1;
-                const vac = emp.vacationDays || 0;
-                return sum + cap * f * ((20 - vac) / 20);
+                const vac = emp.vacationDays || [];
+                const empWeekdayVacations = getWeekdayVacationDays(vac, currentYear, currentMonth);
+                const empVacationCoefficient = weekdaysInMonth > 0 
+                    ? (weekdaysInMonth - empWeekdayVacations) / weekdaysInMonth 
+                    : 0;
+                return sum + cap * f * empVacationCoefficient;
             }, 0);
 
             const capacityForRevenue = Math.max(totalCapacity, totalEffectiveCapacity);
@@ -86,6 +130,9 @@ function openEmployeesModal(projectId) {
                 const revenuePerUnit = budget / capacityForRevenue;
                 revenue = revenuePerUnit * effectiveCapacity;
             }
+
+            // Cost: based on assigned capacity (salary)
+            const cost = employee.salary || 0;
 
             // Profit = revenue - cost
             const profit = revenue - cost;
@@ -98,7 +145,7 @@ function openEmployeesModal(projectId) {
                 <td><a href="#" class="employee-link" data-id="${employee.id}">${employee.name} ${employee.surname}</a></td>
                 <td>${capacity.toFixed(2)}</td>
                 <td>${fit.toFixed(2)}</td>
-                <td>${vacationDays}</td>
+                <td>${vacationDays.length}</td>
                 <td>${effectiveCapacity.toFixed(3)}</td>
                 <td>$${revenue.toFixed(2)}</td>
                 <td>$${cost.toFixed(2)}</td>
@@ -512,7 +559,7 @@ export function initModal() {
         if (assignPredictedCapacity) assignPredictedCapacity.textContent = predictedTotal.toFixed(2);
         if (assignAvailableCapacity) {
             const available = Math.max(0, 1.5 - currentTotalCapacity);
-            assignAvailableCapacity.textContent = `Available capacity: ${available.toFixed(2)}`;
+            assignAvailableCapacity.textContent = `Available: ${available.toFixed(2)}`;
         }
 
         // Show sliders and calculations only if project is selected
@@ -546,7 +593,7 @@ export function initModal() {
         }
 
         if (assignCurrentCapacity) {
-            assignCurrentCapacity.textContent = `Current total capacity: ${currentTotalCapacity.toFixed(2)} / 1.5`;
+            assignCurrentCapacity.textContent = `Current Сapacity: ${currentTotalCapacity.toFixed(2)} / 1.5`;
         }
 
         if (assignCapacitySlider) {

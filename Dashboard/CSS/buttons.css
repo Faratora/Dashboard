@@ -27,6 +27,7 @@ button:hover:disabled {
     background: #ccc;
 }
 
+
 .toggle-btn {
     background: var(--color-side-panel);
     font-size: 24px;
@@ -63,9 +64,14 @@ button:hover:disabled {
     background: var(--background-btn-close-hover);
 }
 
+.btn {
+
+}
+
 .edit-btn,
-.delete-btn {
-    padding: 6px 12px;
+.delete-btn,
+.unassign-btn {
+    padding: 5px 12px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 12px;
@@ -84,7 +90,7 @@ button:hover:disabled {
     background: var(--color-button-blue);
     color: white;
     border: none;
-    padding: 5px 10px;
+    padding: 5px 12px;
     border-radius: 4px;
 }
 
@@ -101,7 +107,7 @@ button:hover:disabled {
 
 #employees-modal .edit-btn,
 #employees-modal .assign-unbtn {
-    padding: 5px 10px;
+    padding: 5px 12px;
     font-size: 12px;
     margin-right: 5px;
 }

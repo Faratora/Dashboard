@@ -2,6 +2,46 @@ import { $, log, generateId, formatCurrency, escapeHtml } from './utils.js';
 
 const STORAGE_KEY = 'monthlyData';
 
+// Calculate weekdays in the current month
+function getWeekdaysInMonth() {
+    const period = getCurrentPeriod();
+    const [year, month] = period.split('-').map(Number);
+    // month is 1-indexed in our data, but Date expects 0-indexed
+    const date = new Date(year, month - 1, 1);
+    const daysInMonth = new Date(year, month, 0).getDate();
+    
+    let weekdays = 0;
+    for (let day = 1; day <= daysInMonth; day++) {
+        date.setDate(day);
+        const dayOfWeek = date.getDay();
+        // 0 = Sunday, 6 = Saturday
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+            weekdays++;
+        }
+    }
+    return weekdays;
+}
+
+// Count vacation days that fall on weekdays in the current month
+function getWeekdayVacationDays(vacationDays, year, month) {
+    if (!Array.isArray(vacationDays) || vacationDays.length === 0) {
+        return 0;
+    }
+    let weekdayVacations = 0;
+    for (const vacDay of vacationDays) {
+        const vacDate = new Date(vacDay);
+        // Check if this vacation day is in the current month
+        if (vacDate.getFullYear() === year && vacDate.getMonth() + 1 === month) {
+            const dayOfWeek = vacDate.getDay();
+            // Only count if it's a weekday (Mon-Fri)
+            if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+                weekdayVacations++;
+            }
+        }
+    }
+    return weekdayVacations;
+}
+
 export function getCurrentPeriod() {
     const monthSelect = $('#month-select');
     const yearSelect = $('#year-select');
@@ -69,46 +109,30 @@ export function addProject(projectData) {
 export function deleteProject(id) {
     const data = loadData();
     const period = getCurrentPeriod();
-
-    if (data.monthlyData[period]) {
-        data.monthlyData[period].projects = data.monthlyData[period].projects.filter((p) => p.id !== id);
-        saveData(data);
-    }
+    data.monthlyData[period].projects = data.monthlyData[period].projects.filter((p) => p.id !== id);
+    // Also delete employees assigned to this project
+    data.monthlyData[period].employees = data.monthlyData[period].employees.filter((e) => e.project !== id);
+    saveData(data);
 }
 
 export function updateProject(id, projectData) {
     const data = loadData();
     const period = getCurrentPeriod();
-
-    if (data.monthlyData[period]) {
-        const index = data.monthlyData[period].projects.findIndex((p) => p.id === id);
-        if (index !== -1) {
-            data.monthlyData[period].projects[index] = {
-                ...data.monthlyData[period].projects[index],
-                companyName: projectData.companyName,
-                projectName: projectData.projectName,
-                budget: parseFloat(projectData.budget) || 0,
-                employeeCapacity: parseInt(projectData.employeeCapacity) || 0,
-            };
-            saveData(data);
-            return data.monthlyData[period].projects[index];
-        }
+    const project = data.monthlyData[period].projects.find((p) => p.id === id);
+    if (project) {
+        Object.assign(project, projectData);
+        saveData(data);
     }
-    return null;
 }
 
 export function getProjects() {
-    const period = getCurrentPeriod();
-    log('getProjects called for period: ' + period);
-    const monthData = getMonthData();
-    return [...monthData.projects];
+    return getMonthData().projects;
 }
 
 export function addEmployee(employeeData) {
-    log('addEmployee called with: ' + JSON.stringify(employeeData));
+    log('addEmployee called');
     const data = loadData();
     const period = getCurrentPeriod();
-    log('Period: ' + period);
 
     if (!data.monthlyData[period]) {
         data.monthlyData[period] = { employees: [], projects: [] };
@@ -118,21 +142,19 @@ export function addEmployee(employeeData) {
         id: generateId(),
         name: employeeData.name,
         surname: employeeData.surname,
-        age: parseInt(employeeData.age) || 0,
+        age: parseInt(employeeData.age),
+        birthDate: employeeData.birthDate,
         position: employeeData.position,
         salary: parseFloat(employeeData.salary) || 0,
-        capacity: parseFloat(employeeData.capacity) || 1,
-        fit: parseFloat(employeeData.fit) || 1,
-        vacationDays: parseInt(employeeData.vacationDays) || 0,
+        capacity: 1,
+        fit: 1,
+        vacationDays: 0,
         project: employeeData.project || '',
         assignedCapacity: 0,
-        estimatedPayment: 0,
-        estimatedIncome: 0,
     };
 
     data.monthlyData[period].employees.push(newEmployee);
     saveData(data);
-    log(`Employee saved with id: ${newEmployee.id}, total employees: ${data.monthlyData[period].employees.length}`);
 
     return newEmployee;
 }
@@ -140,50 +162,29 @@ export function addEmployee(employeeData) {
 export function deleteEmployee(id) {
     const data = loadData();
     const period = getCurrentPeriod();
-
-    if (data.monthlyData[period]) {
-        data.monthlyData[period].employees = data.monthlyData[period].employees.filter((e) => e.id !== id);
-        saveData(data);
-    }
+    data.monthlyData[period].employees = data.monthlyData[period].employees.filter((e) => e.id !== id);
+    saveData(data);
 }
 
 export function updateEmployee(id, employeeData) {
     const data = loadData();
     const period = getCurrentPeriod();
-
-    if (data.monthlyData[period]) {
-        const index = data.monthlyData[period].employees.findIndex((e) => e.id === id);
-        if (index !== -1) {
-            data.monthlyData[period].employees[index] = {
-                ...data.monthlyData[period].employees[index],
-                name: employeeData.name,
-                surname: employeeData.surname,
-                age: parseInt(employeeData.age) || 0,
-                position: employeeData.position,
-                salary: parseFloat(employeeData.salary) || 0,
-                capacity: parseFloat(employeeData.capacity) || 1,
-                fit: parseFloat(employeeData.fit) || 1,
-                vacationDays: Array.isArray(employeeData.vacationDays) 
-                    ? employeeData.vacationDays 
-                    : parseInt(employeeData.vacationDays) || 0,
-                project: employeeData.project || '',
-                assignedCapacity: parseFloat(employeeData.assignedCapacity) || 0,
-            };
-            saveData(data);
-            return data.monthlyData[period].employees[index];
-        }
+    const employeeIndex = data.monthlyData[period].employees.findIndex((e) => e.id === id);
+    if (employeeIndex !== -1) {
+        Object.assign(data.monthlyData[period].employees[employeeIndex], employeeData);
+        saveData(data);
     }
-    return null;
 }
 
 export function getEmployees() {
     const period = getCurrentPeriod();
-    log('getEmployees called for period: ' + period);
     const monthData = getMonthData();
     const employees = [...monthData.employees];
 
-    // Calculate estimatedIncome for each employee
+    // Calculate estimatedIncome for each employee using weekday-based vacation calculation
     const projects = getProjects();
+    const [currentYear, currentMonth] = period.split('-').map(Number);
+    const weekdaysInMonth = getWeekdaysInMonth();
 
     return employees.map((emp) => {
         if (!emp.project) {
@@ -195,14 +196,16 @@ export function getEmployees() {
             return { ...emp, estimatedIncome: 0, estimatedPayment: emp.salary };
         }
 
-        // Calculate total effective capacity for the project
+        // Calculate total effective capacity for the project using weekday-based calculation
         const projectEmployees = employees.filter((e) => e.project === emp.project);
         const totalEffectiveCapacity = projectEmployees.reduce((sum, e) => {
             const capacity = e.capacity || 1;
             const fit = e.fit || 1;
-            const vacationDaysCount = Array.isArray(e.vacationDays) ? e.vacationDays.length : (e.vacationDays || 0);
-            const vacation = (20 - vacationDaysCount) / 20;
-            return sum + capacity * fit * vacation;
+            const weekdayVacations = getWeekdayVacationDays(e.vacationDays, currentYear, currentMonth);
+            const vacationCoefficient = weekdaysInMonth > 0 
+                ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth 
+                : 0;
+            return sum + capacity * fit * vacationCoefficient;
         }, 0);
 
         // Capacity for revenue = max(project capacity, total effective capacity used)
@@ -217,12 +220,14 @@ export function getEmployees() {
         // Revenue per effective capacity = budget ÷ capacity for revenue
         const revenuePerEffectiveCapacity = project.budget / capacityForRevenue;
 
-        // Calculate this employee's effective capacity
+        // Calculate this employee's effective capacity using weekday-based calculation
         const empCapacity = emp.capacity || 1;
         const empFit = emp.fit || 1;
-        const empVacationDaysCount = Array.isArray(emp.vacationDays) ? emp.vacationDays.length : (emp.vacationDays || 0);
-        const empVacation = (20 - empVacationDaysCount) / 20;
-        const empEffectiveCapacity = empCapacity * empFit * empVacation;
+        const empWeekdayVacations = getWeekdayVacationDays(emp.vacationDays, currentYear, currentMonth);
+        const empVacationCoefficient = weekdaysInMonth > 0 
+            ? (weekdaysInMonth - empWeekdayVacations) / weekdaysInMonth 
+            : 0;
+        const empEffectiveCapacity = empCapacity * empFit * empVacationCoefficient;
 
         // Employee's revenue = revenue per effective capacity × employee's effective capacity
         const estimatedIncome = revenuePerEffectiveCapacity * empEffectiveCapacity;
