@@ -13,7 +13,7 @@ function getWeekdaysInMonth() {
     // month is 1-indexed in our data, but Date expects 0-indexed
     const date = new Date(year, month - 1, 1);
     const daysInMonth = new Date(year, month, 0).getDate();
-    
+
     let weekdays = 0;
     for (let day = 1; day <= daysInMonth; day++) {
         date.setDate(day);
@@ -100,9 +100,8 @@ function openEmployeesModal(projectId) {
 
             // Vacation coefficient: (weekdaysInMonth - weekdayVacationDays) / weekdaysInMonth
             const weekdayVacationDays = getWeekdayVacationDays(vacationDays, currentYear, currentMonth);
-            const vacationCoefficient = weekdaysInMonth > 0 
-                ? (weekdaysInMonth - weekdayVacationDays) / weekdaysInMonth 
-                : 0;
+            const vacationCoefficient =
+                weekdaysInMonth > 0 ? (weekdaysInMonth - weekdayVacationDays) / weekdaysInMonth : 0;
 
             // Effective capacity: capacity × fit × vacation coefficient (3 decimal places)
             const effectiveCapacity = Number((capacity * fit * vacationCoefficient).toFixed(3));
@@ -118,9 +117,8 @@ function openEmployeesModal(projectId) {
                 const f = emp.fit || 1;
                 const vac = emp.vacationDays || [];
                 const empWeekdayVacations = getWeekdayVacationDays(vac, currentYear, currentMonth);
-                const empVacationCoefficient = weekdaysInMonth > 0 
-                    ? (weekdaysInMonth - empWeekdayVacations) / weekdaysInMonth 
-                    : 0;
+                const empVacationCoefficient =
+                    weekdaysInMonth > 0 ? (weekdaysInMonth - empWeekdayVacations) / weekdaysInMonth : 0;
                 return sum + cap * f * empVacationCoefficient;
             }, 0);
 
@@ -245,14 +243,14 @@ export function initModal() {
     const openFilterModal = (column, headerText) => {
         currentFilterColumn = column;
         const filterModalTitle = $('#filter-modal-title');
-        
+
         // Format column name for display
-        const columnName = column.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-        
+        const columnName = column.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase());
+
         if (filterModalTitle) {
             filterModalTitle.textContent = `Filter by ${columnName}`;
         }
-        
+
         if (filterInput) {
             // Set dynamic placeholder
             const placeholders = {
@@ -550,7 +548,17 @@ export function initModal() {
     const updateAssignCalculations = () => {
         const assignedCapacity = parseFloat(assignCapacitySlider.value) || 0;
         const fitCoefficient = parseFloat(assignFitSlider.value) || 1;
-        const effectiveCapacity = assignedCapacity * fitCoefficient;
+
+        // Calculate vacation coefficient for current employee
+        const period = getCurrentPeriod();
+        const [currentYear, currentMonth] = period.split('-').map(Number);
+        const weekdaysInMonth = getWeekdaysInMonth();
+        const vacationDays = currentAssignEmployee?.vacationDays || [];
+        const weekdayVacationDays = getWeekdayVacationDays(vacationDays, currentYear, currentMonth);
+        const vacationCoefficient = weekdaysInMonth > 0 ? (weekdaysInMonth - weekdayVacationDays) / weekdaysInMonth : 0;
+
+        // Effective capacity: assignedCapacity × fit × vacationCoefficient
+        const effectiveCapacity = assignedCapacity * fitCoefficient * vacationCoefficient;
         const predictedTotal = currentTotalCapacity + effectiveCapacity;
 
         if (assignCapacityValue) assignCapacityValue.textContent = assignedCapacity.toFixed(1);
@@ -645,11 +653,19 @@ export function initModal() {
         const fitCoefficient = parseFloat(assignFitSlider.value) || 1;
         const project = assignProjectSelect.value;
 
+        // Calculate vacation coefficient for assigned capacity
+        const period = getCurrentPeriod();
+        const [currentYear, currentMonth] = period.split('-').map(Number);
+        const weekdaysInMonth = getWeekdaysInMonth();
+        const vacationDays = currentAssignEmployee?.vacationDays || [];
+        const weekdayVacationDays = getWeekdayVacationDays(vacationDays, currentYear, currentMonth);
+        const vacationCoefficient = weekdaysInMonth > 0 ? (weekdaysInMonth - weekdayVacationDays) / weekdaysInMonth : 0;
+
         const updatedEmployee = {
             ...currentAssignEmployee,
             capacity: assignedCapacity,
             fit: fitCoefficient,
-            assignedCapacity: currentTotalCapacity + assignedCapacity * fitCoefficient,
+            assignedCapacity: currentTotalCapacity + assignedCapacity * fitCoefficient * vacationCoefficient,
             project: project,
         };
 
