@@ -212,6 +212,26 @@ export function initEmployees() {
         return;
     }
 
+    // Clear column filters on initialization so filters don't persist across sessions
+    const filterableColumns = ['name', 'surname', 'age', 'position', 'salary', 'estimatedPayment', 'project', 'estimatedIncome'];
+    filterableColumns.forEach((column) => {
+        window[`filter_${column}`] = '';
+    });
+
+    // Reset filter icon colors
+    const thead = $('#employees-thead');
+    if (thead) {
+        filterableColumns.forEach((column) => {
+            const th = thead.querySelector(`th[data-filter="${column}"]`);
+            if (th) {
+                const filterIcon = th.querySelector('.filter-icon');
+                if (filterIcon) {
+                    filterIcon.style.color = '';
+                }
+            }
+        });
+    }
+
     window.addEmployeeCallback = handleAddEmployee;
     window.editEmployeeCallback = handleEditEmployee;
 
