@@ -93,6 +93,22 @@ function openEmployeesModal(projectId) {
         tbody.innerHTML =
             '<tr><td colspan="9" style="text-align: center; padding: 20px;">No employees assigned</td></tr>';
     } else {
+        // Calculate total effective capacity once (for revenue distribution)
+        const totalEffectiveCapacity = employees.reduce((sum, emp) => {
+            const cap = emp.capacity || 1;
+            const f = emp.fit || 1;
+            const vac = emp.vacationDays || [];
+            const empWeekdayVacations = getWeekdayVacationDays(vac, currentYear, currentMonth);
+            const empVacationCoefficient =
+                weekdaysInMonth > 0 ? (weekdaysInMonth - empWeekdayVacations) / weekdaysInMonth : 0;
+            return sum + cap * f * empVacationCoefficient;
+        }, 0);
+
+        const budget = project.budget || 0;
+        const totalCapacity = project.employeeCapacity || 0;
+        const capacityForRevenue = Math.max(totalCapacity, totalEffectiveCapacity);
+        const revenuePerUnit = capacityForRevenue > 0 ? budget / capacityForRevenue : 0;
+
         employees.forEach((employee) => {
             const capacity = employee.capacity || 1;
             const fit = employee.fit || 1;
@@ -106,28 +122,8 @@ function openEmployeesModal(projectId) {
             // Effective capacity: capacity × fit × vacation coefficient (3 decimal places)
             const effectiveCapacity = Number((capacity * fit * vacationCoefficient).toFixed(3));
 
-            // Get project budget for revenue calculation
-            const budget = project.budget || 0;
-            const totalCapacity = project.employeeCapacity || 0;
-
-            // Capacity for revenue = max(project capacity, sum of effective capacities of all employees)
-            // We need total effective capacity of all employees in this project
-            const totalEffectiveCapacity = employees.reduce((sum, emp) => {
-                const cap = emp.capacity || 1;
-                const f = emp.fit || 1;
-                const vac = emp.vacationDays || [];
-                const empWeekdayVacations = getWeekdayVacationDays(vac, currentYear, currentMonth);
-                const empVacationCoefficient =
-                    weekdaysInMonth > 0 ? (weekdaysInMonth - empWeekdayVacations) / weekdaysInMonth : 0;
-                return sum + cap * f * empVacationCoefficient;
-            }, 0);
-
-            const capacityForRevenue = Math.max(totalCapacity, totalEffectiveCapacity);
-            let revenue = 0;
-            if (capacityForRevenue > 0) {
-                const revenuePerUnit = budget / capacityForRevenue;
-                revenue = revenuePerUnit * effectiveCapacity;
-            }
+            // Employee revenue = revenuePerEffectiveCapacity × employeeEffectiveCapacity
+            const revenue = revenuePerUnit * effectiveCapacity;
 
             // Cost: based on assigned capacity (salary)
             const cost = employee.salary || 0;
