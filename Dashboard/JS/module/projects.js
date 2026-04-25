@@ -7,6 +7,9 @@ import {
     getEmployees,
     formatCurrency,
     escapeHtml,
+    getCurrentPeriod,
+    getWeekdaysInMonth,
+    getWeekdayVacationDays,
 } from './dataStorage.js';
 
 let sortColumn = null;
@@ -55,6 +58,61 @@ function calculateEstimatedIncome(projectName, budget) {
     const totalRevenue = revenuePerEffectiveCapacity * totalEffectiveCapacity;
 
     return totalRevenue;
+}
+
+function calculateProjectProfit(projectName, budget) {
+    const employees = getEmployees();
+    const period = getCurrentPeriod();
+    const [currentYear, currentMonth] = period.split('-').map(Number);
+    const weekdaysInMonth = getWeekdaysInMonth();
+    
+    const projectEmployees = employees.filter((e) => e.project === projectName);
+
+    // Calculate total effective capacity
+    const totalEffectiveCapacity = projectEmployees.reduce((sum, emp) => {
+        const capacity = emp.capacity || 1;
+        const fit = emp.fit || 1;
+        const weekdayVacations = getWeekdayVacationDays(emp.vacationDays || [], currentYear, currentMonth);
+        const vacationCoefficient = weekdaysInMonth > 0 
+            ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth 
+            : 0;
+        return sum + capacity * fit * vacationCoefficient;
+    }, 0);
+
+    // Capacity for revenue
+    const capacityForRevenue = totalEffectiveCapacity;
+
+    if (capacityForRevenue === 0) {
+        // All employees have bench cost
+        return projectEmployees.reduce((sum, emp) => {
+            const cost = (emp.salary || 0) * Math.max(0.5, emp.capacity || 1);
+            return sum - cost;
+        }, 0);
+    }
+
+    const revenuePerEffectiveCapacity = budget / capacityForRevenue;
+
+    // Calculate total revenue and total cost
+    let totalRevenue = 0;
+    let totalCost = 0;
+
+    projectEmployees.forEach((emp) => {
+        const empCapacity = emp.capacity || 1;
+        const empFit = emp.fit || 1;
+        const weekdayVacations = getWeekdayVacationDays(emp.vacationDays || [], currentYear, currentMonth);
+        const vacationCoefficient = weekdaysInMonth > 0 
+            ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth 
+            : 0;
+        const empEffectiveCapacity = empCapacity * empFit * vacationCoefficient;
+        
+        const empRevenue = revenuePerEffectiveCapacity * empEffectiveCapacity;
+        const empCost = (emp.salary || 0) * Math.max(0.5, empCapacity);
+        
+        totalRevenue += empRevenue;
+        totalCost += empCost;
+    });
+
+    return totalRevenue - totalCost;
 }
 
 function sortAndFilterProjects(projects) {

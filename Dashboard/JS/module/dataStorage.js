@@ -190,14 +190,17 @@ export function getEmployees() {
         if (!emp.project) {
             // Bench cost: salary × 0.5 for unassigned employees
             const benchCost = (emp.salary || 0) * 0.5;
-            return { ...emp, estimatedIncome: 0, estimatedPayment: benchCost };
+            // Bench profit = 0 revenue - bench cost = negative profit
+            const benchProfit = 0 - benchCost;
+            return { ...emp, estimatedIncome: 0, estimatedPayment: benchCost, profit: benchProfit };
         }
 
         const project = projects.find((p) => p.projectName === emp.project);
         if (!project) {
             // Bench cost: salary × 0.5 for employees without valid project
             const benchCost = (emp.salary || 0) * 0.5;
-            return { ...emp, estimatedIncome: 0, estimatedPayment: benchCost };
+            const benchProfit = 0 - benchCost;
+            return { ...emp, estimatedIncome: 0, estimatedPayment: benchCost, profit: benchProfit };
         }
 
         // Calculate total effective capacity for the project using weekday-based calculation
@@ -220,7 +223,9 @@ export function getEmployees() {
         if (capacityForRevenue === 0) {
             // Cost: salary × max(0.5, capacity) even when no revenue
             const cost = (emp.salary || 0) * Math.max(0.5, empCapacity);
-            return { ...emp, estimatedIncome: 0, estimatedPayment: cost };
+            // Profit = 0 revenue - cost
+            const profit = 0 - cost;
+            return { ...emp, estimatedIncome: 0, estimatedPayment: cost, profit };
         }
 
         // Revenue per effective capacity = budget ÷ capacity for revenue
@@ -242,8 +247,11 @@ export function getEmployees() {
         const cost = (emp.salary || 0) * Math.max(0.5, empCapacity);
         const estimatedPayment = cost;
 
-        return { ...emp, estimatedIncome, estimatedPayment };
+        // Profit = revenue - cost
+        const profit = estimatedIncome - cost;
+
+        return { ...emp, estimatedIncome, estimatedPayment, profit };
     });
 }
 
-export { formatCurrency, escapeHtml };
+export { formatCurrency, escapeHtml, getWeekdaysInMonth, getWeekdayVacationDays };
