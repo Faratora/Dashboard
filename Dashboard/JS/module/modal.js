@@ -462,7 +462,11 @@ export function initModal() {
     // Listen for showProjectEmployees event
     window.addEventListener('showProjectEmployees', (e) => {
         log('showProjectEmployees event received for project: ' + e.detail.projectId);
-        openEmployeesModal(e.detail.projectId);
+        // Close modal if already open to force refresh
+        closeEmployeesModal();
+        setTimeout(() => {
+            openEmployeesModal(e.detail.projectId);
+        }, 10);
     });
 
     // Filter modal event listeners

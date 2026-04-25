@@ -11,11 +11,11 @@ import { getCurrentPeriod } from './module/dataStorage.js';
 document.addEventListener('DOMContentLoaded', () => {
     initSidebar();
     initPeriodSelector();
+    initSeedData();
     initProjects();
     initEmployees();
     initModal();
     initNavigation();
-    initSeedData();
     setupInputRestrictions();
 
     window.addEventListener('periodChanged', (e) => {
