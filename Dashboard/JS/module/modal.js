@@ -1,6 +1,6 @@
 import { $, log } from './utils.js';
 import { validateProject, validateEmployee } from './validator.js';
-import { getProjects, getEmployees, getCurrentPeriod } from './dataStorage.js';
+import { getProjects, getEmployees, getCurrentPeriod, formatCurrency } from './dataStorage.js';
 
 let editMode = null;
 let editingId = null;
@@ -145,8 +145,8 @@ function openEmployeesModal(projectId) {
                 <td>$${cost.toFixed(2)}</td>
                 <td class="${profitClass}">$${profit.toFixed(2)}</td>
                 <td>
-                    <button class="modal-edit-employee change-btn" data-id="${employee.id}">Change</button>
-                    <button class="modal-unassign-employee unassign-btn" data-id="${employee.id}">Unassign</button>
+                    <button class="modal-edit-employee change-btn" data-id="${employee.id}" data-project="${project.projectName}">Change</button>
+                    <button class="modal-unassign-employee unassign-btn" data-id="${employee.id}" data-project="${project.projectName}">Unassign</button>
                 </td>
             `;
             tbody.appendChild(tr);
@@ -158,14 +158,14 @@ function openEmployeesModal(projectId) {
     document.body.style.overflow = 'hidden';
 
     setTimeout(() => {
-        // Edit button handlers
-        tbody.querySelectorAll('.modal-edit-employee').forEach((btn) => {
+        // Change button handlers - open edit assignment modal
+        tbody.querySelectorAll('.change-btn').forEach((btn) => {
             btn.addEventListener('click', (e) => {
                 const empId = e.target.dataset.id;
+                const project = e.target.dataset.project;
                 const employee = allEmployees.find((emp) => emp.id === empId);
                 if (employee) {
-                    closeEmployeesModal();
-                    window.openAddEmployeeEditModal(employee);
+                    window.openEditAssignmentModal(employee, project);
                 }
             });
         });
@@ -173,15 +173,18 @@ function openEmployeesModal(projectId) {
         // Unassign button handlers
         tbody.querySelectorAll('.modal-unassign-employee').forEach((btn) => {
             btn.addEventListener('click', (e) => {
+                console.log('[Unassign button clicked]', e.target);
                 const empId = e.target.dataset.id;
-                if (window.editEmployeeCallback) {
-                    const employee = allEmployees.find((emp) => emp.id === empId);
-                    if (employee) {
-                        window.editEmployeeCallback(empId, { ...employee, project: '' });
-                    }
+                const project = e.target.dataset.project;
+                console.log('[Unassign] empId:', empId, 'project:', project);
+                const employee = allEmployees.find((emp) => emp.id === empId);
+                console.log('[Unassign] employee:', employee);
+                if (employee) {
+                    console.log('[Unassign] Calling openUnassignConfirmationModal');
+                    window.openUnassignConfirmationModal(employee, project);
+                } else {
+                    console.error('[Unassign] Employee not found!');
                 }
-                // Refresh modal
-                openEmployeesModal(projectId);
             });
         });
 
@@ -1005,4 +1008,286 @@ export function initModal() {
         log('Opening availability calendar for employee: ' + employeeId);
         openAvailabilityModal(employeeId);
     });
+
+    // Edit Assignment Modal
+    const editAssignmentBackdrop = $('#edit-assignment-backdrop');
+    const editAssignmentModal = $('#edit-assignment-modal');
+    const editAssignmentModalTitle = $('#edit-assignment-modal-title');
+    const editAssignmentEmployeeName = $('#edit-assignment-employee-name');
+    const editAssignmentProject = $('#edit-assignment-project');
+    const editAssignmentCapacitySlider = $('#edit-assignment-capacity-slider');
+    const editAssignmentCapacityValue = $('#edit-assignment-capacity-value');
+    const editAssignmentFitSlider = $('#edit-assignment-fit-slider');
+    const editAssignmentFitValue = $('#edit-assignment-fit-value');
+    const editAssignmentSaveBtn = $('#edit-assignment-save-btn');
+    const editAssignmentCancelBtn = $('#edit-assignment-cancel-btn');
+    const editAssignmentModalClose = $('#edit-assignment-modal-close');
+
+    let currentEditAssignmentEmployee = null;
+    let currentEditAssignmentProject = null;
+
+    const openEditAssignmentModal = (employee, project) => {
+        currentEditAssignmentEmployee = employee;
+        currentEditAssignmentProject = project;
+
+        if (!editAssignmentModal || !editAssignmentEmployeeName || !editAssignmentProject) return;
+
+        log('Opening edit assignment modal for employee: ' + employee.id);
+
+        // Set employee name and project
+        editAssignmentEmployeeName.textContent = `${employee.name} ${employee.surname}`;
+        editAssignmentProject.textContent = `Project: ${project}`;
+
+        // Set slider values
+        if (editAssignmentCapacitySlider) {
+            editAssignmentCapacitySlider.value = employee.capacity || 0.5;
+            editAssignmentCapacityValue.textContent = (employee.capacity || 0.5).toFixed(2);
+        }
+        if (editAssignmentFitSlider) {
+            editAssignmentFitSlider.value = employee.fit || 1.0;
+            editAssignmentFitValue.textContent = (employee.fit || 1.0).toFixed(2);
+        }
+
+        if (editAssignmentBackdrop) editAssignmentBackdrop.classList.remove('hidden');
+        if (editAssignmentModal) editAssignmentModal.classList.remove('hidden');
+    };
+
+    window.openEditAssignmentModal = openEditAssignmentModal;
+
+    const closeEditAssignmentModal = () => {
+        if (editAssignmentBackdrop) editAssignmentBackdrop.classList.add('hidden');
+        if (editAssignmentModal) editAssignmentModal.classList.add('hidden');
+        currentEditAssignmentEmployee = null;
+        currentEditAssignmentProject = null;
+    };
+
+    const handleEditAssignmentSave = () => {
+        if (!currentEditAssignmentEmployee) return;
+
+        const capacity = parseFloat(editAssignmentCapacitySlider.value) || 0.5;
+        const fit = parseFloat(editAssignmentFitSlider.value) || 1.0;
+
+        log('Saving assignment: capacity=' + capacity + ', fit=' + fit);
+
+        const updatedEmployee = {
+            ...currentEditAssignmentEmployee,
+            capacity: capacity,
+            fit: fit,
+        };
+
+        window.dispatchEvent(
+            new CustomEvent('editAssignment', {
+                detail: { employeeId: currentEditAssignmentEmployee.id, employeeData: updatedEmployee },
+            })
+        );
+
+        closeEditAssignmentModal();
+    };
+
+    if (editAssignmentCapacitySlider) {
+        editAssignmentCapacitySlider.addEventListener('input', () => {
+            if (editAssignmentCapacityValue) {
+                editAssignmentCapacityValue.textContent = parseFloat(editAssignmentCapacitySlider.value).toFixed(2);
+            }
+        });
+    }
+
+    if (editAssignmentFitSlider) {
+        editAssignmentFitSlider.addEventListener('input', () => {
+            if (editAssignmentFitValue) {
+                editAssignmentFitValue.textContent = parseFloat(editAssignmentFitSlider.value).toFixed(2);
+            }
+        });
+    }
+
+    if (editAssignmentSaveBtn) {
+        editAssignmentSaveBtn.addEventListener('click', handleEditAssignmentSave);
+    }
+
+    if (editAssignmentCancelBtn) {
+        editAssignmentCancelBtn.addEventListener('click', closeEditAssignmentModal);
+    }
+
+    if (editAssignmentModalClose) {
+        editAssignmentModalClose.addEventListener('click', closeEditAssignmentModal);
+    }
+
+    if (editAssignmentBackdrop) {
+        editAssignmentBackdrop.addEventListener('click', closeEditAssignmentModal);
+    }
+
+    // Unassign Confirmation Modal
+    const unassignBackdrop = $('#unassign-backdrop');
+    const unassignModal = $('#unassign-modal');
+    const unassignModalTitle = $('#unassign-modal-title');
+    const unassignMessage = $('#unassign-message');
+    const unassignAssignedCapacity = $('#unassign-assigned-capacity');
+    const unassignSalaryShare = $('#unassign-salary-share');
+    const unassignBudgetShare = $('#unassign-budget-share');
+    const unassignEstimatedIncome = $('#unassign-estimated-income');
+    const unassignCurrentCapacity = $('#unassign-current-capacity');
+    const unassignAfterCapacity = $('#unassign-after-capacity');
+    const unassignIncomeNow = $('#unassign-income-now');
+    const unassignIncomeAfter = $('#unassign-income-after');
+    const unassignConfirmBtn = $('#unassign-confirm-btn');
+    const unassignCancelBtn = $('#unassign-cancel-btn');
+    const unassignModalClose = $('#unassign-modal-close');
+
+    let currentUnassignEmployee = null;
+    let currentUnassignProject = null;
+    let currentUnassignProjectId = null;
+
+    const openUnassignConfirmationModal = (employee, projectName) => {
+        currentUnassignEmployee = employee;
+        currentUnassignProject = projectName;
+
+        if (!unassignModal || !unassignMessage) return;
+
+        log('Opening unassign confirmation modal for employee: ' + employee.id);
+
+        // Get project info
+        const projects = getProjects();
+        const project = projects.find((p) => p.projectName === projectName);
+        if (!project) return;
+
+        currentUnassignProjectId = project.id;
+
+        // Get all employees in this project
+        const allEmployees = getEmployees();
+        const projectEmployees = allEmployees.filter((e) => e.project === projectName);
+
+        // Calculate current values
+        const capacity = employee.capacity || 0.5;
+        const salary = employee.salary || 0;
+        const budget = project.budget || 0;
+        const totalCapacity = project.employeeCapacity || 0;
+
+        // Calculate total effective capacity
+        const period = getCurrentPeriod();
+        const [currentYear, currentMonth] = period.split('-').map(Number);
+        const weekdaysInMonth = getWeekdaysInMonth();
+        
+        const totalEffectiveCapacity = projectEmployees.reduce((sum, emp) => {
+            const cap = emp.capacity || 1;
+            const fit = emp.fit || 1;
+            const weekdayVacations = getWeekdayVacationDays(emp.vacationDays || [], currentYear, currentMonth);
+            const vacationCoefficient = weekdaysInMonth > 0 
+                ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth 
+                : 0;
+            return sum + cap * fit * vacationCoefficient;
+        }, 0);
+
+        const capacityForRevenue = Math.max(totalCapacity, totalEffectiveCapacity);
+        const revenuePerUnit = capacityForRevenue > 0 ? budget / capacityForRevenue : 0;
+
+        // Employee's current effective capacity
+        const fit = employee.fit || 1;
+        const weekdayVacations = getWeekdayVacationDays(employee.vacationDays || [], currentYear, currentMonth);
+        const vacationCoefficient = weekdaysInMonth > 0 
+            ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth 
+            : 0;
+        const empEffectiveCapacity = capacity * fit * vacationCoefficient;
+
+        // Employee's estimated income
+        const empEstimatedIncome = revenuePerUnit * empEffectiveCapacity;
+
+        // Employee's salary share (cost)
+        const empSalaryShare = salary * Math.max(0.5, capacity);
+
+        // Employee's budget share (revenue)
+        const empBudgetShare = revenuePerUnit * empEffectiveCapacity;
+
+        // Project income now
+        const projectIncomeNow = projectEmployees.reduce((sum, emp) => {
+            const cap = emp.capacity || 1;
+            const f = emp.fit || 1;
+            const vac = emp.vacationDays || [];
+            const weekdayVacs = getWeekdayVacationDays(vac, currentYear, currentMonth);
+            const vacCoeff = weekdaysInMonth > 0 
+                ? (weekdaysInMonth - weekdayVacs) / weekdaysInMonth 
+                : 0;
+            const effCap = cap * f * vacCoeff;
+            const rev = revenuePerUnit * effCap;
+            const cost = (emp.salary || 0) * Math.max(0.5, cap);
+            return sum + rev - cost;
+        }, 0);
+
+        // After unassignment
+        const capacityAfter = totalEffectiveCapacity - empEffectiveCapacity;
+        const capacityForRevenueAfter = Math.max(totalCapacity, capacityAfter);
+        const revenuePerUnitAfter = capacityForRevenueAfter > 0 ? budget / capacityForRevenueAfter : 0;
+
+        // Project income after (without this employee)
+        const projectIncomeAfter = projectEmployees
+            .filter((emp) => emp.id !== employee.id)
+            .reduce((sum, emp) => {
+                const cap = emp.capacity || 1;
+                const f = emp.fit || 1;
+                const vac = emp.vacationDays || [];
+                const weekdayVacs = getWeekdayVacationDays(vac, currentYear, currentMonth);
+                const vacCoeff = weekdaysInMonth > 0 
+                    ? (weekdaysInMonth - weekdayVacs) / weekdaysInMonth 
+                    : 0;
+                const effCap = cap * f * vacCoeff;
+                const rev = revenuePerUnitAfter * effCap;
+                const cost = (emp.salary || 0) * Math.max(0.5, cap);
+                return sum + rev - cost;
+            }, 0);
+
+        // Set message
+        unassignMessage.textContent = `You want to unassign ${employee.name} ${employee.surname} (${capacity.toFixed(2)} capacity) from ${projectName}?`;
+
+        // Set details
+        if (unassignAssignedCapacity) unassignAssignedCapacity.textContent = capacity.toFixed(2);
+        if (unassignSalaryShare) unassignSalaryShare.textContent = formatCurrency(empSalaryShare);
+        if (unassignBudgetShare) unassignBudgetShare.textContent = formatCurrency(empBudgetShare);
+        if (unassignEstimatedIncome) unassignEstimatedIncome.textContent = formatCurrency(empEstimatedIncome);
+        if (unassignCurrentCapacity) unassignCurrentCapacity.textContent = `${totalEffectiveCapacity.toFixed(1)} / ${totalCapacity}`;
+        if (unassignAfterCapacity) unassignAfterCapacity.textContent = `${capacityAfter.toFixed(1)} / ${totalCapacity}`;
+        if (unassignIncomeNow) unassignIncomeNow.textContent = formatCurrency(projectIncomeNow);
+        if (unassignIncomeAfter) unassignIncomeAfter.textContent = formatCurrency(projectIncomeAfter);
+
+        if (unassignBackdrop) unassignBackdrop.classList.remove('hidden');
+        if (unassignModal) unassignModal.classList.remove('hidden');
+    };
+
+    window.openUnassignConfirmationModal = openUnassignConfirmationModal;
+
+    const closeUnassignConfirmationModal = () => {
+        if (unassignBackdrop) unassignBackdrop.classList.add('hidden');
+        if (unassignModal) unassignModal.classList.add('hidden');
+        currentUnassignEmployee = null;
+        currentUnassignProject = null;
+        currentUnassignProjectId = null;
+    };
+
+    const handleUnassignConfirm = () => {
+        if (!currentUnassignEmployee || !window.editEmployeeCallback) return;
+
+        log('Confirming unassign for employee: ' + currentUnassignEmployee.id);
+
+        window.editEmployeeCallback(currentUnassignEmployee.id, { 
+            ...currentUnassignEmployee, 
+            project: '' 
+        });
+
+        closeUnassignConfirmationModal();
+        openEmployeesModal(currentUnassignProjectId);
+    };
+
+    if (unassignConfirmBtn) {
+        unassignConfirmBtn.addEventListener('click', handleUnassignConfirm);
+    }
+
+    if (unassignCancelBtn) {
+        unassignCancelBtn.addEventListener('click', closeUnassignConfirmationModal);
+    }
+
+    if (unassignModalClose) {
+        unassignModalClose.addEventListener('click', closeUnassignConfirmationModal);
+    }
+
+    if (unassignBackdrop) {
+        unassignBackdrop.addEventListener('click', closeUnassignConfirmationModal);
+    }
 }

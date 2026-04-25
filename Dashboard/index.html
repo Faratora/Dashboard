@@ -7,6 +7,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Project & Employee Manager</title>
 	<link rel="stylesheet" href="./CSS/styles.css">
+	<link rel="stylesheet" href="./CSS/editAssignmentModal.css">
+	<link rel="stylesheet" href="./CSS/unassignModal.css">
 
 
 </head>
@@ -296,6 +298,59 @@
 				<div class="modal-footer">
 					<button type="button" id="set-vacation-btn" class="apply-btn">Set Vacation</button>
 				</div>
+			</div>
+		</div>
+
+		<!-- Edit Assignment Modal -->
+		<div id="edit-assignment-backdrop" class="hidden"></div>
+		<div id="edit-assignment-modal" class="hidden">
+			<div class="modal-header">
+				<h2 id="edit-assignment-modal-title">Edit Assignment</h2>
+				<button type="button" class="modal-close" id="edit-assignment-modal-close">&times;</button>
+			</div>
+			<div class="modal-body">
+				<div class="assignment-info">
+					<h3 id="edit-assignment-employee-name"></h3>
+					<p id="edit-assignment-project"></p>
+				</div>
+				<div class="form-group">
+					<label for="edit-assignment-capacity-slider">Capacity (0.0 - 1.5): <span id="edit-assignment-capacity-value">0.5</span></label>
+					<input type="range" id="edit-assignment-capacity-slider" min="0" max="1.5" step="0.1" value="0.5">
+				</div>
+				<div class="form-group">
+					<label for="edit-assignment-fit-slider">Project Fit (0.0-1.0): <span id="edit-assignment-fit-value">1.0</span></label>
+					<input type="range" id="edit-assignment-fit-slider" min="0" max="1" step="0.1" value="1.0">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="edit-assignment-cancel-btn" class="cancel-btn">Cancel</button>
+				<button type="button" id="edit-assignment-save-btn" class="apply-btn">Save</button>
+			</div>
+		</div>
+
+		<!-- Unassign Confirmation Modal -->
+		<div id="unassign-backdrop" class="hidden"></div>
+		<div id="unassign-modal" class="hidden">
+			<div class="modal-header">
+				<h2 id="unassign-modal-title">Unassign Confirmation</h2>
+				<button type="button" class="modal-close" id="unassign-modal-close">&times;</button>
+			</div>
+			<div class="modal-body">
+				<p id="unassign-message" style="margin-bottom: 20px; font-size: 15px; color: #333;"></p>
+				<div class="unassign-details">
+					<p><strong>Assigned Capacity:</strong> <span id="unassign-assigned-capacity"></span></p>
+					<p><strong>Employee Salary Share:</strong> <span id="unassign-salary-share"></span></p>
+					<p><strong>Budget Share:</strong> <span id="unassign-budget-share"></span></p>
+					<p><strong>Employee Estimated Income:</strong> <span id="unassign-estimated-income"></span></p>
+					<p style="margin-top: 15px;"><strong>Current Project Capacity:</strong> <span id="unassign-current-capacity"></span></p>
+					<p><strong>Capacity After Unassignment:</strong> <span id="unassign-after-capacity"></span></p>
+					<p style="margin-top: 15px;"><strong>Project Income Now:</strong> <span id="unassign-income-now"></span></p>
+					<p><strong>Project Income After:</strong> <span id="unassign-income-after"></span></p>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" id="unassign-cancel-btn" class="cancel-btn">Cancel</button>
+				<button type="button" id="unassign-confirm-btn" class="apply-btn">Unassign</button>
 			</div>
 		</div>
 

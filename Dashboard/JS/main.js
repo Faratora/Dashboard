@@ -27,4 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
         renderProjects();
         renderEmployees();
     });
+
+    window.addEventListener('editAssignment', (e) => {
+        const { employeeId, employeeData } = e.detail;
+        console.log('[editAssignment] Employee updated:', employeeId, employeeData);
+        // Refresh tables
+        renderProjects();
+        renderEmployees();
+    });
 });

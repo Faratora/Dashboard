@@ -15,29 +15,42 @@ import {
 let sortColumn = null;
 let sortDirection = 'asc';
 
-function calculateUsedCapacity(projectId) {
+function calculateUsedCapacity(projectName) {
     const employees = getEmployees();
-    const projectEmployees = employees.filter((e) => e.project === projectId);
+    const period = getCurrentPeriod();
+    const [currentYear, currentMonth] = period.split('-').map(Number);
+    const weekdaysInMonth = getWeekdaysInMonth();
+    
+    const projectEmployees = employees.filter((e) => e.project === projectName);
 
     return projectEmployees.reduce((sum, emp) => {
         const capacity = emp.capacity || 1;
         const fit = emp.fit || 1;
-        const vacation = emp.vacationDays ? (20 - emp.vacationDays) / 20 : 1;
-        return sum + capacity * fit * vacation;
+        const weekdayVacations = getWeekdayVacationDays(emp.vacationDays || [], currentYear, currentMonth);
+        const vacationCoefficient = weekdaysInMonth > 0 
+            ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth 
+            : 0;
+        return sum + capacity * fit * vacationCoefficient;
     }, 0);
 }
 
 function calculateEstimatedIncome(projectName, budget) {
     const employees = getEmployees();
+    const period = getCurrentPeriod();
+    const [currentYear, currentMonth] = period.split('-').map(Number);
+    const weekdaysInMonth = getWeekdaysInMonth();
+    
     const projectEmployees = employees.filter((e) => e.project === projectName);
 
     // Calculate total effective capacity used
     const totalEffectiveCapacity = projectEmployees.reduce((sum, emp) => {
         const capacity = emp.capacity || 1;
         const fit = emp.fit || 1;
-        const vacationDaysCount = Array.isArray(emp.vacationDays) ? emp.vacationDays.length : (emp.vacationDays || 0);
-        const vacation = (20 - vacationDaysCount) / 20;
-        return sum + capacity * fit * vacation;
+        const weekdayVacations = getWeekdayVacationDays(emp.vacationDays || [], currentYear, currentMonth);
+        const vacationCoefficient = weekdaysInMonth > 0 
+            ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth 
+            : 0;
+        return sum + capacity * fit * vacationCoefficient;
     }, 0);
 
     // Get project capacity from employeeCapacity field (project doesn't have separate capacity)
