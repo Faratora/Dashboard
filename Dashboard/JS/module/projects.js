@@ -402,10 +402,10 @@ function applyColumnFilter(column, value) {
 function updateClearButtonVisibility() {
     const clearBtn = $('#clear-project-filters-btn');
     if (clearBtn) {
-        const hasFilters = window.filter_companyName ||
-            window.filter_projectName ||
-            sortColumn;
-        clearBtn.style.display = hasFilters ? 'flex' : 'none';
+        const filterableColumns = ['companyName', 'projectName'];
+        const activeFiltersCount = filterableColumns.filter(col => window[`filter_${col}`]).length;
+        
+        clearBtn.style.display = activeFiltersCount >= 2 ? 'flex' : 'none';
     }
 }
 

@@ -400,17 +400,11 @@ function applyColumnFilter(column, value) {
 function updateClearButtonVisibility() {
     const clearBtn = $('#clear-employee-filters-btn');
     if (clearBtn) {
-        const hasFilters = window.filter_name ||
-            window.filter_surname ||
-            window.filter_age ||
-            window.filter_position ||
-            window.filter_salary ||
-            window.filter_estimatedPayment ||
-            window.filter_project ||
-            window.filter_estimatedIncome ||
-            projectFilter ||
-            sortColumn;
-        clearBtn.style.display = hasFilters ? 'flex' : 'none';
+        const filterableColumns = ['name', 'surname', 'age', 'position', 'salary', 'estimatedPayment', 'estimatedIncome'];
+        const activeColumnFilters = filterableColumns.filter(col => window[`filter_${col}`]).length;
+        const activeFiltersCount = activeColumnFilters + (projectFilter ? 1 : 0);
+        
+        clearBtn.style.display = activeFiltersCount >= 2 ? 'flex' : 'none';
     }
 }
 
