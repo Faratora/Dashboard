@@ -1,4 +1,4 @@
-import { $, log, initSortFilter as initCommonSortFilter } from './utils.js';
+import { $, log, initSortFilter as initCommonSortFilter, renderFilterChips, getFilterDisplayName } from './utils.js';
 import {
     addEmployee,
     deleteEmployee,
@@ -21,18 +21,18 @@ function sortAndFilterEmployees(employees) {
     let result = [...employees];
 
     if (projectFilter) {
-        result = result.filter((e) => e.project === projectFilter);
+        result = result.filter((e) => e.project && e.project.toLowerCase().includes(projectFilter.toLowerCase()));
     }
 
     // Apply column-specific filters
     const filterableColumns = ['name', 'surname', 'age', 'position', 'salary', 'estimatedPayment', 'project', 'estimatedIncome'];
     filterableColumns.forEach((column) => {
+        if (column === 'project') return; // Already handled above
         const columnFilter = window[`filter_${column}`];
         if (columnFilter) {
             result = result.filter((e) => {
                 let value;
                 if (column === 'project') {
-                    // Filter by project name instead of id
                     value = getProjectNameById(e.project);
                 } else {
                     value = e[column];
@@ -121,6 +121,8 @@ function renderEmployees() {
     employees.forEach((employee) => {
         renderEmployeeRow(employee);
     });
+
+    updateEmployeeFilterChips();
 }
 
 function renderEmployeeRow(employee) {
@@ -303,6 +305,7 @@ function initSortFilter() {
                 projectFilter = e.detail.projectId;
                 updateClearButtonVisibility();
                 renderEmployees();
+                updateEmployeeFilterChips();
             },
         },
     });
@@ -355,6 +358,7 @@ function initSortFilter() {
         projectFilter = '';
         updateClearButtonVisibility();
         renderEmployees();
+        updateEmployeeFilterChips();
     });
 }
 
@@ -379,13 +383,18 @@ function applyColumnFilter(column, value) {
     }
 
     // Store column-specific filter
-    if (value) {
-        window[`filter_${column}`] = value.toLowerCase();
+    if (column === 'project') {
+        projectFilter = value; // Store in projectFilter for project matching
     } else {
-        window[`filter_${column}`] = '';
+        if (value) {
+            window[`filter_${column}`] = value.toLowerCase();
+        } else {
+            window[`filter_${column}`] = '';
+        }
     }
 
     renderEmployees();
+    updateEmployeeFilterChips();
 }
 
 function updateClearButtonVisibility() {
@@ -430,6 +439,46 @@ function resetAllFilters() {
 
     renderEmployees();
     updateClearButtonVisibility();
+    updateEmployeeFilterChips();
+}
+
+function updateEmployeeFilterChips() {
+    const container = $('#employee-filter-chips');
+    if (!container) return;
+
+    const filterableColumns = ['name', 'surname', 'age', 'position', 'salary', 'estimatedPayment', 'estimatedIncome'];
+    const chips = [];
+
+    // Column-specific filters (except project which is handled separately)
+    filterableColumns.forEach(column => {
+        const value = window[`filter_${column}`];
+        if (value) {
+            chips.push({
+                column,
+                label: getFilterDisplayName(column),
+                value: value
+            });
+        }
+    });
+
+    // Project filter (uses projectFilter variable)
+    if (projectFilter) {
+        chips.push({
+            column: 'project',
+            label: 'Project',
+            value: projectFilter
+        });
+    }
+
+    renderFilterChips(container, chips, (column) => {
+        if (column === 'project') {
+            projectFilter = '';
+        } else {
+            window[`filter_${column}`] = '';
+        }
+        renderEmployees();
+        updateEmployeeFilterChips();
+    });
 }
 
 export function handleAddEmployee(employeeData) {

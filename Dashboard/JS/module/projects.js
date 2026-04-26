@@ -1,4 +1,4 @@
-import { $, log, initSortFilter as initCommonSortFilter } from './utils.js';
+import { $, log, initSortFilter as initCommonSortFilter, renderFilterChips, getFilterDisplayName } from './utils.js';
 import {
     addProject,
     deleteProject as storageDelete,
@@ -212,6 +212,7 @@ function renderProjects() {
     });
 
     renderProjectsSummary(projects);
+    updateProjectFilterChips();
 }
 
 function renderProjectsSummary(projects) {
@@ -292,6 +293,7 @@ function handleEditProject(id, projectData) {
         updateProject(id, projectData);
         log(`Project updated: ${projectData.projectName}`);
         renderProjects();
+        updateProjectFilterChips();
     } else {
         const projects = getProjects();
         const project = projects.find((p) => p.id === id);
@@ -299,6 +301,26 @@ function handleEditProject(id, projectData) {
             window.openAddProjectEditModal(project);
         }
     }
+}
+
+function updateProjectFilterChips() {
+    const container = $('#project-filter-chips');
+    if (!container) return;
+
+    const filterableColumns = ['companyName', 'projectName'];
+    const chips = filterableColumns
+        .filter(column => window[`filter_${column}`])
+        .map(column => ({
+            column,
+            label: getFilterDisplayName(column),
+            value: window[`filter_${column}`]
+        }));
+
+    renderFilterChips(container, chips, (column) => {
+        window[`filter_${column}`] = '';
+        renderProjects();
+        updateProjectFilterChips();
+    });
 }
 
 export function initProjects() {
@@ -374,6 +396,7 @@ function applyColumnFilter(column, value) {
     }
 
     renderProjects();
+    updateProjectFilterChips();
 }
 
 function updateClearButtonVisibility() {
@@ -410,6 +433,7 @@ function resetAllFilters() {
 
     renderProjects();
     updateClearButtonVisibility();
+    updateProjectFilterChips();
 }
 
 export function handleAddProject(projectData) {

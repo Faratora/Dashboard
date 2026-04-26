@@ -28,6 +28,51 @@ export function escapeHtml(text) {
     return div.innerHTML;
 }
 
+export function getFilterDisplayName(column) {
+    const names = {
+        name: 'Name',
+        surname: 'Surname',
+        age: 'Age',
+        position: 'Position',
+        salary: 'Salary',
+        estimatedPayment: 'Estimated Payment',
+        project: 'Project',
+        estimatedIncome: 'Projected Income',
+        companyName: 'Company',
+        projectName: 'Project'
+    };
+    return names[column] || column;
+}
+
+export function renderFilterChips(container, chips, onRemove) {
+    container.innerHTML = '';
+
+    if (chips.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+
+    container.style.display = 'flex';
+    chips.forEach(chip => {
+        const chipEl = document.createElement('span');
+        chipEl.className = 'filter-chip';
+        chipEl.innerHTML = `
+            <span class="chip-label">${chip.label}: "${chip.value}"</span>
+            <span class="chip-remove" data-column="${chip.column}">&times;</span>
+        `;
+        container.appendChild(chipEl);
+    });
+
+    container.querySelectorAll('.chip-remove').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const column = e.target.dataset.column;
+            if (onRemove) {
+                onRemove(column);
+            }
+        });
+    });
+}
+
 export function initSortFilter(config) {
     const {
         theadSelector,
