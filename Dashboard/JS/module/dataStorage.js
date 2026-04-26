@@ -109,9 +109,15 @@ export function addProject(projectData) {
 export function deleteProject(id) {
     const data = loadData();
     const period = getCurrentPeriod();
+    // Find project to get its name before deleting
+    const project = data.monthlyData[period].projects.find((p) => p.id === id);
+    const projectName = project ? project.projectName : null;
+    
     data.monthlyData[period].projects = data.monthlyData[period].projects.filter((p) => p.id !== id);
-    // Also delete employees assigned to this project
-    data.monthlyData[period].employees = data.monthlyData[period].employees.filter((e) => e.project !== id);
+    // Unassign employees from this project (match by project name, not id)
+    if (projectName) {
+        data.monthlyData[period].employees = data.monthlyData[period].employees.filter((e) => e.project !== projectName);
+    }
     saveData(data);
 }
 
