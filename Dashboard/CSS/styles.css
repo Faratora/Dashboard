@@ -330,6 +330,36 @@ th.sortable:hover {
     font-weight: bold;
 }
 
+/* Table Summary Footer */
+.table-summary {
+    padding: 12px 20px;
+    background-color: var(--color-bg-sidebar);
+    border-top: 2px solid var(--color-border-bottom);
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--color-white);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+}
+
+.table-summary .total-label {
+    color: var(--color-text-secondary);
+}
+
+.table-summary .total-value {
+    font-size: 18px;
+}
+
+.table-summary .total-value.income-positive {
+    color: #27ae60;
+}
+
+.table-summary .total-value.income-negative {
+    color: #e74c3c;
+}
+
 
 
 .filter-container {

@@ -210,6 +210,24 @@ function renderProjects() {
     projects.forEach((project) => {
         renderProjectRow(project);
     });
+
+    renderProjectsSummary(projects);
+}
+
+function renderProjectsSummary(projects) {
+    const summary = $('#projects-summary');
+    if (!summary) return;
+
+    const totalIncome = projects.reduce((sum, project) => {
+        return sum + calculateProjectProfit(project.projectName, project.budget);
+    }, 0);
+
+    const totalClass = totalIncome > 0 ? 'income-positive' : totalIncome < 0 ? 'income-negative' : '';
+
+    summary.innerHTML = `
+        <span class="total-label">Total Projected Income:</span>
+        <span class="total-value ${totalClass}">${formatCurrency(totalIncome)}</span>
+    `;
 }
 
 function renderProjectRow(project) {
