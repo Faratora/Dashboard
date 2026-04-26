@@ -19,7 +19,7 @@ body {
 /* Button base styles */
 
 /* Sidebar Styles */
-#side-panel {
+.side-panel {
     width: 280px;
     background: linear-gradient(135deg, #1a1a2e 0%, var(--color-side-panel) 100%);
     color: var(--color-white);
@@ -34,7 +34,7 @@ body {
     display: flex;
     flex-direction: column;
 }
-#side-panel.collapsed {
+.side-panel.collapsed {
     transform: translateX(-280px);
 }
 
@@ -129,6 +129,8 @@ body.panel-collapsed .main-content {
 .content-header h1 {
     margin: 0;
     font-size: 28px;
+    border-bottom: 2px solid #1abc9c;
+    padding-bottom: 15px;
 }
 
 /* Slide-in Panel Styles */

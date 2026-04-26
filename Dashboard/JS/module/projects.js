@@ -225,10 +225,17 @@ function renderProjectsSummary(projects) {
 
     const totalClass = totalIncome > 0 ? 'income-positive' : totalIncome < 0 ? 'income-negative' : '';
 
-    summary.innerHTML = `
-        <span class="total-label">Total Projected Income:</span>
-        <span class="total-value ${totalClass}">${formatCurrency(totalIncome)}</span>
-    `;
+    summary.innerHTML = '';
+    const labelSpan = document.createElement('span');
+    labelSpan.className = 'total-label';
+    labelSpan.textContent = 'Total Projected Income:';
+
+    const valueSpan = document.createElement('span');
+    valueSpan.className = `total-value ${totalClass}`;
+    valueSpan.textContent = formatCurrency(totalIncome);
+
+    summary.appendChild(labelSpan);
+    summary.appendChild(valueSpan);
 }
 
 function renderProjectRow(project) {

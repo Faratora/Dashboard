@@ -17,7 +17,7 @@
 
 <body>
 	<!-- LEFT SIDEBAR -->
-	<div id="side-panel">
+	<div id="side-panel" class="side-panel">
 		<button id="toggle-btn" class="toggle-btn">&#9776;</button>
 		<div class="month-selector">
 			<h3>Period</h3>
@@ -104,7 +104,25 @@
 			<div id="employee-filter-chips" class="filter-chips"></div>
 		</div>
 
-		<!-- Шаблон строки projects -->
+		<!-- Cтроки таблицы сотрудников в модалке (project employees) -->
+<template id="project-employee-row-template">
+  <tr>
+    <td><a href="#" class="employee-link"></a></td>
+    <td class="emp-capacity"></td>
+    <td class="emp-fit"></td>
+    <td class="emp-vacation"></td>
+    <td class="emp-effective"></td>
+    <td class="emp-revenue"></td>
+    <td class="emp-cost"></td>
+    <td class="emp-profit"></td>
+    <td class="emp-actions">
+      <button class="modal-edit-employee change-btn">Change</button>
+      <button class="modal-unassign-employee unassign-btn">Unassign</button>
+    </td>
+  </tr>
+</template>
+
+		<!-- Cтроки projects -->
 <template id="project-row-template">
   <tr>
     <td class="project-company-name"></td>
@@ -117,7 +135,7 @@
   </tr>
 </template>
 
-		<!-- Шаблон строки employees -->
+		<!-- Cтроки employees -->
 <template id="employee-row-template">
   <tr>
     <td class="emp-name"></td>

@@ -90,8 +90,14 @@ function openEmployeesModal(projectId) {
     const weekdaysInMonth = getWeekdaysInMonth();
 
     if (employees.length === 0) {
-        tbody.innerHTML =
-            '<tr><td colspan="9" style="text-align: center; padding: 20px;">No employees assigned</td></tr>';
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 9;
+        td.style.textAlign = 'center';
+        td.style.padding = '20px';
+        td.textContent = 'No employees assigned';
+        tr.appendChild(td);
+        tbody.appendChild(tr);
     } else {
         // Calculate total effective capacity once (for revenue distribution)
         const totalEffectiveCapacity = employees.reduce((sum, emp) => {
@@ -134,21 +140,52 @@ function openEmployeesModal(projectId) {
             // Profit color class
             const profitClass = profit >= 0 ? 'profit-positive' : 'profit-negative';
 
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><a href="#" class="employee-link" data-id="${employee.id}">${employee.name} ${employee.surname}</a></td>
-                <td>${capacity.toFixed(2)}</td>
-                <td>${fit.toFixed(2)}</td>
-                <td>${vacationDays.length}</td>
-                <td>${effectiveCapacity.toFixed(3)}</td>
-                <td>$${revenue.toFixed(2)}</td>
-                <td>$${cost.toFixed(2)}</td>
-                <td class="${profitClass}">$${profit.toFixed(2)}</td>
-                <td>
-                    <button class="modal-edit-employee change-btn" data-id="${employee.id}" data-project="${project.projectName}">Change</button>
-                    <button class="modal-unassign-employee unassign-btn" data-id="${employee.id}" data-project="${project.projectName}">Unassign</button>
-                </td>
-            `;
+            const template = $('#project-employee-row-template');
+            const tr = template.content.cloneNode(true).firstElementChild;
+
+            const linkEl = tr.querySelector('.employee-link');
+            if (linkEl) {
+                linkEl.textContent = `${employee.name} ${employee.surname}`;
+                linkEl.dataset.id = employee.id;
+            }
+
+            const capacityEl = tr.querySelector('.emp-capacity');
+            if (capacityEl) capacityEl.textContent = capacity.toFixed(2);
+
+            const fitEl = tr.querySelector('.emp-fit');
+            if (fitEl) fitEl.textContent = fit.toFixed(2);
+
+            const vacationEl = tr.querySelector('.emp-vacation');
+            if (vacationEl) vacationEl.textContent = vacationDays.length;
+
+            const effectiveEl = tr.querySelector('.emp-effective');
+            if (effectiveEl) effectiveEl.textContent = effectiveCapacity.toFixed(3);
+
+            const revenueEl = tr.querySelector('.emp-revenue');
+            if (revenueEl) revenueEl.textContent = `$${revenue.toFixed(2)}`;
+
+            const costEl = tr.querySelector('.emp-cost');
+            if (costEl) costEl.textContent = `$${cost.toFixed(2)}`;
+
+            const profitEl = tr.querySelector('.emp-profit');
+            if (profitEl) {
+                profitEl.textContent = `$${profit.toFixed(2)}`;
+                profitEl.className = 'emp-profit';
+                if (profitClass) profitEl.classList.add(profitClass);
+            }
+
+            const changeBtn = tr.querySelector('.change-btn');
+            if (changeBtn) {
+                changeBtn.dataset.id = employee.id;
+                changeBtn.dataset.project = project.projectName;
+            }
+
+            const unassignBtn = tr.querySelector('.unassign-btn');
+            if (unassignBtn) {
+                unassignBtn.dataset.id = employee.id;
+                unassignBtn.dataset.project = project.projectName;
+            }
+
             tbody.appendChild(tr);
         });
     }
