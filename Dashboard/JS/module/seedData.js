@@ -157,14 +157,15 @@ function copyDataFromPeriod(sourcePeriod) {
         }
     });
 
-    // Merge employees (replace if same id)
+    // Merge employees (replace if same id, but clear vacationDays)
     const targetEmployees = [...allData.monthlyData[currentPeriod].employees];
     sourceData.employees.forEach((srcEmp) => {
         const idx = targetEmployees.findIndex((e) => e.id === srcEmp.id);
+        const empCopy = { ...srcEmp, vacationDays: [] }; // Clear vacation days for new month
         if (idx >= 0) {
-            targetEmployees[idx] = srcEmp;
+            targetEmployees[idx] = empCopy;
         } else {
-            targetEmployees.push(srcEmp);
+            targetEmployees.push(empCopy);
         }
     });
 
