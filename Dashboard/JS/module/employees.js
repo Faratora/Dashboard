@@ -157,52 +157,112 @@ function renderEmployeeRow(employee) {
         }, 0);
     }
 
-    const tr = document.createElement('tr');
+    const template = $('#employee-row-template');
+    const tr = template.content.cloneNode(true).firstElementChild;
     tr.dataset.id = employee.id;
-    tr.innerHTML = `
-        <td>${escapeHtml(employee.name)}</td>
-        <td>${escapeHtml(employee.surname)}</td>
-        <td>${employee.age}</td>
-        <td class="position-cell">${escapeHtml(employee.position)}<span class="edit-pencil" data-field="position" data-id="${employee.id}">✎</span></td>
-        <td class="salary-cell">${formatCurrency(employee.salary)}<span class="edit-pencil" data-field="salary" data-id="${employee.id}">✎</span></td>
-        <td>${formatCurrency(employee.estimatedPayment)}</td>
-        <td>
-            <span class="project-cell">
-                <span class="project-name">${escapeHtml(employee.project || '-')}</span>
-                ${employee.project ? `<button class="show-assignments-btn" data-project="${employee.project}">Show Assignments (${projectEmployeeCount}) ${projectUsedCapacity.toFixed(1)}/${projectTotalCapacity}</button>` : ''}
-            </span>
-        </td>
-        <td>${formatCurrency(employee.estimatedIncome)}</td>
-        <td>
-            <button class="availability-btn" data-id="${employee.id}">Availability</button>
-            <button class="assign-btn" data-id="${employee.id}" ${isAssignDisabled ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''}>Assign</button>
-            <button class="edit-btn" data-id="${employee.id}">Edit</button>
-            <button class="delete-btn" data-id="${employee.id}">Delete</button>
-        </td>
-    `;
 
-    tbody.appendChild(tr);
+    const nameEl = tr.querySelector('.emp-name');
+    const surnameEl = tr.querySelector('.emp-surname');
+    const ageEl = tr.querySelector('.emp-age');
+    const positionCell = tr.querySelector('.position-cell');
+    const salaryCell = tr.querySelector('.salary-cell');
+    const estimatedPaymentEl = tr.querySelector('.estimated-payment');
+    const projectCell = tr.querySelector('.project-cell');
+    const estimatedIncomeEl = tr.querySelector('.estimated-income');
+    const actionsCell = tr.querySelector('.actions');
 
-    const editBtn = tr.querySelector('.edit-btn');
-    const deleteBtn = tr.querySelector('.delete-btn');
+    if (nameEl) nameEl.textContent = employee.name;
+    if (surnameEl) surnameEl.textContent = employee.surname;
+    if (ageEl) ageEl.textContent = employee.age;
+
+    if (positionCell) {
+        const positionSpan = positionCell.querySelector('.position-value');
+        const pencil = positionCell.querySelector('.edit-pencil');
+        if (positionSpan) positionSpan.textContent = employee.position;
+        if (pencil) {
+            pencil.dataset.field = 'position';
+            pencil.dataset.id = employee.id;
+        }
+    }
+
+    if (salaryCell) {
+        const salarySpan = salaryCell.querySelector('.salary-value');
+        const pencil = salaryCell.querySelector('.edit-pencil');
+        if (salarySpan) salarySpan.textContent = formatCurrency(employee.salary);
+        if (pencil) {
+            pencil.dataset.field = 'salary';
+            pencil.dataset.id = employee.id;
+        }
+    }
+
+    if (estimatedPaymentEl) estimatedPaymentEl.textContent = formatCurrency(employee.estimatedPayment);
+    if (estimatedIncomeEl) estimatedIncomeEl.textContent = formatCurrency(employee.estimatedIncome);
+
+    if (projectCell) {
+        const projectNameSpan = projectCell.querySelector('.project-name');
+        const showBtn = projectCell.querySelector('.show-assignments-btn');
+        if (projectNameSpan) projectNameSpan.textContent = employee.project || '-';
+        if (showBtn) {
+            if (employee.project) {
+                showBtn.style.display = '';
+                showBtn.dataset.project = employee.project;
+                showBtn.textContent = `Show Assignments (${projectEmployeeCount}) ${projectUsedCapacity.toFixed(1)}/${projectTotalCapacity}`;
+            } else {
+                showBtn.style.display = 'none';
+            }
+        }
+    }
+
     const availBtn = tr.querySelector('.availability-btn');
     const assignBtn = tr.querySelector('.assign-btn');
+    const editBtn = tr.querySelector('.edit-btn');
+    const deleteBtn = tr.querySelector('.delete-btn');
+
+    if (availBtn) {
+        availBtn.dataset.id = employee.id;
+        availBtn.addEventListener('click', () => {
+            log('Availability button clicked for employee: ' + employee.id);
+            window.dispatchEvent(new CustomEvent('showAvailabilityCalendar', { detail: { employeeId: employee.id } }));
+        });
+    }
+
+    if (assignBtn) {
+        assignBtn.dataset.id = employee.id;
+        if (isAssignDisabled) {
+            assignBtn.disabled = true;
+            assignBtn.style.opacity = '0.5';
+            assignBtn.style.cursor = 'not-allowed';
+        } else {
+            assignBtn.disabled = false;
+            assignBtn.style.opacity = '';
+            assignBtn.style.cursor = '';
+        }
+        assignBtn.addEventListener('click', () => {
+            log('Assign button clicked for employee: ' + employee.id);
+            window.dispatchEvent(new CustomEvent('showAssignEmployee', { detail: { employeeId: employee.id } }));
+        });
+    }
+
+    if (editBtn) {
+        editBtn.dataset.id = employee.id;
+        editBtn.addEventListener('click', () => {
+            log('Edit button clicked for employee: ' + employee.id);
+            handleEditEmployee(employee.id);
+        });
+    }
+
+    if (deleteBtn) {
+        deleteBtn.dataset.id = employee.id;
+        deleteBtn.addEventListener('click', () => {
+            log('Delete button clicked for employee: ' + employee.id);
+            handleDeleteEmployee(employee.id);
+        });
+    }
+
     const showAssignmentsBtn = tr.querySelector('.show-assignments-btn');
-
-    availBtn.addEventListener('click', () => {
-        log('Availability button clicked for employee: ' + employee.id);
-        window.dispatchEvent(new CustomEvent('showAvailabilityCalendar', { detail: { employeeId: employee.id } }));
-    });
-
-    assignBtn.addEventListener('click', () => {
-        log('Assign button clicked for employee: ' + employee.id);
-        window.dispatchEvent(new CustomEvent('showAssignEmployee', { detail: { employeeId: employee.id } }));
-    });
-
-    if (showAssignmentsBtn) {
+    if (showAssignmentsBtn && employee.project) {
         showAssignmentsBtn.addEventListener('click', () => {
             log('Show assignments button clicked for project: ' + employee.project);
-
             const projects = getProjects();
             const project = projects.find(p => p.projectName === employee.project);
             if (project) {
@@ -211,14 +271,7 @@ function renderEmployeeRow(employee) {
         });
     }
 
-    editBtn.addEventListener('click', () => {
-        log('Edit button clicked for employee: ' + employee.id);
-        handleEditEmployee(employee.id);
-    });
-    deleteBtn.addEventListener('click', () => {
-        log('Delete button clicked for employee: ' + employee.id);
-        handleDeleteEmployee(employee.id);
-    });
+    tbody.appendChild(tr);
 }
 
 function handleDeleteEmployee(id) {

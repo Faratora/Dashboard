@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="./CSS/styles.css">
 	<link rel="stylesheet" href="./CSS/editAssignmentModal.css">
 	<link rel="stylesheet" href="./CSS/unassignModal.css">
+	<link rel="stylesheet" href="./CSS/inlineEdit.css">
 
 
 </head>
@@ -103,6 +104,29 @@
 			<div id="employee-filter-chips" class="filter-chips"></div>
 		</div>
 
+		<!-- Шаблон строки employees — перенос из JS в HTML -->
+<template id="employee-row-template">
+  <tr>
+    <td class="emp-name"></td>
+    <td class="emp-surname"></td>
+    <td class="emp-age"></td>
+    <td class="position-cell"><span class="position-value"></span><span class="edit-pencil" data-field="position">✎</span></td>
+    <td class="salary-cell"><span class="salary-value"></span><span class="edit-pencil" data-field="salary">✎</span></td>
+    <td class="estimated-payment"></td>
+    <td class="project-cell"><span class="project-name"></span><button class="show-assignments-btn" style="display:none">Show Assignments</button></td>
+    <td class="estimated-income"></td>
+    <td class="actions">
+      <button class="availability-btn">Availability</button>
+      <button class="assign-btn">Assign</button>
+      <button class="edit-btn">Edit</button>
+      <button class="delete-btn">Delete</button>
+    </td>
+  </tr>
+</template>
+		
+		
+		
+		
 		<!-- Add Project Slide-in Panel -->
 		<div id="panel-backdrop" class="panel-backdrop hidden"></div>
 		<div id="add-project-panel" class="panel-drawer hidden">
