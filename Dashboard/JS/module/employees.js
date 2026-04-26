@@ -24,10 +24,9 @@ function sortAndFilterEmployees(employees) {
         result = result.filter((e) => e.project && e.project.toLowerCase().includes(projectFilter.toLowerCase()));
     }
 
-    // Apply column-specific filters
     const filterableColumns = ['name', 'surname', 'age', 'position', 'salary', 'estimatedPayment', 'project', 'estimatedIncome'];
     filterableColumns.forEach((column) => {
-        if (column === 'project') return; // Already handled above
+        if (column === 'project') return;
         const columnFilter = window[`filter_${column}`];
         if (columnFilter) {
             result = result.filter((e) => {
@@ -132,28 +131,27 @@ function renderEmployeeRow(employee) {
     const assignedCapacity = parseFloat(employee.assignedCapacity) || 0;
     const isAssignDisabled = assignedCapacity >= 1.5;
 
-    // Count employees in the same project and calculate project capacity usage
     const allEmployees = getEmployees();
     let projectUsedCapacity = 0;
     let projectTotalCapacity = 0;
     const projectEmployees = employee.project ? allEmployees.filter(e => e.project === employee.project) : [];
     const projectEmployeeCount = projectEmployees.length;
-    
+
     if (employee.project) {
         const projects = getProjects();
         const project = projects.find(p => p.projectName === employee.project);
         projectTotalCapacity = project ? project.employeeCapacity || 0 : 0;
-        
+
         const period = getCurrentPeriod();
         const [currentYear, currentMonth] = period.split('-').map(Number);
         const weekdaysInMonth = getWeekdaysInMonth();
-        
+
         projectUsedCapacity = projectEmployees.reduce((sum, emp) => {
             const capacity = emp.capacity || 1;
             const fit = emp.fit || 1;
             const weekdayVacations = getWeekdayVacationDays(emp.vacationDays || [], currentYear, currentMonth);
-            const vacationCoefficient = weekdaysInMonth > 0 
-                ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth 
+            const vacationCoefficient = weekdaysInMonth > 0
+                ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth
                 : 0;
             return sum + capacity * fit * vacationCoefficient;
         }, 0);
@@ -204,7 +202,7 @@ function renderEmployeeRow(employee) {
     if (showAssignmentsBtn) {
         showAssignmentsBtn.addEventListener('click', () => {
             log('Show assignments button clicked for project: ' + employee.project);
-            // Look up project by name to get its id for the event
+
             const projects = getProjects();
             const project = projects.find(p => p.projectName === employee.project);
             if (project) {
@@ -255,7 +253,6 @@ export function initEmployees() {
         return;
     }
 
-    // Clear column filters on initialization so filters don't persist across sessions
     const filterableColumns = ['name', 'surname', 'age', 'position', 'salary', 'estimatedPayment', 'project', 'estimatedIncome'];
     filterableColumns.forEach((column) => {
         window[`filter_${column}`] = '';

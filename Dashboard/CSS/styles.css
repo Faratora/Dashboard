@@ -128,7 +128,6 @@ body.panel-collapsed .main-content {
 
 .content-header h1 {
     margin: 0;
-    color: #1a1a2e;
     font-size: 28px;
 }
 
@@ -212,7 +211,7 @@ body.panel-collapsed .main-content {
 .panel-drawer input {
     width: calc(100% - 40px);
     padding: 12px 15px;
-    border: 1px solid #ddd;
+    border: 1px solid #bfbfbf;
     border-radius: 8px;
     font-size: 16px;
     transition: border-color 0.2s;
@@ -261,7 +260,7 @@ body.panel-collapsed .main-content {
 table {
     width: 100%;
     border-collapse: collapse;
-    background: white;
+    background: var(--color-white);
     border-radius: 12px;
     overflow: auto;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -269,9 +268,9 @@ table {
 }
 
 /* Table header */
-thead {
+/* thead {
     background-color: var(--color-white);
-}
+} */
 th,
 td {
     padding: 12px 10px;
@@ -294,7 +293,7 @@ td {
     align-self: flex-start;
 }
 th {
-    background: #ecf0f1;
+    background: var(--table-header);
     cursor: pointer;
     position: relative;
 }
@@ -303,12 +302,10 @@ th.sortable:hover {
 }
 
 /* Projects table full width */
-#projects-table,
-#employees-table {
-    width: 100% !important;
+.table {
     table-layout: auto !important;
     overflow: visible !important;
-    background: var;
+
 }
 
 /* Table action buttons */
@@ -345,7 +342,7 @@ th.sortable:hover {
 }
 
 .table-summary .total-label {
-    color: var(--color-text-secondary);
+    color:#1a1a2e
 }
 
 .table-summary .total-value {
@@ -413,7 +410,7 @@ th.sortable:hover {
 
 .filter-input {
     padding: 8px 12px;
-    border: 1px solid #ccc;
+    border: 1px solid #bfbfbf;
     border-radius: 6px;
     font-size: 14px;
     width: 200px;
@@ -449,7 +446,7 @@ th.sortable:hover {
 .reset-filters-btn {
     background: #f8f9fa;
     color: #666;
-    border: 1px solid #ddd;
+    border: 1px solid #bfbfbf;
     border-radius: 6px;
     padding: 8px 12px;
     font-size: 13px;
@@ -496,7 +493,7 @@ th.sortable:hover {
 #seed-data-modal table,
 #seed-data-modal th,
 #seed-data-modal td {
-    border: 1px solid #ddd;
+    border: 1px solid #bfbfbf;
     padding: 8px;
     text-align: center;
 }
@@ -578,10 +575,10 @@ th.sortable:hover {
     border-bottom: 2px solid #1abc9c;
     padding-bottom: 15px;
 }
-.employees-modal .modal-header {
+.modal-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: 20px;
 }
 .employees-modal .modal-close {
@@ -609,13 +606,10 @@ th.sortable:hover {
 }
 .employees-modal th,
 .employees-modal td {
-    border: 1px solid #ddd;
+    border: 1px solid #bfbfbf;
     padding: 10px 12px;
     text-align: left;
     font-size: 14px;
-}
-.employees-modal th {
-    background: #ecf0f1;
     font-weight: 600;
     white-space: nowrap;
 }
@@ -626,12 +620,12 @@ th.sortable:hover {
     margin-top: 20px;
     text-align: right;
     padding-top: 15px;
-    border-top: 1px solid #ddd;
+    
 }
 
 /* Modal */
 #filter-backdrop,
-#assign-backdrop,
+
 #availability-backdrop,
 .employees-modal-backdrop {
     position: fixed;
@@ -671,18 +665,16 @@ th.sortable:hover {
 }
 
 
-#filter-modal .modal-header,
+/* #filter-modal .modal-header,
 #assign-modal .modal-header,
 #availability-modal .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-}
+} */
 
-#filter-modal .modal-header h2,
-#assign-modal .modal-header h2,
-#availability-modal .modal-header h2  {
+ .modal-header h2  {
     margin: 0;
     color: #1a1a2e;
     font-size: 22px;
@@ -705,7 +697,7 @@ th.sortable:hover {
 #filter-modal .modal-body input {
     width: 100%;
     padding: 12px 15px;
-    border: 1px solid #ddd;
+    border: 1px solid #bfbfbf;
     border-radius: 8px;
     font-size: 16px;
     box-sizing: border-box;
@@ -762,7 +754,7 @@ th.sortable:hover {
 #assign-modal .form-group select {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ddd;
+   border: 1px solid #bfbfbf;
     border-radius: 8px;
     font-size: 16px;
 }

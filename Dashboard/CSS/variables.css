@@ -1,6 +1,12 @@
 :root {
     --color-bg-body: #f0f2f5;
-    
+    --color-text: #1a1a2e;
+    --table-header: #dbdcdd;
+    --table-border: #bfbfbf;
+
+    --background-btn-close: #d0d0d0;
+    --background-btn-close-hover: #bfbfbf;
+
     --color-white: white;
     --color-button: #1abc9c;
     --color-hover-dark: #16a085;
@@ -12,16 +18,12 @@
     --color-background: #34495e;
     --color-text-muted: #95a5a6;
 
-    --background-btn-close: #d0d0d0;
-    --background-btn-close-hover: #bfbfbf;
-
     --color-button-red: #e74c3c;
-  --color-hover-red: #c0392b;
+    --color-hover-red: #c0392b;
 
-   --color-button-orange: #f39c12;
-  --color-hover-orange: #d68910;
+    --color-button-orange: #f39c12;
+    --color-hover-orange: #d68910;
 
-  
-  --color-button-blue: #3498db;
-  --color-hover-blue: #2980b9;
+    --color-button-blue: #3498db;
+    --color-hover-blue: #2980b9;
 }
