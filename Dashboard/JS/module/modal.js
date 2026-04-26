@@ -417,7 +417,7 @@ export function initModal() {
                 salary: parseFloat(salary),
                 capacity: 1,
                 fit: 1,
-                vacationDays: 0,
+                vacationDays: [],
                 project: projectSelect ? projectSelect.value : '',
             };
 

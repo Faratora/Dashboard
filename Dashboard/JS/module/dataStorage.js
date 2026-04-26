@@ -148,7 +148,7 @@ export function addEmployee(employeeData) {
         salary: parseFloat(employeeData.salary) || 0,
         capacity: 1,
         fit: 1,
-        vacationDays: 0,
+        vacationDays: [],
         project: employeeData.project || '',
         assignedCapacity: 0,
     };
