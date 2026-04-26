@@ -244,38 +244,82 @@ function renderProjectRow(project) {
     const incomeClass = projectProfit > 0 ? 'income-positive' : projectProfit < 0 ? 'income-negative' : '';
     const capacityClass = overCapacity ? 'over-capacity' : '';
 
-    const tr = document.createElement('tr');
+    const template = $('#project-row-template');
+    const tr = template.content.cloneNode(true).firstElementChild;
     tr.dataset.id = project.id;
-    tr.innerHTML = `
-        <td>${escapeHtml(project.companyName)}</td>
-        <td>${escapeHtml(project.projectName)}</td>
-        <td>${formatCurrency(project.budget)}</td>
-        <td class="${capacityClass}">${usedCapacity.toFixed(1)}/${totalCapacity}</td>
-        <td><button class="show-employees-btn" data-id="${project.id}">Show Employees (${employeeCount})</button></td>
-        <td class="${incomeClass}">${formatCurrency(projectProfit)}</td>
-        <td>
-            <button class="edit-btn" data-id="${project.id}">Edit</button>
-            <button class="delete-btn" data-id="${project.id}">Delete</button>
-        </td>
-    `;
 
-    tbody.appendChild(tr);
+    const companyNameEl = tr.querySelector('.project-company-name');
+    const projectNameEl = tr.querySelector('.project-name');
+    const budgetEl = tr.querySelector('.project-budget');
+    const capacityEl = tr.querySelector('.project-capacity');
+    const employeesEl = tr.querySelector('.project-employees');
+    const incomeEl = tr.querySelector('.project-income');
+    const actionsEl = tr.querySelector('.project-actions');
+
+    if (companyNameEl) companyNameEl.textContent = project.companyName;
+    if (projectNameEl) projectNameEl.textContent = project.projectName;
+    if (budgetEl) budgetEl.textContent = formatCurrency(project.budget);
+    if (capacityEl) {
+        capacityEl.textContent = `${usedCapacity.toFixed(1)}/${totalCapacity}`;
+        capacityEl.className = 'project-capacity';
+        if (capacityClass) capacityEl.classList.add(capacityClass);
+    }
+    if (employeesEl) {
+        const btn = employeesEl.querySelector('.show-employees-btn') || document.createElement('button');
+        if (!employeesEl.querySelector('.show-employees-btn')) {
+            btn.className = 'show-employees-btn';
+            employeesEl.appendChild(btn);
+        }
+        btn.textContent = `Show Employees (${employeeCount})`;
+        btn.dataset.id = project.id;
+    }
+    if (incomeEl) {
+        incomeEl.textContent = formatCurrency(projectProfit);
+        incomeEl.className = 'project-income';
+        if (incomeClass) incomeEl.classList.add(incomeClass);
+    }
+    if (actionsEl) {
+        let editBtn = actionsEl.querySelector('.edit-btn');
+        let deleteBtn = actionsEl.querySelector('.delete-btn');
+        if (!editBtn) {
+            editBtn = document.createElement('button');
+            editBtn.className = 'edit-btn';
+            actionsEl.appendChild(editBtn);
+        }
+        if (!deleteBtn) {
+            deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            actionsEl.appendChild(deleteBtn);
+        }
+        editBtn.textContent = 'Edit';
+        editBtn.dataset.id = project.id;
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.dataset.id = project.id;
+    }
 
     const editBtn = tr.querySelector('.edit-btn');
     const showEmpBtn = tr.querySelector('.show-employees-btn');
     const deleteBtn = tr.querySelector('.delete-btn');
 
-    editBtn.addEventListener('click', () => {
-        log('Edit button clicked for project: ' + project.id);
-        handleEditProject(project.id);
-    });
-    showEmpBtn.addEventListener('click', () => {
-        log('Show employees for project: ' + project.id);
-        window.dispatchEvent(new CustomEvent('showProjectEmployees', { detail: { projectId: project.id } }));
-    });
-    deleteBtn.addEventListener('click', () => {
-        handleDeleteProject(project.id);
-    });
+    if (editBtn) {
+        editBtn.addEventListener('click', () => {
+            log('Edit button clicked for project: ' + project.id);
+            handleEditProject(project.id);
+        });
+    }
+    if (showEmpBtn) {
+        showEmpBtn.addEventListener('click', () => {
+            log('Show employees for project: ' + project.id);
+            window.dispatchEvent(new CustomEvent('showProjectEmployees', { detail: { projectId: project.id } }));
+        });
+    }
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', () => {
+            handleDeleteProject(project.id);
+        });
+    }
+
+    tbody.appendChild(tr);
 }
 
 function handleDeleteProject(id) {
