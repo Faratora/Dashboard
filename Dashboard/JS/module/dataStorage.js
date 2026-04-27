@@ -228,6 +228,7 @@ export function getEmployees() {
         // If no capacity, no revenue
         if (capacityForRevenue === 0) {
             // Cost: salary × max(0.5, capacity) even when no revenue
+            const empCapacity = emp.capacity || 1;
             const cost = (emp.salary || 0) * Math.max(0.5, empCapacity);
             // Profit = 0 revenue - cost
             const profit = 0 - cost;
