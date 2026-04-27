@@ -66,16 +66,16 @@ function sortAndFilterEmployees(employees) {
                     valB = b.salary;
                     break;
                 case 'estimatedPayment':
-                    valA = a.salary;
-                    valB = b.salary;
+                    valA = a.estimatedPayment || 0;
+                    valB = b.estimatedPayment || 0;
                     break;
                 case 'project':
                     valA = getProjectNameById(a.project);
                     valB = getProjectNameById(b.project);
                     break;
                 case 'estimatedIncome':
-                    valA = a.estimatedIncome || 0;
-                    valB = b.estimatedIncome || 0;
+                    valA = a.profit || 0;
+                    valB = b.profit || 0;
                     break;
                 default:
                     return 0;
@@ -196,7 +196,17 @@ function renderEmployeeRow(employee) {
     }
 
     if (estimatedPaymentEl) estimatedPaymentEl.textContent = formatCurrency(employee.estimatedPayment);
-    if (estimatedIncomeEl) estimatedIncomeEl.textContent = formatCurrency(employee.estimatedIncome);
+    if (estimatedIncomeEl) {
+        estimatedIncomeEl.textContent = formatCurrency(employee.profit);
+        // Color-code based on profit sign
+        const profit = employee.profit || 0;
+        estimatedIncomeEl.classList.remove('income-positive', 'income-negative');
+        if (profit > 0) {
+            estimatedIncomeEl.classList.add('income-positive');
+        } else if (profit < 0) {
+            estimatedIncomeEl.classList.add('income-negative');
+        }
+    }
 
     if (projectCell) {
         const projectNameSpan = projectCell.querySelector('.project-name');

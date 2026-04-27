@@ -193,12 +193,24 @@ export function getEmployees() {
     const weekdaysInMonth = getWeekdaysInMonth();
 
     return employees.map((emp) => {
+        // Calculate age from birthDate if available
+        let age = emp.age;
+        if (emp.birthDate) {
+            const birth = new Date(emp.birthDate);
+            const today = new Date();
+            age = today.getFullYear() - birth.getFullYear();
+            const monthDiff = today.getMonth() - birth.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+                age--;
+            }
+        }
+
         if (!emp.project) {
             // Bench cost: salary × 0.5 for unassigned employees
             const benchCost = (emp.salary || 0) * 0.5;
             // Bench profit = 0 revenue - bench cost = negative profit
             const benchProfit = 0 - benchCost;
-            return { ...emp, estimatedIncome: 0, estimatedPayment: benchCost, profit: benchProfit };
+            return { ...emp, age, estimatedIncome: 0, estimatedPayment: benchCost, profit: benchProfit };
         }
 
         const project = projects.find((p) => p.projectName === emp.project);
@@ -206,7 +218,7 @@ export function getEmployees() {
             // Bench cost: salary × 0.5 for employees without valid project
             const benchCost = (emp.salary || 0) * 0.5;
             const benchProfit = 0 - benchCost;
-            return { ...emp, estimatedIncome: 0, estimatedPayment: benchCost, profit: benchProfit };
+            return { ...emp, age, estimatedIncome: 0, estimatedPayment: benchCost, profit: benchProfit };
         }
 
         // Calculate total effective capacity for the project using weekday-based calculation
@@ -232,7 +244,7 @@ export function getEmployees() {
             const cost = (emp.salary || 0) * Math.max(0.5, empCapacity);
             // Profit = 0 revenue - cost
             const profit = 0 - cost;
-            return { ...emp, estimatedIncome: 0, estimatedPayment: cost, profit };
+            return { ...emp, age, estimatedIncome: 0, estimatedPayment: cost, profit };
         }
 
         // Revenue per effective capacity = budget ÷ capacity for revenue
@@ -257,7 +269,7 @@ export function getEmployees() {
         // Profit = revenue - cost
         const profit = estimatedIncome - cost;
 
-        return { ...emp, estimatedIncome, estimatedPayment, profit };
+        return { ...emp, age, estimatedIncome, estimatedPayment, profit };
     });
 }
 
