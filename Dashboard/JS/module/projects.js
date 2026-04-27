@@ -268,8 +268,12 @@ function renderProjectRow(project) {
     if (budgetEl) budgetEl.textContent = formatCurrency(project.budget);
     if (capacityEl) {
         capacityEl.textContent = `${usedCapacity.toFixed(1)}/${totalCapacity}`;
-        capacityEl.className = 'project-capacity';
-        if (capacityClass) capacityEl.classList.add(capacityClass);
+        // Remove old classes and add the correct one
+        capacityEl.classList.remove('project-capacity', 'over-capacity');
+        capacityEl.classList.add('project-capacity');
+        if (overCapacity) {
+            capacityEl.classList.add('over-capacity');
+        }
     }
     if (employeesEl) {
         const btn = employeesEl.querySelector('.show-employees-btn') || document.createElement('button');
