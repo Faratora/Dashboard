@@ -1,0 +1,29 @@
+/* Sidebar Styles */
+.side-panel {
+    width: 280px;
+    background: var(--color-side-panel);
+    color: var(--color-white);
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    padding: 20px 0;
+    box-shadow: 2px 0 20px var(--color-box-shadow);
+    display: flex;
+    flex-direction: column;
+}
+.side-panel.collapsed {
+    transform: translateX(-280px);
+}
+
+.month-selector {
+    padding: 20px;
+    border-bottom: 1px solid var(--color-border-bottom);
+    margin-bottom: 20px;
+}
+
+.month-selector h2 {
+    margin: 20px 0;
+}

@@ -27,14 +27,19 @@ button:hover:disabled {
     background: #ccc;
 }
 
+.btn {
 
+}
+
+/* Sidebar button */
 .toggle-btn {
-    background: var(--color-side-panel);
+    background: var(--color-background);
     font-size: 24px;
     width: 280px;
     position: absolute;
     right: 0;
     top: 0;
+
 }
 
 .toggle-btn:hover {
@@ -64,9 +69,7 @@ button:hover:disabled {
     background: var(--background-btn-close-hover);
 }
 
-.btn {
 
-}
 
 .edit-btn,
 .delete-btn,
@@ -127,10 +130,16 @@ button:hover:disabled {
 .open-btn {
     font-size: 24px;
     position: fixed;
-    left: 20px;
+     left: 20px;
     top: 5px;
     display: none;
     z-index: 1001;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
 }
 
 .open-btn.hidden {

@@ -16,44 +16,21 @@ body {
     overflow-x: hidden;
 }
 
-/* Button base styles */
-
-/* Sidebar Styles */
-.side-panel {
-    width: 280px;
-    background: linear-gradient(135deg, #1a1a2e 0%, var(--color-side-panel) 100%);
-    color: var(--color-white);
-    height: 100vh;
-    position: fixed;
-    left: 0;
-    top: 0;
-    transition: transform 0.3s ease;
-    z-index: 1000;
-    padding: 20px 0;
-    box-shadow: 2px 0 20px var(--color-box-shadow);
-    display: flex;
-    flex-direction: column;
-}
-.side-panel.collapsed {
-    transform: translateX(-280px);
+h2 {
+    font-size: 22px;
 }
 
-.main-content.collapsed {
-    margin-left: 0;
-    width: 100%;
-}
-
-.month-selector {
-    padding: 20px;
-    border-bottom: 1px solid var(--color-border-bottom);
-    margin-bottom: 20px;
-}
-
-.month-selector h3 {
-    margin: 20px 0;
-    color: var(--color-button);
+h3 {
     font-size: 18px;
 }
+/* Button base styles */
+
+/*  */
+
+/* .main-content.collapsed {
+    margin-left: 0;
+    width: 100%;
+} */
 
 select {
     width: 100%;
@@ -65,9 +42,18 @@ select {
     color: var(--color-white);
     cursor: pointer;
 }
-select option {
-    background: #16213e;
+
+select:focus {
+    outline: none;
+    border-color: #5b9aff;
+    box-shadow: 0 0 0 2px rgba(91, 154, 255, 0.3);
 }
+
+/* select option {
+    background: #16213e;
+} */
+
+
 
 nav {
     display: flex;
@@ -76,7 +62,7 @@ nav {
     padding: 0 20px;
 }
 .nav-item {
-    background: var(--color-side-panel);
+    background: var(--color-background);
     padding: 12px 20px;
     text-align: left;
     color: var(--color-white);
@@ -98,10 +84,10 @@ nav {
     width: calc(100% - 280px);
     transition: margin-left 0.3s ease;
 }
-body.panel-collapsed .main-content {
+/* body.panel-collapsed .main-content {
     margin-left: 0;
     width: 100%;
-}
+} */
 
 .content-header {
     display: flex;
@@ -174,13 +160,14 @@ body.panel-collapsed .main-content {
     align-items: center;
     padding: 20px;
     border-bottom: 1px solid var(--color-border-bottom);
-    background: var(--color-bg-body);
+    background: var(--color-side-panel);
+    color: white;
 }
 
 .panel-header h2 {
     margin: 0;
     color: var(--color-primary);
-    font-size: 22px;
+    
 }
 
 .panel-close {
