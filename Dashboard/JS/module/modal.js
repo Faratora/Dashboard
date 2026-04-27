@@ -842,6 +842,15 @@ export function initModal() {
                 dayCell.classList.add('vacation');
             }
 
+            // Today highlighting
+            const today = new Date();
+            const isToday = day === today.getDate() &&
+                currentCalendarMonth === today.getMonth() &&
+                currentCalendarYear === today.getFullYear();
+            if (isToday) {
+                dayCell.classList.add('today');
+            }
+
             dayCell.addEventListener('click', () => {
                 if (dayCell.classList.contains('vacation')) {
                     dayCell.classList.remove('vacation');
