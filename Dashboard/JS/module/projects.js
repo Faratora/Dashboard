@@ -27,8 +27,8 @@ function calculateUsedCapacity(projectName) {
         const capacity = emp.capacity || 1;
         const fit = emp.fit || 1;
         const weekdayVacations = getWeekdayVacationDays(emp.vacationDays || [], currentYear, currentMonth);
-        const vacationCoefficient = weekdaysInMonth > 0 
-            ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth 
+        const vacationCoefficient = weekdaysInMonth > 0
+            ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth
             : 0;
         return sum + capacity * fit * vacationCoefficient;
     }, 0);
@@ -334,11 +334,21 @@ function renderProjectRow(project) {
 }
 
 function handleDeleteProject(id) {
+    const projects = getProjects();
+    const project = projects.find((p) => p.id === id);
+    if (!project) return;
+
+    const projectName = project.projectName;
+    const confirmed = confirm(`Are you sure you want to delete project "${projectName}"?\n\nThis will unassign all employees from this project.`);
+    
+    if (!confirmed) return;
+
     const row = $(`tr[data-id="${id}"]`);
     if (row) {
         row.remove();
         storageDelete(id);
         log(`Project deleted: ${id}`);
+        renderEmployees();
     }
 }
 

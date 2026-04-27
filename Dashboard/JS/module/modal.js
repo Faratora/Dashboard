@@ -82,7 +82,14 @@ function openEmployeesModal(projectId) {
     // ${project.projectName}
     tbody.innerHTML = '';
     const allEmployees = getEmployees();
-    const employees = allEmployees.filter((e) => e.project === project.projectName);
+    let employees = allEmployees.filter((e) => e.project === project.projectName);
+
+    // Sort employees by name
+    employees.sort((a, b) => {
+        const nameA = `${a.name} ${a.surname}`.toLowerCase();
+        const nameB = `${b.name} ${b.surname}`.toLowerCase();
+        return nameA.localeCompare(nameB);
+    });
 
     // Get current period for weekday calculations
     const period = getCurrentPeriod();
