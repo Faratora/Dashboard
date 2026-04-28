@@ -20,6 +20,28 @@
     display: inline-block;
 }
 
+/* Make position cell clickable for inline edit */
+.position-cell {
+    cursor: pointer;
+    position: relative;
+}
+
+.position-cell:hover {
+    background-color: #f0f8ff;
+}
+
+.position-value {
+    display: inline;
+}
+
+.position-cell.editing {
+    cursor: default;
+}
+
+.position-cell.editing:hover {
+    background-color: transparent;
+}
+
 .edit-input {
     width: 100%;
     padding: 4px 8px;
