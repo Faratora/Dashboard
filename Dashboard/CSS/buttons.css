@@ -28,7 +28,6 @@ button:hover:disabled {
 }
 
 .btn {
-
 }
 
 /* Sidebar button */
@@ -39,7 +38,6 @@ button:hover:disabled {
     position: absolute;
     right: 0;
     top: 0;
-
 }
 
 .toggle-btn:hover {
@@ -68,8 +66,6 @@ button:hover:disabled {
 .cancel-btn:hover {
     background: var(--background-btn-close-hover);
 }
-
-
 
 .edit-btn,
 .delete-btn,
@@ -122,31 +118,20 @@ button:hover:disabled {
     margin-right: 5px;
 }
 #employees-modal .assign-unbtn {
-    background:var(--color-button-orange);
+    background: var(--color-button-orange);
 }
 #employees-modal .assign-unbtn:hover {
     background: var(--color-hover-orange);
 }
 .open-btn {
-    font-size: 24px;
     position: fixed;
-     left: 20px;
+    left: 20px;
     top: 5px;
-    display: none;
-    z-index: 1001;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
 }
 
 .open-btn.hidden {
     display: none !important;
 }
-
-
 
 .availability-btn {
     background: #e215d1;
@@ -158,7 +143,6 @@ button:hover:disabled {
     background: #5c0e55;
 }
 
-
 /* Availability Modal */
 #availability-modal .nav-btn {
     background: #3498db;
@@ -169,8 +153,3 @@ button:hover:disabled {
     cursor: pointer;
     font-size: 16px;
 }
-
- 
-
-
-
