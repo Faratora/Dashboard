@@ -1,6 +1,8 @@
 import { $, log } from './utils.js';
 import { validateProject, validateEmployee } from './validator.js';
-import { getProjects, getEmployees, getCurrentPeriod, formatCurrency } from './dataStorage.js';
+import { getProjects, getEmployees, getCurrentPeriod, formatCurrency, updateEmployee } from './dataStorage.js';
+import { renderEmployees } from './employees.js';
+import { renderProjects } from './projects.js';
 
 let editMode = null;
 let editingId = null;
@@ -1349,4 +1351,13 @@ export function initModal() {
     if (unassignBackdrop) {
         unassignBackdrop.addEventListener('click', closeUnassignConfirmationModal);
     }
+
+    // Listen for editAssignment event - save employee data and update tables
+    window.addEventListener('editAssignment', (e) => {
+        const { employeeId, employeeData } = e.detail;
+        log('Editing assignment for employee: ' + employeeId);
+        updateEmployee(employeeId, employeeData);
+        renderEmployees();
+        renderProjects();
+    });
 }

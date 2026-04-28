@@ -11,6 +11,7 @@ import {
     getWeekdaysInMonth,
     getWeekdayVacationDays,
 } from './dataStorage.js';
+import { renderProjects } from './projects.js';
 import { initInlineEditListeners, setRenderCallback } from './inlineEdit.js';
 
 let sortColumn = null;
@@ -24,7 +25,16 @@ function sortAndFilterEmployees(employees) {
         result = result.filter((e) => e.project && e.project.toLowerCase().includes(projectFilter.toLowerCase()));
     }
 
-    const filterableColumns = ['name', 'surname', 'age', 'position', 'salary', 'estimatedPayment', 'project', 'estimatedIncome'];
+    const filterableColumns = [
+        'name',
+        'surname',
+        'age',
+        'position',
+        'salary',
+        'estimatedPayment',
+        'project',
+        'estimatedIncome',
+    ];
     filterableColumns.forEach((column) => {
         if (column === 'project') return;
         const columnFilter = window[`filter_${column}`];
@@ -134,12 +144,12 @@ function renderEmployeeRow(employee) {
     const allEmployees = getEmployees();
     let projectUsedCapacity = 0;
     let projectTotalCapacity = 0;
-    const projectEmployees = employee.project ? allEmployees.filter(e => e.project === employee.project) : [];
+    const projectEmployees = employee.project ? allEmployees.filter((e) => e.project === employee.project) : [];
     const projectEmployeeCount = projectEmployees.length;
 
     if (employee.project) {
         const projects = getProjects();
-        const project = projects.find(p => p.projectName === employee.project);
+        const project = projects.find((p) => p.projectName === employee.project);
         projectTotalCapacity = project ? project.employeeCapacity || 0 : 0;
 
         const period = getCurrentPeriod();
@@ -150,9 +160,8 @@ function renderEmployeeRow(employee) {
             const capacity = emp.capacity || 1;
             const fit = emp.fit || 1;
             const weekdayVacations = getWeekdayVacationDays(emp.vacationDays || [], currentYear, currentMonth);
-            const vacationCoefficient = weekdaysInMonth > 0
-                ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth
-                : 0;
+            const vacationCoefficient =
+                weekdaysInMonth > 0 ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth : 0;
             return sum + capacity * fit * vacationCoefficient;
         }, 0);
     }
@@ -274,7 +283,7 @@ function renderEmployeeRow(employee) {
         showAssignmentsBtn.addEventListener('click', () => {
             log('Show assignments button clicked for project: ' + employee.project);
             const projects = getProjects();
-            const project = projects.find(p => p.projectName === employee.project);
+            const project = projects.find((p) => p.projectName === employee.project);
             if (project) {
                 window.dispatchEvent(new CustomEvent('showProjectEmployees', { detail: { projectId: project.id } }));
             }
@@ -316,7 +325,16 @@ export function initEmployees() {
         return;
     }
 
-    const filterableColumns = ['name', 'surname', 'age', 'position', 'salary', 'estimatedPayment', 'project', 'estimatedIncome'];
+    const filterableColumns = [
+        'name',
+        'surname',
+        'age',
+        'position',
+        'salary',
+        'estimatedPayment',
+        'project',
+        'estimatedIncome',
+    ];
     filterableColumns.forEach((column) => {
         window[`filter_${column}`] = '';
     });
@@ -394,6 +412,7 @@ function initSortFilter() {
         log('Assigning employee: ' + employeeId);
         updateEmployee(employeeId, employeeData);
         renderEmployees();
+        renderProjects();
     });
 
     // Listen for set vacation event
@@ -403,6 +422,7 @@ function initSortFilter() {
         log('Vacation days:', employeeData.vacationDays);
         updateEmployee(employeeId, employeeData);
         renderEmployees();
+        renderProjects();
     });
 
     // Listen for inline edit event
@@ -411,6 +431,7 @@ function initSortFilter() {
         log('Inline editing employee: ' + employeeId);
         updateEmployee(employeeId, employeeData);
         renderEmployees();
+        renderProjects();
     });
 
     // Reset project filter when closing employees modal
@@ -460,10 +481,18 @@ function applyColumnFilter(column, value) {
 function updateClearButtonVisibility() {
     const clearBtn = $('#clear-employee-filters-btn');
     if (clearBtn) {
-        const filterableColumns = ['name', 'surname', 'age', 'position', 'salary', 'estimatedPayment', 'estimatedIncome'];
-        const activeColumnFilters = filterableColumns.filter(col => window[`filter_${col}`]).length;
+        const filterableColumns = [
+            'name',
+            'surname',
+            'age',
+            'position',
+            'salary',
+            'estimatedPayment',
+            'estimatedIncome',
+        ];
+        const activeColumnFilters = filterableColumns.filter((col) => window[`filter_${col}`]).length;
         const activeFiltersCount = activeColumnFilters + (projectFilter ? 1 : 0);
-        
+
         clearBtn.style.display = activeFiltersCount >= 2 ? 'flex' : 'none';
     }
 }
@@ -474,7 +503,16 @@ function resetAllFilters() {
     projectFilter = '';
 
     // Clear all column-specific filters
-    const filterableColumns = ['name', 'surname', 'age', 'position', 'salary', 'estimatedPayment', 'project', 'estimatedIncome'];
+    const filterableColumns = [
+        'name',
+        'surname',
+        'age',
+        'position',
+        'salary',
+        'estimatedPayment',
+        'project',
+        'estimatedIncome',
+    ];
     filterableColumns.forEach((column) => {
         window[`filter_${column}`] = '';
     });
@@ -504,13 +542,13 @@ function updateEmployeeFilterChips() {
     const chips = [];
 
     // Column-specific filters (except project which is handled separately)
-    filterableColumns.forEach(column => {
+    filterableColumns.forEach((column) => {
         const value = window[`filter_${column}`];
         if (value) {
             chips.push({
                 column,
                 label: getFilterDisplayName(column),
-                value: value
+                value: value,
             });
         }
     });
@@ -520,7 +558,7 @@ function updateEmployeeFilterChips() {
         chips.push({
             column: 'project',
             label: 'Project',
-            value: projectFilter
+            value: projectFilter,
         });
     }
 
