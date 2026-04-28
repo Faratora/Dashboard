@@ -245,22 +245,31 @@ function renderEmployeeRow(employee) {
         });
     }
 
-    if (assignBtn) {
-        assignBtn.dataset.id = employee.id;
-        if (isAssignDisabled) {
-            assignBtn.disabled = true;
-            assignBtn.style.opacity = '0.5';
-            assignBtn.style.cursor = 'not-allowed';
-        } else {
-            assignBtn.disabled = false;
-            assignBtn.style.opacity = '';
-            assignBtn.style.cursor = '';
+        if (assignBtn) {
+            assignBtn.dataset.id = employee.id;
+            if (isAssignDisabled) {
+                assignBtn.disabled = true;
+                assignBtn.style.opacity = '0.5';
+                assignBtn.style.cursor = 'not-allowed';
+            } else {
+                assignBtn.disabled = false;
+                assignBtn.style.opacity = '';
+                assignBtn.style.cursor = '';
+            }
+            assignBtn.addEventListener('click', (e) => {
+                log('Assign button clicked for employee: ' + employee.id);
+                const buttonRect = assignBtn.getBoundingClientRect();
+                window.dispatchEvent(new CustomEvent('showAssignEmployee', { 
+                    detail: { 
+                        employeeId: employee.id,
+                        buttonX: buttonRect.left + buttonRect.width / 2,
+                        buttonY: buttonRect.top + buttonRect.height,
+                        buttonWidth: buttonRect.width,
+                        buttonHeight: buttonRect.height
+                    } 
+                }));
+            });
         }
-        assignBtn.addEventListener('click', () => {
-            log('Assign button clicked for employee: ' + employee.id);
-            window.dispatchEvent(new CustomEvent('showAssignEmployee', { detail: { employeeId: employee.id } }));
-        });
-    }
 
     if (editBtn) {
         editBtn.dataset.id = employee.id;

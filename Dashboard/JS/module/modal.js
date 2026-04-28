@@ -596,7 +596,7 @@ export function initModal() {
     let currentAssignEmployee = null;
     let currentTotalCapacity = 0;
 
-    const updateAssignCalculations = () => {
+     const updateAssignCalculations = () => {
         const assignedCapacity = parseFloat(assignCapacitySlider.value) || 0;
         const fitCoefficient = parseFloat(assignFitSlider.value) || 1;
 
@@ -619,6 +619,26 @@ export function initModal() {
         if (assignAvailableCapacity) {
             const available = Math.max(0, 1.5 - currentTotalCapacity);
             assignAvailableCapacity.textContent = `Available: ${available.toFixed(2)}`;
+        }
+
+        // Get selected project for capacity info
+        const selectedProjectName = assignProjectSelect?.value || '';
+        const projects = getProjects();
+        const selectedProject = projects.find(p => p.projectName === selectedProjectName);
+        
+        if (selectedProject) {
+            // Update project capacity displays
+            const projectCapacityEl = $('#assign-project-capacity');
+            const projectTotalCapacityEl = $('#assign-project-total-capacity');
+            const effectiveCapacityEl = $('#assign-effective-capacity-value');
+            const predictedEffectiveEl = $('#assign-predicted-effective-capacity');
+            const projectTotalCapacityEl2 = $('#assign-project-total-capacity-2');
+            
+            if (projectCapacityEl) projectCapacityEl.textContent = selectedProject.employeeCapacity.toFixed(1);
+            if (projectTotalCapacityEl) projectTotalCapacityEl.textContent = selectedProject.employeeCapacity;
+            if (effectiveCapacityEl) effectiveCapacityEl.textContent = effectiveCapacity.toFixed(2);
+            if (predictedEffectiveEl) predictedEffectiveEl.textContent = predictedTotal.toFixed(2);
+            if (projectTotalCapacityEl2) projectTotalCapacityEl2.textContent = selectedProject.employeeCapacity;
         }
 
         // Show sliders and calculations only if project is selected
@@ -662,19 +682,8 @@ export function initModal() {
             assignFitSlider.value = currentAssignEmployee.fit || 1.0;
         }
 
-        if (assignProjectSelect) {
-            const projects = getProjects();
-            assignProjectSelect.innerHTML = '<option value="">-- Select Project --</option>';
-            projects.forEach((project) => {
-                const option = document.createElement('option');
-                option.value = project.projectName;
-                option.textContent = project.projectName;
-                if (currentAssignEmployee.project === project.projectName) {
-                    option.selected = true;
-                }
-                assignProjectSelect.appendChild(option);
-            });
-        }
+        // Initialize project search
+        initializeProjectSearch();
 
         // Hide sliders and calculations by default
         if (assignSlidersContainer) {
@@ -696,6 +705,63 @@ export function initModal() {
         currentAssignEmployeeId = null;
         currentAssignEmployee = null;
     };
+
+    // Project search functionality
+    function initializeProjectSearch() {
+        const projectSearchInput = $('#assign-project-search');
+        const projectSelect = $('#assign-project-select');
+        
+        if (!projectSearchInput || !projectSelect) return;
+
+        // Clear and repopulate project list
+        function populateProjectList(filter = '') {
+            projectSelect.innerHTML = '<option value="">-- Select Project --</option>';
+            const projects = getProjects();
+            projects
+                .filter(project => 
+                    project.projectName.toLowerCase().includes(filter.toLowerCase())
+                )
+                .forEach((project) => {
+                    const option = document.createElement('option');
+                    option.value = project.projectName;
+                    option.textContent = project.projectName;
+                    if (currentAssignEmployee?.project === project.projectName) {
+                        option.selected = true;
+                    }
+                    projectSelect.appendChild(option);
+                });
+                
+            // If no projects match, show a message
+            if (projectSelect.options.length <= 1) {
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'No projects found';
+                option.disabled = true;
+                projectSelect.appendChild(option);
+            }
+        }
+
+        // Initial population
+        populateProjectList();
+
+        // Search input event listener
+        projectSearchInput.addEventListener('input', (e) => {
+            const filter = e.target.value.trim();
+            populateProjectList(filter);
+            
+            // Update calculations based on selected project
+            updateAssignCalculations();
+        });
+
+        // Clear search on ESC key
+        projectSearchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                projectSearchInput.value = '';
+                populateProjectList('');
+                updateAssignCalculations();
+            }
+        });
+    }
 
     const handleAssignConfirm = () => {
         if (!currentAssignEmployee) return;
@@ -752,9 +818,9 @@ export function initModal() {
     }
 
     window.addEventListener('showAssignEmployee', (e) => {
-        const { employeeId } = e.detail;
+        const { employeeId, buttonX, buttonY, buttonWidth, buttonHeight } = e.detail;
         log('Opening assign modal for employee: ' + employeeId);
-        openAssignModal(employeeId);
+        openAssignModal(employeeId, { buttonX, buttonY, buttonWidth, buttonHeight });
     });
 
     // Availability Modal
