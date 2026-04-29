@@ -2,11 +2,11 @@ import { $, log, generateId, formatCurrency, escapeHtml } from './utils.js';
 
 const STORAGE_KEY = 'monthlyData';
 
-// Calculate weekdays in the current month
+
 function getWeekdaysInMonth() {
     const period = getCurrentPeriod();
     const [year, month] = period.split('-').map(Number);
-    // month is 1-indexed in our data, but Date expects 0-indexed
+    
     const date = new Date(year, month - 1, 1);
     const daysInMonth = new Date(year, month, 0).getDate();
     
@@ -14,7 +14,7 @@ function getWeekdaysInMonth() {
     for (let day = 1; day <= daysInMonth; day++) {
         date.setDate(day);
         const dayOfWeek = date.getDay();
-        // 0 = Sunday, 6 = Saturday
+        
         if (dayOfWeek !== 0 && dayOfWeek !== 6) {
             weekdays++;
         }
@@ -22,7 +22,7 @@ function getWeekdaysInMonth() {
     return weekdays;
 }
 
-// Count vacation days that fall on weekdays in the current month
+
 function getWeekdayVacationDays(vacationDays, year, month) {
     if (!Array.isArray(vacationDays) || vacationDays.length === 0) {
         return 0;
@@ -30,10 +30,10 @@ function getWeekdayVacationDays(vacationDays, year, month) {
     let weekdayVacations = 0;
     for (const vacDay of vacationDays) {
         const vacDate = new Date(vacDay);
-        // Check if this vacation day is in the current month
+        
         if (vacDate.getFullYear() === year && vacDate.getMonth() + 1 === month) {
             const dayOfWeek = vacDate.getDay();
-            // Only count if it's a weekday (Mon-Fri)
+            
             if (dayOfWeek !== 0 && dayOfWeek !== 6) {
                 weekdayVacations++;
             }
@@ -109,12 +109,12 @@ export function addProject(projectData) {
 export function deleteProject(id) {
     const data = loadData();
     const period = getCurrentPeriod();
-    // Find project to get its name before deleting
+    
     const project = data.monthlyData[period].projects.find((p) => p.id === id);
     const projectName = project ? project.projectName : null;
     
     data.monthlyData[period].projects = data.monthlyData[period].projects.filter((p) => p.id !== id);
-    // Unassign employees from this project (match by project name, not id)
+    
     if (projectName) {
         data.monthlyData[period].employees = data.monthlyData[period].employees.filter((e) => e.project !== projectName);
     }
@@ -182,18 +182,38 @@ export function updateEmployee(id, employeeData) {
     }
 }
 
+
+function calculateAssignedCapacity(employee, currentYear, currentMonth, weekdaysInMonth) {
+   
+    if (!employee.project) {
+        return 0;
+    }
+
+    const capacity = employee.capacity || 1;
+    const fit = employee.fit || 1;
+    const weekdayVacations = getWeekdayVacationDays(employee.vacationDays || [], currentYear, currentMonth);
+    const vacationCoefficient = weekdaysInMonth > 0
+        ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth
+        : 0;
+
+   
+    return capacity * fit * vacationCoefficient;
+}
+
 export function getEmployees() {
     const period = getCurrentPeriod();
     const monthData = getMonthData();
     const employees = [...monthData.employees];
 
-    // Calculate estimatedIncome for each employee using weekday-based vacation calculation
+    
     const projects = getProjects();
     const [currentYear, currentMonth] = period.split('-').map(Number);
     const weekdaysInMonth = getWeekdaysInMonth();
 
     return employees.map((emp) => {
-        // Calculate age from birthDate if available
+       
+        const assignedCapacity = calculateAssignedCapacity(emp, currentYear, currentMonth, weekdaysInMonth);
+        
         let age = emp.age;
         if (emp.birthDate) {
             const birth = new Date(emp.birthDate);
@@ -206,22 +226,22 @@ export function getEmployees() {
         }
 
         if (!emp.project) {
-            // Bench cost: salary × 0.5 for unassigned employees
+            
             const benchCost = (emp.salary || 0) * 0.5;
-            // Bench profit = 0 revenue - bench cost = negative profit
+            
             const benchProfit = 0 - benchCost;
-            return { ...emp, age, estimatedIncome: 0, estimatedPayment: benchCost, profit: benchProfit };
+            return { ...emp, age, assignedCapacity: 0, estimatedIncome: 0, estimatedPayment: benchCost, profit: benchProfit };
         }
 
         const project = projects.find((p) => p.projectName === emp.project);
         if (!project) {
-            // Bench cost: salary × 0.5 for employees without valid project
+            
             const benchCost = (emp.salary || 0) * 0.5;
             const benchProfit = 0 - benchCost;
-            return { ...emp, age, estimatedIncome: 0, estimatedPayment: benchCost, profit: benchProfit };
+            return { ...emp, age, assignedCapacity, estimatedIncome: 0, estimatedPayment: benchCost, profit: benchProfit };
         }
 
-        // Calculate total effective capacity for the project using weekday-based calculation
+        
         const projectEmployees = employees.filter((e) => e.project === emp.project);
         const totalEffectiveCapacity = projectEmployees.reduce((sum, e) => {
             const capacity = e.capacity || 1;
@@ -233,43 +253,43 @@ export function getEmployees() {
             return sum + capacity * fit * vacationCoefficient;
         }, 0);
 
-        // Capacity for revenue = max(project capacity, total effective capacity used)
+        
         const projectCapacity = project.employeeCapacity || 0;
         const capacityForRevenue = Math.max(projectCapacity, totalEffectiveCapacity);
 
-        // If no capacity, no revenue
+        
         if (capacityForRevenue === 0) {
-            // Cost: salary × max(0.5, capacity) even when no revenue
+            
             const empCapacity = emp.capacity || 1;
             const cost = (emp.salary || 0) * Math.max(0.5, empCapacity);
-            // Profit = 0 revenue - cost
+           
             const profit = 0 - cost;
-            return { ...emp, age, estimatedIncome: 0, estimatedPayment: cost, profit };
+            return { ...emp, age, assignedCapacity, estimatedIncome: 0, estimatedPayment: cost, profit };
         }
 
-        // Revenue per effective capacity = budget ÷ capacity for revenue
+        
         const revenuePerEffectiveCapacity = project.budget / capacityForRevenue;
 
-        // Calculate this employee's effective capacity using weekday-based calculation
+        
         const empCapacity = emp.capacity || 1;
         const empFit = emp.fit || 1;
         const empWeekdayVacations = getWeekdayVacationDays(emp.vacationDays, currentYear, currentMonth);
-        const empVacationCoefficient = weekdaysInMonth > 0 
-            ? (weekdaysInMonth - empWeekdayVacations) / weekdaysInMonth 
+        const empVacationCoefficient = weekdaysInMonth > 0
+            ? (weekdaysInMonth - empWeekdayVacations) / weekdaysInMonth
             : 0;
         const empEffectiveCapacity = empCapacity * empFit * empVacationCoefficient;
 
-        // Employee's revenue = revenue per effective capacity × employee's effective capacity
+        
         const estimatedIncome = revenuePerEffectiveCapacity * empEffectiveCapacity;
         
-        // Cost: salary × max(0.5, capacity) for assigned employees
+        
         const cost = (emp.salary || 0) * Math.max(0.5, empCapacity);
         const estimatedPayment = cost;
 
-        // Profit = revenue - cost
+        
         const profit = estimatedIncome - cost;
 
-        return { ...emp, age, estimatedIncome, estimatedPayment, profit };
+        return { ...emp, age, assignedCapacity, estimatedIncome, estimatedPayment, profit };
     });
 }
 

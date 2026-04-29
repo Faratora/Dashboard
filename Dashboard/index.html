@@ -14,9 +14,10 @@
 	<link rel="stylesheet" href="./CSS/seedData.css">
 	<link rel="stylesheet" href="./CSS/filterModal.css">
 	<link rel="stylesheet" href="./CSS/slideInPanel.css">
-<link rel="stylesheet" href="./CSS/assignModalPosition.css">
+<link rel="stylesheet" href="./CSS/filterModal.css">
 	<link rel="stylesheet" href="./CSS/assignModalPosition.css">
 	<link rel="stylesheet" href="./CSS/availabilityToday.css">
+	<link rel="stylesheet" href="./CSS/table.css">
 </head>
 
 
@@ -43,10 +44,13 @@
 			<div class="content-header">
 				<h1>Projects</h1>
 			</div>
+
 			<div class="table-controls">
 				<button id="clear-project-filters-btn" class="reset-filters-btn" title="Clear all filters">✕ Clear
 					filters</button>
+					<div id="project-filter-chips" class="filter-chips"></div>
 				<div class="controls-right">
+					
 					<button id="add-project-btn" class="add-btn">+ Add Project</button>
 					<button id="seed-data-btn" class="add-btn">Seed Data</button>
 				</div>
@@ -69,16 +73,19 @@
 				<tbody id="projects-tbody"></tbody>
 			</table>
 			<div id="projects-summary" class="table-summary"></div>
-			<div id="project-filter-chips" class="filter-chips"></div>
+			
 		</div>
 		<!-- Employees -->
 		<div id="employees-content" style="display: none;">
 			<div class="content-header">
 				<h1>Employees</h1>
 			</div>
+
+
 			<div class="table-controls">
 				<button id="clear-employee-filters-btn" class="reset-filters-btn" title="Clear all filters">✕ Clear
 					filters</button>
+					<div id="employee-filter-chips" class="filter-chips"></div>
 				<div class="controls-right">
 					<button id="add-employee-btn" class="add-btn">+ Add Employee</button>
 				</div>
@@ -106,7 +113,7 @@
 				</thead>
 				<tbody id="employees-tbody"></tbody>
 			</table>
-			<div id="employee-filter-chips" class="filter-chips"></div>
+			
 		</div>
 
 		<!-- Cтроки таблицы сотрудников в модалке (project employees) -->
@@ -282,17 +289,13 @@
 
 		<!-- Filter Modal -->
 		<div id="filter-backdrop" class="backdrop hidden"></div>
-		<div id="filter-modal" class="hidden">
-			<div class="modal-header">
-				<h2 id="filter-modal-title">Filter</h2>
-				<button type="button" class="modal-close" id="filter-modal-close">&times;</button>
-			</div>
-			<div class="modal-body">
+		<div id="filter-modal" class="filter-modal hidden">
+			<div class="filter-modal-body">
 				<input type="text" id="filter-input" placeholder="Filter by..." autofocus>
 			</div>
-			<div class="modal-footer">
-				<button type="button" id="filter-apply-btn" class="apply-btn">Apply</button>
-				<button type="button" id="filter-cancel-btn" class="cancel-btn">Cancel</button>
+			<div class="filter-modal-footer">
+				<button type="button" id="filter-apply-btn" class="apply-btn small">Apply</button>
+				<button type="button" id="filter-cancel-btn" class="cancel-btn small">Cancel</button>
 			</div>
 		</div>
 

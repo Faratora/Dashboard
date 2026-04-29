@@ -207,7 +207,7 @@ function renderEmployeeRow(employee) {
     if (estimatedPaymentEl) estimatedPaymentEl.textContent = formatCurrency(employee.estimatedPayment);
     if (estimatedIncomeEl) {
         estimatedIncomeEl.textContent = formatCurrency(employee.profit);
-        // Color-code based on profit sign
+        
         const profit = employee.profit || 0;
         estimatedIncomeEl.classList.remove('income-positive', 'income-negative');
         if (profit > 0) {
@@ -245,31 +245,33 @@ function renderEmployeeRow(employee) {
         });
     }
 
-        if (assignBtn) {
-            assignBtn.dataset.id = employee.id;
-            if (isAssignDisabled) {
-                assignBtn.disabled = true;
-                assignBtn.style.opacity = '0.5';
-                assignBtn.style.cursor = 'not-allowed';
-            } else {
-                assignBtn.disabled = false;
-                assignBtn.style.opacity = '';
-                assignBtn.style.cursor = '';
-            }
-            assignBtn.addEventListener('click', (e) => {
-                log('Assign button clicked for employee: ' + employee.id);
-                const buttonRect = assignBtn.getBoundingClientRect();
-                window.dispatchEvent(new CustomEvent('showAssignEmployee', { 
-                    detail: { 
+    if (assignBtn) {
+        assignBtn.dataset.id = employee.id;
+        if (isAssignDisabled) {
+            assignBtn.disabled = true;
+            assignBtn.style.opacity = '0.5';
+            assignBtn.style.cursor = 'not-allowed';
+        } else {
+            assignBtn.disabled = false;
+            assignBtn.style.opacity = '';
+            assignBtn.style.cursor = '';
+        }
+        assignBtn.addEventListener('click', (e) => {
+            log('Assign button clicked for employee: ' + employee.id);
+            const buttonRect = assignBtn.getBoundingClientRect();
+            window.dispatchEvent(
+                new CustomEvent('showAssignEmployee', {
+                    detail: {
                         employeeId: employee.id,
                         buttonX: buttonRect.left + buttonRect.width / 2,
                         buttonY: buttonRect.top + buttonRect.height,
                         buttonWidth: buttonRect.width,
-                        buttonHeight: buttonRect.height
-                    } 
-                }));
-            });
-        }
+                        buttonHeight: buttonRect.height,
+                    },
+                })
+            );
+        });
+    }
 
     if (editBtn) {
         editBtn.dataset.id = employee.id;
@@ -348,7 +350,7 @@ export function initEmployees() {
         window[`filter_${column}`] = '';
     });
 
-    // Reset filter icon colors
+    
     const thead = $('#employees-thead');
     if (thead) {
         filterableColumns.forEach((column) => {
@@ -368,7 +370,7 @@ export function initEmployees() {
     log('addEmployeeCallback registered: ' + typeof window.addEmployeeCallback);
     log('editEmployeeCallback registered: ' + typeof window.editEmployeeCallback);
 
-    // Set render callback for inline edit
+    
     setRenderCallback(renderEmployees);
 
     initSortFilter();
@@ -397,7 +399,7 @@ function initSortFilter() {
         },
     });
 
-    // Reset filters button
+    
     const clearBtn = $('#clear-employee-filters-btn');
     if (clearBtn) {
         clearBtn.addEventListener('click', () => {
@@ -405,17 +407,17 @@ function initSortFilter() {
         });
     }
 
-    // Show/hide clear button on initial load
+    
     updateClearButtonVisibility();
 
-    // Listen for column filter events
+    
     window.addEventListener('applyColumnFilter', (e) => {
         const { column, value } = e.detail;
         applyColumnFilter(column, value);
         updateClearButtonVisibility();
     });
 
-    // Listen for assign employee event
+    
     window.addEventListener('assignEmployee', (e) => {
         const { employeeId, employeeData } = e.detail;
         log('Assigning employee: ' + employeeId);
@@ -424,7 +426,7 @@ function initSortFilter() {
         renderProjects();
     });
 
-    // Listen for set vacation event
+    
     window.addEventListener('setVacation', (e) => {
         const { employeeId, employeeData } = e.detail;
         log('Setting vacation for employee: ' + employeeId);
@@ -434,7 +436,7 @@ function initSortFilter() {
         renderProjects();
     });
 
-    // Listen for inline edit event
+    
     window.addEventListener('inlineEditEmployee', (e) => {
         const { employeeId, employeeData } = e.detail;
         log('Inline editing employee: ' + employeeId);
@@ -443,7 +445,7 @@ function initSortFilter() {
         renderProjects();
     });
 
-    // Reset project filter when closing employees modal
+    
     window.addEventListener('closeProjectEmployeesModal', () => {
         projectFilter = '';
         updateClearButtonVisibility();
@@ -472,9 +474,9 @@ function applyColumnFilter(column, value) {
         filterIcon.style.color = value ? '#1abc9c' : '';
     }
 
-    // Store column-specific filter
+    
     if (column === 'project') {
-        projectFilter = value; // Store in projectFilter for project matching
+        projectFilter = value; 
     } else {
         if (value) {
             window[`filter_${column}`] = value.toLowerCase();
@@ -511,7 +513,7 @@ function resetAllFilters() {
     sortDirection = 'asc';
     projectFilter = '';
 
-    // Clear all column-specific filters
+    
     const filterableColumns = [
         'name',
         'surname',
@@ -526,7 +528,7 @@ function resetAllFilters() {
         window[`filter_${column}`] = '';
     });
 
-    // Reset column filter icons
+    
     const thead = $('#employees-thead');
     if (thead) {
         const filterableHeaders = thead.querySelectorAll('th.filterable');
@@ -550,7 +552,7 @@ function updateEmployeeFilterChips() {
     const filterableColumns = ['name', 'surname', 'age', 'position', 'salary', 'estimatedPayment', 'estimatedIncome'];
     const chips = [];
 
-    // Column-specific filters (except project which is handled separately)
+    
     filterableColumns.forEach((column) => {
         const value = window[`filter_${column}`];
         if (value) {
@@ -562,7 +564,7 @@ function updateEmployeeFilterChips() {
         }
     });
 
-    // Project filter (uses projectFilter variable)
+    
     if (projectFilter) {
         chips.push({
             column: 'project',

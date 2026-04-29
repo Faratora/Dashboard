@@ -53,8 +53,6 @@ select:focus {
     background: #16213e;
 } */
 
-
-
 nav {
     display: flex;
     flex-direction: column;
@@ -96,21 +94,7 @@ nav {
     margin-bottom: 25px;
     flex-wrap: wrap;
 }
-.table-controls {
-    display: flex;
-    align-items: center;
-    margin-bottom: 25px;
-    flex-wrap: wrap;
-    gap: 10px;
-}
 
-.table-controls .controls-right {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
 
 .content-header h1 {
     margin: 0;
@@ -167,7 +151,6 @@ nav {
 .panel-header h2 {
     margin: 0;
     color: var(--color-primary);
-    
 }
 
 .panel-close {
@@ -245,107 +228,8 @@ nav {
     background: var(--color-bg-body);
 }
 
-/* Table */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: var(--color-white);
-    border-radius: 12px;
-    overflow: auto;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    table-layout: fixed;
-}
 
-/* Table header */
-/* thead {
-    background-color: var(--color-white);
-} */
-th,
-td {
-    padding: 12px 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-/* Project column */
-.project-cell {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.project-name {
-    font-size: 14px;
-}
-
-.show-assignments-btn {
-    align-self: flex-start;
-}
-th {
-    background: var(--table-header);
-    cursor: pointer;
-    position: relative;
-}
-th.sortable:hover {
-    background: #d5dbdb;
-}
-
-/* Projects table full width */
-.table {
-    table-layout: auto !important;
-    overflow: visible !important;
-
-}
-
-/* Table action buttons */
-
-/* Project table color coding */
-.over-capacity {
-    background-color: #ffcccc;
-    color: #cc0000;
-    font-weight: bold;
-}
-
-.income-positive {
-    color: #27ae60;
-    font-weight: bold;
-}
-
-.income-negative {
-    color: #e74c3c;
-    font-weight: bold;
-}
-
-/* Table Summary Footer */
-.table-summary {
-    padding: 12px 20px;
-    background-color: var(--color-bg-sidebar);
-    border-top: 2px solid var(--color-border-bottom);
-    font-size: 16px;
-    font-weight: bold;
-    color: var(--color-white);
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 15px;
-}
-
-.table-summary .total-label {
-    color:#1a1a2e
-}
-
-.table-summary .total-value {
-    font-size: 18px;
-}
-
-.table-summary .total-value.income-positive {
-    color: #27ae60;
-}
-
-.table-summary .total-value.income-negative {
-    color: #e74c3c;
-}
-
+на одной строче
 /* Filter Chips */
 .filter-chips {
     display: flex;
@@ -384,13 +268,9 @@ th.sortable:hover {
 
 /*apacity Overload Indicator */
 .over-capacity {
-    background-color: #ffcccc;
-    color: #cc0000;
+    color: #e74c3c;
     font-weight: bold;
 }
-
-
-
 
 .filter-container {
     position: relative;
@@ -454,10 +334,6 @@ th.sortable:hover {
     gap: 10px;
     align-items: center;
 }
-
-
-
-
 
 .high-availability {
     background-color: #d4edda;
@@ -609,12 +485,10 @@ th.sortable:hover {
     margin-top: 20px;
     text-align: right;
     padding-top: 15px;
-    
 }
 
 /* Modal */
 #filter-backdrop,
-
 #availability-backdrop,
 .employees-modal-backdrop {
     position: fixed;
@@ -629,7 +503,7 @@ th.sortable:hover {
 #availability-backdrop.hidden,
 #filter-backdrop.hidden,
 #assign-backdrop.hidden,
-#filter-modal.hidden,
+.hidden,
 #assign-modal.hidden,
 #assign-calculations-container.hidden,
 #assign-sliders-container.hidden,
@@ -637,7 +511,6 @@ th.sortable:hover {
     display: none;
 }
 
-#filter-modal,
 #assign-modal,
 #availability-modal {
     position: fixed;
@@ -648,56 +521,30 @@ th.sortable:hover {
     padding: 20px;
     border-radius: 12px;
     z-index: 2001;
-    min-width: 350px;
+    min-width: 200px;
     max-width: 90%;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
 
-/* #filter-modal .modal-header,
-#assign-modal .modal-header,
-#availability-modal .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-} */
-
- .modal-header h2  {
+.modal-header h2 {
     margin: 0;
     color: #1a1a2e;
     font-size: 22px;
 }
 
-#filter-modal .modal-body,
+
 #assign-modal .modal-body,
 #availability-modal .modal-body {
     margin-bottom: 20px;
 }
 
-#filter-modal .modal-footer,
+
 #assign-modal .modal-footer {
     display: flex;
     gap: 10px;
     justify-content: flex-end;
 }
-
-/* Filter Modal */
-#filter-modal .modal-body input {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #bfbfbf;
-    border-radius: 8px;
-    font-size: 16px;
-    box-sizing: border-box;
-}
-
-#filter-modal .modal-body input:focus {
-    outline: none;
-    border-color: var(--color-button);
-    box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.1);
-}
-
 
 
 
@@ -743,12 +590,12 @@ th.sortable:hover {
 #assign-modal .form-group select {
     width: 100%;
     padding: 10px;
-   border: 1px solid #bfbfbf;
+    border: 1px solid #bfbfbf;
     border-radius: 8px;
     font-size: 16px;
 }
 
-#assign-modal .form-group input[type="range"] {
+#assign-modal .form-group input[type='range'] {
     width: 100%;
     cursor: pointer;
 }

@@ -69,7 +69,8 @@ button:hover:disabled {
 
 .edit-btn,
 .delete-btn,
-.unassign-btn {
+.unassign-btn,
+.small {
     padding: 5px 12px;
     border-radius: 6px;
     cursor: pointer;
@@ -101,7 +102,9 @@ button:hover:disabled {
     padding: 5px 12px;
     font-size: 12px;
 }
-
+.show-assignments-btn {
+    align-self: flex-start;
+}
 .copy-btn:hover,
 .assign-btn:hover,
 .show-employees-btn:hover,

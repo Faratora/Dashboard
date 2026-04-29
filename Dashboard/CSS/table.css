@@ -1,0 +1,115 @@
+/* Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--color-white);
+    border-radius: 12px;
+    overflow: auto;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    
+		table-layout: auto;
+    overflow: visible;
+}
+
+th,
+td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: var(--table-header);
+    cursor: pointer;
+    position: relative;
+}
+
+th:hover {
+    background: #a7aaaa;
+}
+
+.table-controls {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 10px;
+		justify-content: space-between;
+}
+
+.table-controls .controls-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.table-controls .controls-right .filter-chips {
+    margin-right: auto;
+}
+
+
+.project-name {
+    font-size: 14px;
+}
+
+.table td {
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+.table th {
+    white-space: normal;
+    line-height: 1.3;
+}
+
+.sort-icon,
+.filter-icon {
+    display: inline-block;
+    margin-left: 5px;
+}
+/* Project table color coding */
+.over-capacity {
+    color: #cc0000;
+    font-weight: bold;
+}
+
+.income-positive {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+.income-negative {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+/* Table Summary Footer */
+.table-summary {
+    padding: 12px 20px;
+    background-color: var(--color-bg-sidebar);
+    border-top: 2px solid var(--color-border-bottom);
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--color-white);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+}
+
+.table-summary .total-label {
+    color: #1a1a2e;
+}
+
+.table-summary .total-value {
+    font-size: 18px;
+}
+
+.table-summary .total-value.income-positive {
+    color: #27ae60;
+}
+
+.table-summary .total-value.income-negative {
+    color: #e74c3c;
+}
