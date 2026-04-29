@@ -49,7 +49,11 @@ export function getCurrentPeriod() {
     const year = yearSelect ? yearSelect.value : null;
 
     if (!month || !year) {
-        return new Date().getFullYear() + '-' + (new Date().getMonth() + 1);
+        
+        const now = new Date();
+        const currentMonth = now.getMonth() + 1;
+        const currentYear = now.getFullYear();
+        return `${currentYear}-${currentMonth.toString().padStart(2, '0')}`;
     }
     return `${year}-${month}`;
 }
@@ -57,10 +61,6 @@ export function getCurrentPeriod() {
 export function getMonthData() {
     const data = loadData();
     const period = getCurrentPeriod();
-    if (!data.monthlyData[period]) {
-        data.monthlyData[period] = { employees: [], projects: [] };
-        saveData(data);
-    }
     return data.monthlyData[period];
 }
 
@@ -68,12 +68,108 @@ function loadData() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
         try {
-            return JSON.parse(stored);
+            const parsed = JSON.parse(stored);
+           
+            const period = getCurrentPeriod();
+            if (!parsed.monthlyData[period]) {
+                
+                parsed.monthlyData[period] = initializeSampleData();
+                saveData(parsed);
+            }
+            return parsed;
         } catch {
-            return { monthlyData: {} };
+            const period = getCurrentPeriod();
+            return { monthlyData: { [period]: initializeSampleData() } };
         }
     }
-    return { monthlyData: {} };
+    
+    const period = getCurrentPeriod();
+    return { monthlyData: { [period]: initializeSampleData() } };
+}
+
+function initializeSampleData() {
+    const sampleProjects = [
+        {
+            id: generateId(),
+            companyName: 'TechCorp Inc.',
+            projectName: 'E-Commerce Platform',
+            budget: 150000,
+            employeeCapacity: 3,
+            estimatedIncome: 0,
+        },
+        {
+            id: generateId(),
+            companyName: 'DataFlow Systems',
+            projectName: 'Analytics Dashboard',
+            budget: 85000,
+            employeeCapacity: 2,
+            estimatedIncome: 0,
+        },
+    ];
+
+    const sampleEmployees = [
+        {
+            id: generateId(),
+            name: 'John',
+            surname: 'Smith',
+            age: 28,
+            birthDate: '1996-03-15',
+            position: 'Senior',
+            salary: 5500,
+            capacity: 1,
+            fit: 1,
+            vacationDays: [],
+            project: 'E-Commerce Platform',
+            assignedCapacity: 0,
+        },
+        {
+            id: generateId(),
+            name: 'Sarah',
+            surname: 'Johnson',
+            age: 32,
+            birthDate: '1992-07-22',
+            position: 'Lead',
+            salary: 7200,
+            capacity: 1,
+            fit: 1,
+            vacationDays: [],
+            project: 'E-Commerce Platform',
+            assignedCapacity: 0,
+        },
+        {
+            id: generateId(),
+            name: 'Mike',
+            surname: 'Williams',
+            age: 25,
+            birthDate: '1999-11-08',
+            position: 'Middle',
+            salary: 4200,
+            capacity: 1,
+            fit: 1,
+            vacationDays: [],
+            project: 'Analytics Dashboard',
+            assignedCapacity: 0,
+        },
+        {
+            id: generateId(),
+            name: 'Emily',
+            surname: 'Brown',
+            age: 30,
+            birthDate: '1994-05-30',
+            position: 'Senior',
+            salary: 5800,
+            capacity: 1,
+            fit: 1,
+            vacationDays: [],
+            project: '',
+            assignedCapacity: 0,
+        },
+    ];
+
+    return {
+        projects: sampleProjects,
+        employees: sampleEmployees,
+    };
 }
 
 function saveData(data) {
@@ -85,7 +181,7 @@ export function addProject(projectData) {
     const data = loadData();
     const period = getCurrentPeriod();
     log('Period: ' + period);
-
+    
     if (!data.monthlyData[period]) {
         data.monthlyData[period] = { employees: [], projects: [] };
     }
