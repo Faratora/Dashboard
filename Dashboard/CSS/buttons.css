@@ -79,6 +79,17 @@ button:hover:disabled {
 
 .show-assignments-btn {
     align-self: flex-start;
+    margin-top: 4px;
+}
+
+.edit-btn.small,
+.delete-btn.small,
+.assign-btn.small,
+.availability-btn.small,
+.unassign-btn.small {
+    padding: 4px 8px;
+    font-size: 12px;
+    margin: 2px;
 }
 
 .open-btn {

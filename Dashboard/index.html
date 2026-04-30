@@ -437,6 +437,34 @@
 			</div>
 		</div>
 
+		<!-- Employee Assignments Modal -->
+		<div id="employee-assignments-backdrop" class="backdrop hidden"></div>
+		<div id="employee-assignments-modal" class="employees-modal hidden">
+			<div class="modal-header">
+				<h2 id="employee-assignments-modal-title">Assignments for </h2>
+				<button type="button" class="panel-close" id="employee-assignments-modal-close-x">&times;</button>
+			</div>
+			<table id="employee-assignments-table">
+				<thead>
+					<tr>
+						<th>Project</th>
+						<th>Capacity</th>
+						<th>Fit</th>
+						<th>Vacation</th>
+						<th>Effective</th>
+						<th>Revenue</th>
+						<th>Cost</th>
+						<th>Profit</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody id="employee-assignments-tbody"></tbody>
+			</table>
+			<div class="modal-footer">
+				<button type="button" id="employee-assignments-modal-close-btn" class="close-btn">Close</button>
+			</div>
+		</div>
+
 
 		<script type="module" src="./JS/main.js"></script>
 </body>

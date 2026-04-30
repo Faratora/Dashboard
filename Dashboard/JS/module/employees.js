@@ -291,13 +291,12 @@ function renderEmployeeRow(employee) {
 
     const showAssignmentsBtn = tr.querySelector('.show-assignments-btn');
     if (showAssignmentsBtn && employee.project) {
+        showAssignmentsBtn.style.display = 'inline-block';
         showAssignmentsBtn.addEventListener('click', () => {
-            log('Show assignments button clicked for project: ' + employee.project);
-            const projects = getProjects();
-            const project = projects.find((p) => p.projectName === employee.project);
-            if (project) {
-                window.dispatchEvent(new CustomEvent('showProjectEmployees', { detail: { projectId: project.id } }));
-            }
+            log('Show assignments button clicked for employee: ' + employee.id);
+            window.dispatchEvent(new CustomEvent('showEmployeeAssignments', { 
+                detail: { employeeId: employee.id } 
+            }));
         });
     }
 

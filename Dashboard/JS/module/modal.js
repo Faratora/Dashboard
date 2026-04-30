@@ -1320,4 +1320,124 @@ export function initModal() {
         renderEmployees();
         renderProjects();
     });
+
+    // Employee Assignments Modal
+    const employeeAssignmentsBackdrop = $('#employee-assignments-backdrop');
+    const employeeAssignmentsModal = $('#employee-assignments-modal');
+    const employeeAssignmentsModalTitle = $('#employee-assignments-modal-title');
+    const employeeAssignmentsTbody = $('#employee-assignments-tbody');
+    const employeeAssignmentsModalCloseX = $('#employee-assignments-modal-close-x');
+    const employeeAssignmentsModalCloseBtn = $('#employee-assignments-modal-close-btn');
+
+    let currentAssignmentsEmployeeId = null;
+
+    const openEmployeeAssignmentsModal = (employeeId) => {
+        const employees = getEmployees();
+        const employee = employees.find((e) => e.id === employeeId);
+        currentAssignmentsEmployeeId = employeeId;
+
+        if (!employee) return;
+
+        if (employeeAssignmentsModalTitle) {
+            employeeAssignmentsModalTitle.textContent = `Assignments for ${employee.surname}`;
+        }
+
+        renderEmployeeAssignmentsTable(employee);
+
+        if (employeeAssignmentsBackdrop) employeeAssignmentsBackdrop.classList.remove('hidden');
+        if (employeeAssignmentsModal) employeeAssignmentsModal.classList.remove('hidden');
+    };
+
+    const renderEmployeeAssignmentsTable = (employee) => {
+        if (!employeeAssignmentsTbody) return;
+
+        employeeAssignmentsTbody.innerHTML = '';
+
+        const projects = getProjects();
+        const employeeProject = projects.find((p) => p.projectName === employee.project);
+
+        if (employee.project && employeeProject) {
+            const period = getCurrentPeriod();
+            const [currentYear, currentMonth] = period.split('-').map(Number);
+            const weekdaysInMonth = getWeekdaysInMonth();
+            const weekdayVacations = getWeekdayVacationDays(employee.vacationDays || [], currentYear, currentMonth);
+            const vacationCoefficient = weekdaysInMonth > 0 ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth : 0;
+
+            const capacity = employee.capacity || 0.5;
+            const fit = employee.fit || 1.0;
+            const effectiveCapacity = capacity * fit * vacationCoefficient;
+            const vacationDays = employee.vacationDays ? employee.vacationDays.length : 0;
+
+            // Calculate revenue and cost
+            const budget = employeeProject.budget || 0;
+            const totalProjectEmployees = projects.length > 0 ? 1 : 0; // Simplified calculation
+            const revenuePerCapacity = budget > 0 ? budget / Math.max(employeeProject.employeeCapacity, 1) : 0;
+            const revenue = revenuePerCapacity * effectiveCapacity;
+            const cost = (employee.salary || 0) * Math.max(0.5, capacity);
+            const profit = revenue - cost;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${employeeProject.projectName}</td>
+                <td>${capacity.toFixed(2)}</td>
+                <td>${fit.toFixed(2)}</td>
+                <td>${vacationDays}</td>
+                <td>${effectiveCapacity.toFixed(2)}</td>
+                <td>$${revenue.toFixed(2)}</td>
+                <td>$${cost.toFixed(2)}</td>
+                <td class="${profit >= 0 ? 'profit-positive' : 'profit-negative'}">$${profit.toFixed(2)}</td>
+                <td>
+                    <button class="edit-btn small" data-id="${employee.id}">Edit</button>
+                    <button class="unassign-btn small" data-id="${employee.id}">Unassign</button>
+                </td>
+            `;
+
+            // Add event listeners
+            const editBtn = tr.querySelector('.edit-btn');
+            const unassignBtn = tr.querySelector('.unassign-btn');
+
+            if (editBtn) {
+                editBtn.addEventListener('click', () => {
+                    window.openEditAssignmentModal(employee, employeeProject.projectName);
+                });
+            }
+
+            if (unassignBtn) {
+                unassignBtn.addEventListener('click', () => {
+                    window.openUnassignConfirmationModal(employee, employeeProject.projectName);
+                });
+            }
+
+            employeeAssignmentsTbody.appendChild(tr);
+        } else {
+            // No project assigned
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td colspan="9" style="text-align: center; color: #999;">No project assigned</td>`;
+            employeeAssignmentsTbody.appendChild(tr);
+        }
+    };
+
+    const closeEmployeeAssignmentsModal = () => {
+        if (employeeAssignmentsBackdrop) employeeAssignmentsBackdrop.classList.add('hidden');
+        if (employeeAssignmentsModal) employeeAssignmentsModal.classList.add('hidden');
+        currentAssignmentsEmployeeId = null;
+    };
+
+    if (employeeAssignmentsBackdrop) {
+        employeeAssignmentsBackdrop.addEventListener('click', closeEmployeeAssignmentsModal);
+    }
+    if (employeeAssignmentsModalCloseX) {
+        employeeAssignmentsModalCloseX.addEventListener('click', closeEmployeeAssignmentsModal);
+    }
+    if (employeeAssignmentsModalCloseBtn) {
+        employeeAssignmentsModalCloseBtn.addEventListener('click', closeEmployeeAssignmentsModal);
+    }
+
+    window.addEventListener('showEmployeeAssignments', (e) => {
+        const { employeeId } = e.detail;
+        log('Opening employee assignments modal for: ' + employeeId);
+        openEmployeeAssignmentsModal(employeeId);
+    });
+
+    window.openEmployeeAssignmentsModal = openEmployeeAssignmentsModal;
 }

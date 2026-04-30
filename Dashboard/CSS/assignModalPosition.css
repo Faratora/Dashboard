@@ -70,6 +70,61 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin: 8px 0;
+}
+
+#assign-modal .assign-calculations .calc-label {
+    flex: 1;
+    text-align: left;
+}
+
+#assign-modal .assign-calculations .calc-value {
+    flex: 1;
+    text-align: right;
+    font-weight: 600;
+}
+
+/* Employee Assignments Modal */
+#employee-assignments-modal {
+    min-width: 900px;
+}
+
+#employee-assignments-modal table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+#employee-assignments-modal th,
+#employee-assignments-modal td {
+    border: 1px solid #bfbfbf;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+#employee-assignments-modal th {
+    background: #f8f9fa;
+}
+
+#employee-assignments-modal tbody tr:hover {
+    background: #f8f9fa;
+}
+
+#employee-assignments-modal .profit-positive {
+    color: #27ae60;
+}
+
+#employee-assignments-modal .profit-negative {
+    color: #e74c3c;
+}
+
+#assign-modal .assign-calculations p.calculation-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin: 5px 0;
 }
 
