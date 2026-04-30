@@ -488,7 +488,7 @@ nav {
 }
 
 /* Modal */
-#filter-backdrop,
+/* #filter-backdrop, */
 #availability-backdrop,
 .employees-modal-backdrop {
     position: fixed;
