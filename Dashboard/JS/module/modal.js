@@ -603,7 +603,7 @@ export function initModal() {
         if (assignPredictedCapacity) assignPredictedCapacity.textContent = predictedTotal.toFixed(2);
         if (assignAvailableCapacity) {
             const available = Math.max(0, 1.5 - currentTotalCapacity);
-            assignAvailableCapacity.textContent = `Available: ${available.toFixed(2)}`;
+            assignAvailableCapacity.innerHTML = `Available: <span class="available-value">${available.toFixed(2)}</span>`;
         }
 
         const selectedProjectName = assignProjectSelect?.value || '';

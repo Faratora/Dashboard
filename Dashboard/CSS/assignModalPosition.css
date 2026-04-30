@@ -11,14 +11,15 @@
     transform: translate(-50%, -50%);
     background: white;
     padding: 20px;
-    border-radius: 12px;
+    border-radius: 8px;
     z-index: 2001;
-    min-width: 400px;
-    max-width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    min-width: 320px;
+    max-width: 400px;
+    box-shadow: 0 4px 12px #0003;
+  border: 1px solid #bdc3c7;
+
 }
+
 
 #assign-modal .modal-header {
     display: flex;
@@ -36,20 +37,20 @@
 }
 
 #assign-modal .modal-body {
-    margin-bottom: 20px;
-    padding: 10px 0;
+    margin-bottom: 5px;
+    padding: 5px 0;
 }
 
 #assign-modal .assign-info {
     background: #f8f9fa;
     padding: 10px;
     border-radius: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     border-left: 3px solid #3498db;
 }
 
 #assign-modal .assign-info h3 {
-    margin: 0 0 10px 0;
+    margin: 0 0 5px 0;
     color: #1a1a2e;
     font-size: 18px;
 }
@@ -60,12 +61,31 @@
     font-size: 14px;
 }
 
-#assign-modal .assign-info p::first-line {
+#assign-modal .assign-info .available-value {
+    color: #27ae60;
     font-weight: 700;
 }
 
-#assign-modal .form-group {
-    margin-bottom: 20px;
+#assign-modal .assign-calculations p.calculation-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px 0;
+}
+
+#assign-modal .assign-calculations .calc-label {
+    flex: 1;
+    text-align: left;
+}
+
+#assign-modal .assign-calculations .calc-value {
+    flex: 1;
+    text-align: right;
+    font-weight: 600;
+}
+
+#assign-modal .assign-info p::first-line {
+    font-weight: 700;
 }
 
 #assign-modal .form-group label {
@@ -88,7 +108,7 @@
 }
 #assign-modal .form-group select {
     width: 100%;
-    padding: 10px;
+    padding: 5px;
     border: 1px solid #bfbfbf;
     border-radius: 8px;
     font-size: 16px;
@@ -110,19 +130,18 @@
 #assign-modal .fit-coefficient-text {
     font-size: 12px;
     color: #666;
-    margin: 10px 0;
-    font-style: italic;
+        font-style: italic;
 }
 
 #assign-modal .assign-calculations {
     background: #f8f9fa;
-    padding: 15px;
+    padding: 5px;
     border-radius: 8px;
-    margin-top: 5px;
+    
 }
 
 #assign-modal .assign-calculations p {
-    margin: 8px 0;
+    margin: 5px 0;
     color: #2e7d32;
     font-size: 14px;
 }
@@ -137,10 +156,10 @@
 
 #assign-modal .modal-footer {
     display: flex;
-    gap: 10px;
+    gap: 5px;
     justify-content: flex-end;
-    margin-top: 20px;
-    padding-top: 15px;
+    margin-top: 5px;
+    padding-top: 5px;
     border-top: 1px solid #eee;
 }
 
@@ -153,7 +172,7 @@
 }
 
 #assign-modal .modal-footer .apply-btn {
-    background: #1a1a2e;
+    background:var(--color-button-blue);
     color: white;
 }
 
