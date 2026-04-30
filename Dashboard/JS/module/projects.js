@@ -276,41 +276,28 @@ function renderProjectRow(project) {
         }
     }
     if (employeesEl) {
-        const btn = employeesEl.querySelector('.show-employees-btn') || document.createElement('button');
-        if (!employeesEl.querySelector('.show-employees-btn')) {
-            btn.className = 'show-employees-btn';
-            employeesEl.appendChild(btn);
+        const btn = employeesEl.querySelector('.show-employees-btn');
+        if (btn) {
+            btn.textContent = `Show Employees (${employeeCount})`;
+            btn.dataset.id = project.id;
         }
-        btn.textContent = `Show Employees (${employeeCount})`;
-        btn.dataset.id = project.id;
     }
     if (incomeEl) {
         incomeEl.textContent = formatCurrency(projectProfit);
         incomeEl.className = 'project-income';
         if (incomeClass) incomeEl.classList.add(incomeClass);
     }
-    if (actionsEl) {
-        let editBtn = actionsEl.querySelector('.edit-btn');
-        let deleteBtn = actionsEl.querySelector('.delete-btn');
-        if (!editBtn) {
-            editBtn = document.createElement('button');
-            editBtn.className = 'edit-btn';
-            actionsEl.appendChild(editBtn);
-        }
-        if (!deleteBtn) {
-            deleteBtn = document.createElement('button');
-            deleteBtn.className = 'delete-btn';
-            actionsEl.appendChild(deleteBtn);
-        }
-        editBtn.textContent = 'Edit';
+    // Buttons are now in template, just set their text content and data attributes
+    const editBtn = tr.querySelector('.edit-btn');
+    const deleteBtn = tr.querySelector('.delete-btn');
+    if (editBtn) {
         editBtn.dataset.id = project.id;
-        deleteBtn.textContent = 'Delete';
+    }
+    if (deleteBtn) {
         deleteBtn.dataset.id = project.id;
     }
 
-    const editBtn = tr.querySelector('.edit-btn');
     const showEmpBtn = tr.querySelector('.show-employees-btn');
-    const deleteBtn = tr.querySelector('.delete-btn');
 
     if (editBtn) {
         editBtn.addEventListener('click', () => {

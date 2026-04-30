@@ -128,8 +128,8 @@
     <td class="emp-cost"></td>
     <td class="emp-profit"></td>
     <td class="emp-actions">
-      <button class="modal-edit-employee change-btn">Change</button>
-      <button class="modal-unassign-employee unassign-btn">Unassign</button>
+      <button class="modal-edit-employee change-btn small">Change</button>
+      <button class="modal-unassign-employee unassign-btn small">Unassign</button>
     </td>
   </tr>
 </template>
@@ -141,12 +141,17 @@
     <td class="project-name"></td>
     <td class="project-budget"></td>
     <td class="project-capacity"></td>
-    <td class="project-employees"></td>
+    <td class="project-employees">
+      <button class="show-employees-btn"></button>
+    </td>
     <td class="project-income"></td>
-    <td class="project-actions"></td>
+    <td class="project-actions">
+      <button class="edit-btn small">Edit</button>
+      <button class="delete-btn small">Delete</button>
+    </td>
   </tr>
 </template>
-
+		
 		<!-- Cтроки employees -->
 <template id="employee-row-template">
   <tr>
@@ -159,10 +164,10 @@
     <td class="project-cell"><span class="project-name"></span><button class="show-assignments-btn" style="display:none">Show Assignments</button></td>
     <td class="estimated-income"></td>
     <td class="actions">
-      <button class="availability-btn">Availability</button>
-      <button class="assign-btn">Assign</button>
-      <button class="edit-btn">Edit</button>
-      <button class="delete-btn">Delete</button>
+      <button class="availability-btn small">Availability</button>
+      <button class="assign-btn small">Assign</button>
+      <button class="edit-btn small">Edit</button>
+      <button class="delete-btn small">Delete</button>
     </td>
   </tr>
 </template>
@@ -304,7 +309,7 @@
 		<div id="assign-modal" class="hidden">
 			<div class="modal-header">
 				<h2 id="assign-modal-title">Assign</h2>
-				<button type="button" class="modal-close" id="assign-modal-close">&times;</button>
+				<button type="button" class="panel-close" id="assign-modal-close">&times;</button>
 			</div>
 <div class="modal-body">
     <div class="assign-info">
@@ -352,7 +357,7 @@
 		<div id="availability-modal" class="hidden">
 			<div class="modal-header">
 				<h2 id="availability-modal-title"></h2>
-				<button type="button" class="modal-close" id="availability-modal-close">&times;</button>
+				<button type="button" class="panel-close" id="availability-modal-close">&times;</button>
 			</div>
 			<div class="modal-body">
 				<div class="availability-info">
@@ -379,7 +384,7 @@
 		<div id="edit-assignment-modal" class="hidden">
 			<div class="modal-header">
 				<h2 id="edit-assignment-modal-title">Edit Assignment</h2>
-				<button type="button" class="modal-close" id="edit-assignment-modal-close">&times;</button>
+				<button type="button" class="panel-close" id="edit-assignment-modal-close">&times;</button>
 			</div>
 			<div class="modal-body">
 				<div class="assignment-info">
@@ -406,7 +411,7 @@
 		<div id="unassign-modal" class="hidden">
 			<div class="modal-header">
 				<h2 id="unassign-modal-title">Unassign Confirmation</h2>
-				<button type="button" class="modal-close" id="unassign-modal-close">&times;</button>
+				<button type="button" class="panel-close" id="unassign-modal-close">&times;</button>
 			</div>
 			<div class="modal-body">
 				<p id="unassign-message" style="margin-bottom: 20px; font-size: 15px; color: #333;"></p>

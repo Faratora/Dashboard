@@ -27,9 +27,6 @@ button:hover:disabled {
     background: #ccc;
 }
 
-.btn {
-}
-
 /* Sidebar button */
 .toggle-btn {
     background: var(--color-background);
@@ -40,36 +37,6 @@ button:hover:disabled {
     top: 0;
 }
 
-.toggle-btn:hover {
-    background: var(--color-hover-dark);
-    border-radius: 0;
-}
-.apply-btn {
-    background: var(--color-button);
-    color: var(--color-white);
-}
-
-.apply-btn:hover,
-.edit-btn:hover,
-.open-btn:hover {
-    background: var(--color-hover-dark);
-    transform: scale(1.1);
-}
-
-.close-btn,
-.cancel-btn {
-    background: var(--background-btn-close);
-    color: #333;
-}
-
-.close-btn:hover,
-.cancel-btn:hover {
-    background: var(--background-btn-close-hover);
-}
-
-.edit-btn,
-.delete-btn,
-.unassign-btn,
 .small {
     padding: 5px 12px;
     border-radius: 6px;
@@ -78,14 +45,23 @@ button:hover:disabled {
     margin-right: 5px;
     box-shadow: none;
 }
+
+.apply-btn {
+    background: var(--color-button);
+    color: var(--color-white);
+}
+
+.close-btn,
+.cancel-btn {
+    background: var(--background-btn-close);
+    color: #333;
+}
+
 .unassign-btn,
 .delete-btn {
     background: #e74c3c;
 }
-.unassign-btn:hover,
-.delete-btn:hover {
-    background: #c0392b;
-}
+
 .copy-btn {
     background: var(--color-button-blue);
     color: white;
@@ -95,37 +71,16 @@ button:hover:disabled {
 }
 
 .assign-btn,
-.show-employees-btn,
 .change-btn,
+.show-employees-btn,
 .show-assignments-btn {
     background: var(--color-button-blue);
-    padding: 5px 12px;
-    font-size: 12px;
 }
+
 .show-assignments-btn {
     align-self: flex-start;
 }
-.copy-btn:hover,
-.assign-btn:hover,
-.show-employees-btn:hover,
-.change-btn:hover,
-.show-assignments-btn:hover,
-#availability-modal .nav-btn:hover {
-    background: var(--color-hover-blue);
-}
 
-#employees-modal .edit-btn,
-#employees-modal .assign-unbtn {
-    padding: 5px 12px;
-    font-size: 12px;
-    margin-right: 5px;
-}
-#employees-modal .assign-unbtn {
-    background: var(--color-button-orange);
-}
-#employees-modal .assign-unbtn:hover {
-    background: var(--color-hover-orange);
-}
 .open-btn {
     position: fixed;
     left: 20px;
@@ -138,16 +93,13 @@ button:hover:disabled {
 
 .availability-btn {
     background: #e215d1;
-    padding: 5px 12px;
-    font-size: 12px;
 }
 
 .availability-btn:hover {
     background: #5c0e55;
 }
 
-/* Availability Modal */
-#availability-modal .nav-btn {
+.nav-btn {
     background: #3498db;
     color: white;
     border: none;
@@ -155,4 +107,32 @@ button:hover:disabled {
     border-radius: 6px;
     cursor: pointer;
     font-size: 16px;
+}
+
+/* Hover effect for buttons */
+ .toggle-btn:hover,
+.apply-btn:hover,
+.edit-btn:hover,
+.open-btn:hover {
+    background: var(--color-hover-dark);
+    transform: scale(1.1);
+}
+
+.close-btn:hover,
+.cancel-btn:hover {
+    background: var(--background-btn-close-hover);
+}
+
+.unassign-btn:hover,
+.delete-btn:hover {
+    background: #c0392b;
+}
+
+.copy-btn:hover,
+.assign-btn:hover,
+.change-btn:hover,
+.show-employees-btn:hover,
+.show-assignments-btn:hover,
+.nav-btn:hover {
+    background: var(--color-hover-blue);
 }
