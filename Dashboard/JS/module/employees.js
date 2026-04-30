@@ -142,14 +142,21 @@ function renderEmployeeRow(employee) {
     const isAssignDisabled = assignedCapacity >= 1.5;
 
     const allEmployees = getEmployees();
+    
+    const assignments = employee.assignments || [];
+    const projectNames = assignments.map(a => a.projectName);
+    const firstProjectName = projectNames[0] || '';
+    const projectEmployees = firstProjectName ? allEmployees.filter((e) => {
+        const eAssignments = e.assignments || [];
+        return eAssignments.some(a => a.projectName === firstProjectName);
+    }) : [];
+    const projectEmployeeCount = projectEmployees.length;
     let projectUsedCapacity = 0;
     let projectTotalCapacity = 0;
-    const projectEmployees = employee.project ? allEmployees.filter((e) => e.project === employee.project) : [];
-    const projectEmployeeCount = projectEmployees.length;
 
-    if (employee.project) {
+    if (firstProjectName) {
         const projects = getProjects();
-        const project = projects.find((p) => p.projectName === employee.project);
+        const project = projects.find((p) => p.projectName === firstProjectName);
         projectTotalCapacity = project ? project.employeeCapacity || 0 : 0;
 
         const period = getCurrentPeriod();
@@ -157,8 +164,10 @@ function renderEmployeeRow(employee) {
         const weekdaysInMonth = getWeekdaysInMonth();
 
         projectUsedCapacity = projectEmployees.reduce((sum, emp) => {
-            const capacity = emp.capacity || 1;
-            const fit = emp.fit || 1;
+            const empAssignment = (emp.assignments || []).find(a => a.projectName === firstProjectName);
+            if (!empAssignment) return sum;
+            const capacity = empAssignment.capacity || 1;
+            const fit = empAssignment.fit || 1;
             const weekdayVacations = getWeekdayVacationDays(emp.vacationDays || [], currentYear, currentMonth);
             const vacationCoefficient =
                 weekdaysInMonth > 0 ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth : 0;
@@ -220,12 +229,21 @@ function renderEmployeeRow(employee) {
     if (projectCell) {
         const projectNameSpan = projectCell.querySelector('.project-name');
         const showBtn = projectCell.querySelector('.show-assignments-btn');
-        if (projectNameSpan) projectNameSpan.textContent = employee.project || '-';
+        
+        const assignments = employee.assignments || [];
+        if (projectNameSpan) {
+            if (assignments.length > 0) {
+                const projectNames = assignments.map(a => a.projectName).join(', ');
+                projectNameSpan.textContent = projectNames;
+            } else {
+                projectNameSpan.textContent = '-';
+            }
+        }
+        
         if (showBtn) {
-            if (employee.project) {
-                showBtn.style.display = '';
-                showBtn.dataset.project = employee.project;
-                showBtn.textContent = `Show Assignments (${projectEmployeeCount}) ${projectUsedCapacity.toFixed(1)}/${projectTotalCapacity}`;
+            if (assignments.length > 0) {
+                showBtn.style.display = 'inline-block';
+                showBtn.textContent = `Show Assignments (${assignments.length})`;
             } else {
                 showBtn.style.display = 'none';
             }
@@ -290,7 +308,7 @@ function renderEmployeeRow(employee) {
     }
 
     const showAssignmentsBtn = tr.querySelector('.show-assignments-btn');
-    if (showAssignmentsBtn && employee.project) {
+    if (showAssignmentsBtn && assignments.length > 0) {
         showAssignmentsBtn.style.display = 'inline-block';
         showAssignmentsBtn.addEventListener('click', () => {
             log('Show assignments button clicked for employee: ' + employee.id);

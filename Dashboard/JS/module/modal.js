@@ -1,6 +1,6 @@
 import { $, log } from './utils.js';
 import { validateProject, validateEmployee } from './validator.js';
-import { getProjects, getEmployees, getCurrentPeriod, formatCurrency, updateEmployee } from './dataStorage.js';
+import { getProjects, getEmployees, getCurrentPeriod, formatCurrency, updateEmployee, addAssignment, removeAssignment } from './dataStorage.js';
 import { renderEmployees } from './employees.js';
 import { renderProjects } from './projects.js';
 import { positionPopupRelativeToElement } from './positionFiltr.js';
@@ -651,7 +651,7 @@ export function initModal() {
 
         const assignModalTitle = $('#assign-modal-title');
         if (assignModalTitle) {
-            assignModalTitle.textContent = `Assign: ${currentAssignEmployee.name}  ${currentAssignEmployee.surname}`;
+            assignModalTitle.textContent = `Assign: ${currentAssignEmployee.name} ${currentAssignEmployee.surname}`;
         }
 
         if (assignCurrentCapacity) {
@@ -673,9 +673,16 @@ export function initModal() {
                 const option = document.createElement('option');
                 option.value = project.projectName;
                 option.textContent = project.projectName;
-                if (currentAssignEmployee?.project === project.projectName) {
+                
+                // Check if employee is already assigned to this project
+                const assignments = currentAssignEmployee.assignments || [];
+                const existingAssignment = assignments.find(a => a.projectName === project.projectName);
+                if (existingAssignment) {
                     option.selected = true;
+                    assignCapacitySlider.value = existingAssignment.capacity || 0.5;
+                    assignFitSlider.value = existingAssignment.fit || 1.0;
                 }
+                
                 assignProjectSelect.appendChild(option);
             });
         }
@@ -700,26 +707,22 @@ export function initModal() {
         const fitCoefficient = parseFloat(assignFitSlider.value) || 1;
         const project = assignProjectSelect.value;
 
-        const period = getCurrentPeriod();
-        const [currentYear, currentMonth] = period.split('-').map(Number);
-        const weekdaysInMonth = getWeekdaysInMonth();
-        const vacationDays = currentAssignEmployee?.vacationDays || [];
-        const weekdayVacationDays = getWeekdayVacationDays(vacationDays, currentYear, currentMonth);
-        const vacationCoefficient = weekdaysInMonth > 0 ? (weekdaysInMonth - weekdayVacationDays) / weekdaysInMonth : 0;
+        if (!project) return;
 
-        const updatedEmployee = {
-            ...currentAssignEmployee,
-            capacity: assignedCapacity,
-            fit: fitCoefficient,
-            assignedCapacity: currentTotalCapacity + assignedCapacity * fitCoefficient * vacationCoefficient,
-            project: project,
-        };
-
-        window.dispatchEvent(
-            new CustomEvent('assignEmployee', {
-                detail: { employeeId: currentAssignEmployeeId, employeeData: updatedEmployee },
-            })
+        const updatedEmployee = addAssignment(
+            currentAssignEmployeeId,
+            project,
+            assignedCapacity,
+            fitCoefficient
         );
+
+        if (updatedEmployee) {
+            window.dispatchEvent(
+                new CustomEvent('assignEmployee', {
+                    detail: { employeeId: currentAssignEmployeeId, employeeData: updatedEmployee },
+                })
+            );
+        }
 
         closeAssignModal();
     };
@@ -1184,7 +1187,7 @@ export function initModal() {
 
         if (!unassignModal || !unassignMessage) return;
 
-        log('Opening unassign confirmation modal for employee: ' + employee.id);
+        log('Opening unassign confirmation modal for employee: ' + employee.id + ' project: ' + projectName);
 
         const projects = getProjects();
         const project = projects.find((p) => p.projectName === projectName);
@@ -1193,9 +1196,15 @@ export function initModal() {
         currentUnassignProjectId = project.id;
 
         const allEmployees = getEmployees();
-        const projectEmployees = allEmployees.filter((e) => e.project === projectName);
+        const projectEmployees = allEmployees.filter((e) => {
+            const assignments = e.assignments || [];
+            return assignments.some(a => a.projectName === projectName);
+        });
 
-        const capacity = employee.capacity || 0.5;
+        const assignment = (employee.assignments || []).find(a => a.projectName === projectName);
+        if (!assignment) return;
+
+        const capacity = assignment.capacity || 0.5;
         const salary = employee.salary || 0;
         const budget = project.budget || 0;
         const totalCapacity = project.employeeCapacity || 0;
@@ -1205,8 +1214,12 @@ export function initModal() {
         const weekdaysInMonth = getWeekdaysInMonth();
 
         const totalEffectiveCapacity = projectEmployees.reduce((sum, emp) => {
-            const cap = emp.capacity || 1;
-            const fit = emp.fit || 1;
+            const empAssignments = emp.assignments || [];
+            const empAssignment = empAssignments.find(a => a.projectName === projectName);
+            if (!empAssignment) return sum;
+            
+            const cap = empAssignment.capacity || 1;
+            const fit = empAssignment.fit || 1;
             const weekdayVacations = getWeekdayVacationDays(emp.vacationDays || [], currentYear, currentMonth);
             const vacationCoefficient =
                 weekdaysInMonth > 0 ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth : 0;
@@ -1216,7 +1229,7 @@ export function initModal() {
         const capacityForRevenue = Math.max(totalCapacity, totalEffectiveCapacity);
         const revenuePerUnit = capacityForRevenue > 0 ? budget / capacityForRevenue : 0;
 
-        const fit = employee.fit || 1;
+        const fit = assignment.fit || 1;
         const weekdayVacations = getWeekdayVacationDays(employee.vacationDays || [], currentYear, currentMonth);
         const vacationCoefficient = weekdaysInMonth > 0 ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth : 0;
         const empEffectiveCapacity = capacity * fit * vacationCoefficient;
@@ -1228,8 +1241,11 @@ export function initModal() {
         const empBudgetShare = revenuePerUnit * empEffectiveCapacity;
 
         const projectIncomeNow = projectEmployees.reduce((sum, emp) => {
-            const cap = emp.capacity || 1;
-            const f = emp.fit || 1;
+            const empAssignment = (emp.assignments || []).find(a => a.projectName === projectName);
+            if (!empAssignment) return sum;
+            
+            const cap = empAssignment.capacity || 1;
+            const f = empAssignment.fit || 1;
             const vac = emp.vacationDays || [];
             const weekdayVacs = getWeekdayVacationDays(vac, currentYear, currentMonth);
             const vacCoeff = weekdaysInMonth > 0 ? (weekdaysInMonth - weekdayVacs) / weekdaysInMonth : 0;
@@ -1246,8 +1262,11 @@ export function initModal() {
         const projectIncomeAfter = projectEmployees
             .filter((emp) => emp.id !== employee.id)
             .reduce((sum, emp) => {
-                const cap = emp.capacity || 1;
-                const f = emp.fit || 1;
+                const empAssignment = (emp.assignments || []).find(a => a.projectName === projectName);
+                if (!empAssignment) return sum;
+                
+                const cap = empAssignment.capacity || 1;
+                const f = empAssignment.fit || 1;
                 const vac = emp.vacationDays || [];
                 const weekdayVacs = getWeekdayVacationDays(vac, currentYear, currentMonth);
                 const vacCoeff = weekdaysInMonth > 0 ? (weekdaysInMonth - weekdayVacs) / weekdaysInMonth : 0;
@@ -1284,17 +1303,20 @@ export function initModal() {
     };
 
     const handleUnassignConfirm = () => {
-        if (!currentUnassignEmployee || !window.editEmployeeCallback) return;
+        if (!currentUnassignEmployee || !currentUnassignProject) return;
 
-        log('Confirming unassign for employee: ' + currentUnassignEmployee.id);
+        log('Confirming unassign for employee: ' + currentUnassignEmployee.id + ' project: ' + currentUnassignProject);
 
-        window.editEmployeeCallback(currentUnassignEmployee.id, {
-            ...currentUnassignEmployee,
-            project: '',
-        });
+        removeAssignment(currentUnassignEmployee.id, currentUnassignProject);
+
+        window.dispatchEvent(
+            new CustomEvent('assignEmployee', {
+                detail: { employeeId: currentUnassignEmployee.id },
+            })
+        );
 
         closeUnassignConfirmationModal();
-        openEmployeesModal(currentUnassignProjectId);
+        window.openEmployeeAssignmentsModal(currentUnassignEmployee.id);
     };
 
     if (unassignConfirmBtn) {
@@ -1339,7 +1361,7 @@ export function initModal() {
         if (!employee) return;
 
         if (employeeAssignmentsModalTitle) {
-            employeeAssignmentsModalTitle.textContent = `Assignments for ${employee.surname}`;
+            employeeAssignmentsModalTitle.textContent = `Assignments for ${employee.name} ${employee.surname}`;
         }
 
         renderEmployeeAssignmentsTable(employee);
@@ -1354,63 +1376,65 @@ export function initModal() {
         employeeAssignmentsTbody.innerHTML = '';
 
         const projects = getProjects();
-        const employeeProject = projects.find((p) => p.projectName === employee.project);
+        const assignments = employee.assignments || [];
 
-        if (employee.project && employeeProject) {
+        if (assignments.length > 0) {
             const period = getCurrentPeriod();
             const [currentYear, currentMonth] = period.split('-').map(Number);
             const weekdaysInMonth = getWeekdaysInMonth();
             const weekdayVacations = getWeekdayVacationDays(employee.vacationDays || [], currentYear, currentMonth);
             const vacationCoefficient = weekdaysInMonth > 0 ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth : 0;
 
-            const capacity = employee.capacity || 0.5;
-            const fit = employee.fit || 1.0;
-            const effectiveCapacity = capacity * fit * vacationCoefficient;
-            const vacationDays = employee.vacationDays ? employee.vacationDays.length : 0;
+            assignments.forEach((assignment) => {
+                const project = projects.find((p) => p.projectName === assignment.projectName);
+                if (!project) return;
 
-            // Calculate revenue and cost
-            const budget = employeeProject.budget || 0;
-            const totalProjectEmployees = projects.length > 0 ? 1 : 0; // Simplified calculation
-            const revenuePerCapacity = budget > 0 ? budget / Math.max(employeeProject.employeeCapacity, 1) : 0;
-            const revenue = revenuePerCapacity * effectiveCapacity;
-            const cost = (employee.salary || 0) * Math.max(0.5, capacity);
-            const profit = revenue - cost;
+                const capacity = assignment.capacity || 0.5;
+                const fit = assignment.fit || 1.0;
+                const effectiveCapacity = capacity * fit * vacationCoefficient;
+                const vacationDays = employee.vacationDays ? employee.vacationDays.length : 0;
 
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${employeeProject.projectName}</td>
-                <td>${capacity.toFixed(2)}</td>
-                <td>${fit.toFixed(2)}</td>
-                <td>${vacationDays}</td>
-                <td>${effectiveCapacity.toFixed(2)}</td>
-                <td>$${revenue.toFixed(2)}</td>
-                <td>$${cost.toFixed(2)}</td>
-                <td class="${profit >= 0 ? 'profit-positive' : 'profit-negative'}">$${profit.toFixed(2)}</td>
-                <td>
-                    <button class="edit-btn small" data-id="${employee.id}">Edit</button>
-                    <button class="unassign-btn small" data-id="${employee.id}">Unassign</button>
-                </td>
-            `;
+                const budget = project.budget || 0;
+                const totalProjectEmployees = projects.length > 0 ? 1 : 0;
+                const revenuePerCapacity = budget > 0 ? budget / Math.max(project.employeeCapacity, 1) : 0;
+                const revenue = revenuePerCapacity * effectiveCapacity;
+                const cost = (employee.salary || 0) * Math.max(0.5, capacity);
+                const profit = revenue - cost;
 
-            // Add event listeners
-            const editBtn = tr.querySelector('.edit-btn');
-            const unassignBtn = tr.querySelector('.unassign-btn');
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${project.projectName}</td>
+                    <td>${capacity.toFixed(2)}</td>
+                    <td>${fit.toFixed(2)}</td>
+                    <td>${vacationDays}</td>
+                    <td>${effectiveCapacity.toFixed(2)}</td>
+                    <td>$${revenue.toFixed(2)}</td>
+                    <td>$${cost.toFixed(2)}</td>
+                    <td class="${profit >= 0 ? 'profit-positive' : 'profit-negative'}">$${profit.toFixed(2)}</td>
+                    <td>
+                        <button class="edit-btn small" data-id="${employee.id}" data-project="${project.projectName}">Edit</button>
+                        <button class="unassign-btn small" data-id="${employee.id}" data-project="${project.projectName}">Unassign</button>
+                    </td>
+                `;
 
-            if (editBtn) {
-                editBtn.addEventListener('click', () => {
-                    window.openEditAssignmentModal(employee, employeeProject.projectName);
-                });
-            }
+                const editBtn = tr.querySelector('.edit-btn');
+                const unassignBtn = tr.querySelector('.unassign-btn');
 
-            if (unassignBtn) {
-                unassignBtn.addEventListener('click', () => {
-                    window.openUnassignConfirmationModal(employee, employeeProject.projectName);
-                });
-            }
+                if (editBtn) {
+                    editBtn.addEventListener('click', () => {
+                        window.openEditAssignmentModal(employee, project.projectName);
+                    });
+                }
 
-            employeeAssignmentsTbody.appendChild(tr);
+                if (unassignBtn) {
+                    unassignBtn.addEventListener('click', () => {
+                        window.openUnassignConfirmationModal(employee, project.projectName);
+                    });
+                }
+
+                employeeAssignmentsTbody.appendChild(tr);
+            });
         } else {
-            // No project assigned
             const tr = document.createElement('tr');
             tr.innerHTML = `<td colspan="9" style="text-align: center; color: #999;">No project assigned</td>`;
             employeeAssignmentsTbody.appendChild(tr);

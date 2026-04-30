@@ -278,8 +278,45 @@ export function updateEmployee(id, employeeData) {
     }
 }
 
+export function addAssignment(id, projectName, capacity, fit) {
+    const data = loadData();
+    const period = getCurrentPeriod();
+    const employee = data.monthlyData[period].employees.find((e) => e.id === id);
+    
+    if (!employee) return null;
 
-function calculateAssignedCapacity(employee, currentYear, currentMonth, weekdaysInMonth) {
+    if (!employee.assignments) {
+        employee.assignments = [];
+    }
+
+    const existingAssignmentIndex = employee.assignments.findIndex((a) => a.projectName === projectName);
+    
+    if (existingAssignmentIndex !== -1) {
+        employee.assignments[existingAssignmentIndex] = { projectName, capacity, fit };
+    } else {
+        employee.assignments.push({ projectName, capacity, fit });
+    }
+
+    saveData(data);
+    return employee;
+}
+
+export function removeAssignment(id, projectName) {
+    const data = loadData();
+    const period = getCurrentPeriod();
+    const employee = data.monthlyData[period].employees.find((e) => e.id === id);
+    
+    if (!employee) return null;
+
+    if (employee.assignments) {
+        employee.assignments = employee.assignments.filter((a) => a.projectName !== projectName);
+    }
+
+    saveData(data);
+    return employee;
+}
+
+function calculateTotalAssignedCapacity(employee, currentYear, currentMonth, weekdaysInMonth) {
    
     if (!employee.project) {
         return 0;
@@ -308,7 +345,7 @@ export function getEmployees() {
 
     return employees.map((emp) => {
        
-        const assignedCapacity = calculateAssignedCapacity(emp, currentYear, currentMonth, weekdaysInMonth);
+        const assignedCapacity = calculateTotalAssignedCapacity(emp, currentYear, currentMonth, weekdaysInMonth);
         
         let age = emp.age;
         if (emp.birthDate) {
@@ -321,72 +358,108 @@ export function getEmployees() {
             }
         }
 
-        if (!emp.project) {
+        const assignments = emp.assignments || [];
+        
+        if (assignments.length === 0) {
             
             const benchCost = (emp.salary || 0) * 0.5;
-            
             const benchProfit = 0 - benchCost;
             return { ...emp, age, assignedCapacity: 0, estimatedIncome: 0, estimatedPayment: benchCost, profit: benchProfit };
         }
 
-        const project = projects.find((p) => p.projectName === emp.project);
-        if (!project) {
-            
-            const benchCost = (emp.salary || 0) * 0.5;
-            const benchProfit = 0 - benchCost;
-            return { ...emp, age, assignedCapacity, estimatedIncome: 0, estimatedPayment: benchCost, profit: benchProfit };
-        }
+        const totalProfit = assignments.reduce((sum, assignment) => {
+            const project = projects.find((p) => p.projectName === assignment.projectName);
+            if (!project) return sum;
 
-        
-        const projectEmployees = employees.filter((e) => e.project === emp.project);
-        const totalEffectiveCapacity = projectEmployees.reduce((sum, e) => {
-            const capacity = e.capacity || 1;
-            const fit = e.fit || 1;
-            const weekdayVacations = getWeekdayVacationDays(e.vacationDays, currentYear, currentMonth);
-            const vacationCoefficient = weekdaysInMonth > 0 
-                ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth 
-                : 0;
-            return sum + capacity * fit * vacationCoefficient;
+            const projectEmployees = employees.flatMap(e => (e.assignments || []).map(a => ({
+                ...e,
+                assignedProject: a.projectName,
+                capacity: a.capacity,
+                fit: a.fit,
+                vacationDays: e.vacationDays
+            }))).filter(e => e.assignedProject === assignment.projectName);
+            
+            const totalEffectiveCapacity = projectEmployees.reduce((sum, e) => {
+                const weekdayVacations = getWeekdayVacationDays(e.vacationDays, currentYear, currentMonth);
+                const vacationCoefficient = weekdaysInMonth > 0 
+                    ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth 
+                    : 0;
+                return sum + (e.capacity || 1) * (e.fit || 1) * vacationCoefficient;
+            }, 0);
+
+            const projectCapacity = project.employeeCapacity || 0;
+            const capacityForRevenue = Math.max(projectCapacity, totalEffectiveCapacity);
+
+            if (capacityForRevenue === 0) {
+                return sum;
+            }
+
+            const revenuePerEffectiveCapacity = project.budget / capacityForRevenue;
+
+            const empEffectiveCapacity = assignment.capacity * assignment.fit * 
+                (weekdaysInMonth > 0 ? (weekdaysInMonth - getWeekdayVacationDays(emp.vacationDays, currentYear, currentMonth)) / weekdaysInMonth : 0);
+
+            const estimatedIncome = revenuePerEffectiveCapacity * empEffectiveCapacity;
+            const cost = (emp.salary || 0) * Math.max(0.5, assignment.capacity);
+            const profit = estimatedIncome - cost;
+
+            return sum + profit;
         }, 0);
 
+        const totalEstimatedIncome = assignments.reduce((sum, assignment) => {
+            const project = projects.find((p) => p.projectName === assignment.projectName);
+            if (!project) return sum;
         
-        const projectCapacity = project.employeeCapacity || 0;
-        const capacityForRevenue = Math.max(projectCapacity, totalEffectiveCapacity);
-
-        
-        if (capacityForRevenue === 0) {
+            const projectEmployees = employees.flatMap(e => (e.assignments || []).map(a => ({
+                ...e,
+                assignedProject: a.projectName,
+                capacity: a.capacity,
+                fit: a.fit,
+                vacationDays: e.vacationDays
+            }))).filter(e => e.assignedProject === assignment.projectName);
             
-            const empCapacity = emp.capacity || 1;
-            const cost = (emp.salary || 0) * Math.max(0.5, empCapacity);
-           
-            const profit = 0 - cost;
-            return { ...emp, age, assignedCapacity, estimatedIncome: 0, estimatedPayment: cost, profit };
-        }
+            const totalEffectiveCapacity = projectEmployees.reduce((sum, e) => {
+                const weekdayVacations = getWeekdayVacationDays(e.vacationDays, currentYear, currentMonth);
+                const vacationCoefficient = weekdaysInMonth > 0 
+                    ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth 
+                    : 0;
+                return sum + (e.capacity || 1) * (e.fit || 1) * vacationCoefficient;
+            }, 0);
 
-        
-        const revenuePerEffectiveCapacity = project.budget / capacityForRevenue;
+            const projectCapacity = project.employeeCapacity || 0;
+            const capacityForRevenue = Math.max(projectCapacity, totalEffectiveCapacity);
 
-        
-        const empCapacity = emp.capacity || 1;
-        const empFit = emp.fit || 1;
-        const empWeekdayVacations = getWeekdayVacationDays(emp.vacationDays, currentYear, currentMonth);
-        const empVacationCoefficient = weekdaysInMonth > 0
-            ? (weekdaysInMonth - empWeekdayVacations) / weekdaysInMonth
-            : 0;
-        const empEffectiveCapacity = empCapacity * empFit * empVacationCoefficient;
+            if (capacityForRevenue === 0) return sum;
 
-        
-        const estimatedIncome = revenuePerEffectiveCapacity * empEffectiveCapacity;
-        
-        
-        const cost = (emp.salary || 0) * Math.max(0.5, empCapacity);
-        const estimatedPayment = cost;
+            const revenuePerEffectiveCapacity = project.budget / capacityForRevenue;
 
-        
-        const profit = estimatedIncome - cost;
+            const empEffectiveCapacity = assignment.capacity * assignment.fit * 
+                (weekdaysInMonth > 0 ? (weekdaysInMonth - getWeekdayVacationDays(emp.vacationDays, currentYear, currentMonth)) / weekdaysInMonth : 0);
 
-        return { ...emp, age, assignedCapacity, estimatedIncome, estimatedPayment, profit };
+            return sum + (revenuePerEffectiveCapacity * empEffectiveCapacity);
+        }, 0);
+
+        const totalCost = (emp.salary || 0) * Math.max(0.5, assignedCapacity);
+
+        return { ...emp, age, assignedCapacity, estimatedIncome: totalEstimatedIncome, estimatedPayment: totalCost, profit: totalProfit };
     });
+}
+
+function calculateAssignedCapacity(employee, currentYear, currentMonth, weekdaysInMonth) {
+   
+    if (!employee.project) {
+        return 0;
+    }
+
+    const capacity = employee.capacity || 1;
+    const fit = employee.fit || 1;
+    const weekdayVacations = getWeekdayVacationDays(employee.vacationDays || [], currentYear, currentMonth);
+    const vacationCoefficient = weekdaysInMonth > 0
+        ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth
+        : 0;
+
+   
+    return capacity * fit * vacationCoefficient;
 }
 
 export { formatCurrency, escapeHtml, getWeekdaysInMonth, getWeekdayVacationDays };
