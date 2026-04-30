@@ -22,6 +22,14 @@ export function formatCurrency(value) {
     }).format(value);
 }
 
+export function formatNumber(value) {
+    return '$' + new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+        useGrouping: false,
+    }).format(value);
+}
+
 export function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;

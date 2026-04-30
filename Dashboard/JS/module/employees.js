@@ -1,7 +1,7 @@
-import { $, log, initSortFilter as initCommonSortFilter, renderFilterChips, getFilterDisplayName } from './utils.js';
+import { $, log, initSortFilter as initCommonSortFilter, renderFilterChips, getFilterDisplayName, formatNumber } from './utils.js';
 import {
     addEmployee,
-    deleteEmployee,
+    deleteEmployee as storageDelete,
     updateEmployee,
     getEmployees,
     getProjects,
@@ -197,7 +197,7 @@ function renderEmployeeRow(employee) {
     if (salaryCell) {
         const salarySpan = salaryCell.querySelector('.salary-value');
         const pencil = salaryCell.querySelector('.edit-pencil');
-        if (salarySpan) salarySpan.textContent = formatCurrency(employee.salary);
+        if (salarySpan) salarySpan.textContent = formatNumber(employee.salary);
         if (pencil) {
             pencil.dataset.field = 'salary';
             pencil.dataset.id = employee.id;
