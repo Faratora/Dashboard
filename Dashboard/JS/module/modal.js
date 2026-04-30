@@ -9,11 +9,10 @@ let editMode = null;
 let editingId = null;
 let currentProjectId = null;
 
-
 function getWeekdaysInMonth() {
     const period = getCurrentPeriod();
     const [year, month] = period.split('-').map(Number);
-    
+
     const date = new Date(year, month - 1, 1);
     const daysInMonth = new Date(year, month, 0).getDate();
 
@@ -21,14 +20,13 @@ function getWeekdaysInMonth() {
     for (let day = 1; day <= daysInMonth; day++) {
         date.setDate(day);
         const dayOfWeek = date.getDay();
-        
+
         if (dayOfWeek !== 0 && dayOfWeek !== 6) {
             weekdays++;
         }
     }
     return weekdays;
 }
-
 
 function getWeekdayVacationDays(vacationDays, year, month) {
     if (!Array.isArray(vacationDays) || vacationDays.length === 0) {
@@ -37,10 +35,10 @@ function getWeekdayVacationDays(vacationDays, year, month) {
     let weekdayVacations = 0;
     for (const vacDay of vacationDays) {
         const vacDate = new Date(vacDay);
-        
+
         if (vacDate.getFullYear() === year && vacDate.getMonth() + 1 === month) {
             const dayOfWeek = vacDate.getDay();
-            
+
             if (dayOfWeek !== 0 && dayOfWeek !== 6) {
                 weekdayVacations++;
             }
@@ -82,19 +80,17 @@ function openEmployeesModal(projectId) {
         log(`Opening employees modal for project: ${project.projectName}`);
         modalTitle.textContent = `Employees on ${project.projectName}`;
     }
-    
+
     tbody.innerHTML = '';
     const allEmployees = getEmployees();
     let employees = allEmployees.filter((e) => e.project === project.projectName);
 
-    
     employees.sort((a, b) => {
         const nameA = `${a.name} ${a.surname}`.toLowerCase();
         const nameB = `${b.name} ${b.surname}`.toLowerCase();
         return nameA.localeCompare(nameB);
     });
 
-    
     const period = getCurrentPeriod();
     const [currentYear, currentMonth] = period.split('-').map(Number);
     const weekdaysInMonth = getWeekdaysInMonth();
@@ -109,7 +105,6 @@ function openEmployeesModal(projectId) {
         tr.appendChild(td);
         tbody.appendChild(tr);
     } else {
-        
         const totalEffectiveCapacity = employees.reduce((sum, emp) => {
             const cap = emp.capacity || 1;
             const f = emp.fit || 1;
@@ -130,24 +125,18 @@ function openEmployeesModal(projectId) {
             const fit = employee.fit || 1;
             const vacationDays = employee.vacationDays || [];
 
-            
             const weekdayVacationDays = getWeekdayVacationDays(vacationDays, currentYear, currentMonth);
             const vacationCoefficient =
                 weekdaysInMonth > 0 ? (weekdaysInMonth - weekdayVacationDays) / weekdaysInMonth : 0;
 
-            
             const effectiveCapacity = Number((capacity * fit * vacationCoefficient).toFixed(3));
 
-            
             const revenue = revenuePerUnit * effectiveCapacity;
 
-           
             const cost = (employee.salary || 0) * Math.max(0.5, capacity);
 
-           
             const profit = revenue - cost;
 
-            
             const profitClass = profit >= 0 ? 'profit-positive' : 'profit-negative';
 
             const template = $('#project-employee-row-template');
@@ -205,7 +194,6 @@ function openEmployeesModal(projectId) {
     document.body.style.overflow = 'hidden';
 
     setTimeout(() => {
-        
         tbody.querySelectorAll('.change-btn').forEach((btn) => {
             btn.addEventListener('click', (e) => {
                 const empId = e.target.dataset.id;
@@ -217,7 +205,6 @@ function openEmployeesModal(projectId) {
             });
         });
 
-       
         tbody.querySelectorAll('.modal-unassign-employee').forEach((btn) => {
             btn.addEventListener('click', (e) => {
                 console.log('[Unassign button clicked]', e.target);
@@ -235,7 +222,6 @@ function openEmployeesModal(projectId) {
             });
         });
 
-        
         tbody.querySelectorAll('.employee-link').forEach((link) => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -259,7 +245,7 @@ function closeEmployeesModal() {
         modal.classList.add('hidden');
         document.body.style.overflow = '';
         currentProjectId = null;
-       
+
         window.dispatchEvent(new CustomEvent('closeProjectEmployeesModal'));
     }
 }
@@ -279,7 +265,6 @@ export function initModal() {
         return;
     }
 
-    
     const filterBackdrop = $('#filter-backdrop');
     const filterModal = $('#filter-modal');
     const filterInput = $('#filter-input');
@@ -294,7 +279,6 @@ export function initModal() {
         currentFilterIconElement = filterIconElement;
 
         if (filterInput) {
-            
             const placeholders = {
                 companyName: 'Filter by Company Name...',
                 projectName: 'Filter by Project Name...',
@@ -314,13 +298,11 @@ export function initModal() {
 
         filterBackdrop.classList.remove('hidden');
         filterModal.classList.remove('hidden');
-        
-        
+
         if (filterIconElement) {
             positionPopupRelativeToElement(filterModal, filterIconElement, 0, 5);
         }
-        
-        
+
         window.addEventListener('resize', repositionFilterModal);
         window.addEventListener('scroll', repositionFilterModal);
     };
@@ -351,7 +333,6 @@ export function initModal() {
         closeFilterModal();
     };
 
-    
     if (filterModalClose) {
         filterModalClose.addEventListener('click', closeFilterModal);
     }
@@ -393,12 +374,12 @@ export function initModal() {
         if (projectFormFields && projectFormFields.style.display !== 'none') {
             panelTitle.textContent = mode === 'edit' ? 'Edit Project' : 'Add New Project';
             submitBtn.textContent = mode === 'edit' ? 'Update Project' : 'Add Project';
-           
+
             validateProject();
         } else if (employeeFormFields && employeeFormFields.style.display !== 'none') {
             panelTitle.textContent = mode === 'edit' ? 'Edit Employee' : 'Add New Employee';
             submitBtn.textContent = mode === 'edit' ? 'Update Employee' : 'Add Employee';
-           
+
             validateEmployee();
         }
 
@@ -505,7 +486,6 @@ export function initModal() {
         }
     });
 
-    
     const employeesModalCloseX = $('#employees-modal-close-x');
     const employeesModalCloseBtn = $('#employees-modal-close-btn');
     const employeesModalBackdrop = $('#employees-modal-backdrop');
@@ -520,19 +500,16 @@ export function initModal() {
         employeesModalBackdrop.addEventListener('click', closeEmployeesModal);
     }
 
-    
     window.addEventListener('showProjectEmployees', (e) => {
         log('showProjectEmployees event received for project: ' + e.detail.projectId);
-        
+
         closeEmployeesModal();
         setTimeout(() => {
             openEmployeesModal(e.detail.projectId);
         }, 10);
     });
 
-    
     if (filterBackdrop && filterModal && filterInput && filterApplyBtn && filterCancelBtn) {
-        
         document.querySelectorAll('th.filterable .filter-icon').forEach((icon) => {
             icon.style.cursor = 'pointer';
             icon.addEventListener('click', (e) => {
@@ -547,7 +524,6 @@ export function initModal() {
 
     window.openAddProjectModal = () => openPanel('add');
     window.openAddProjectEditModal = (project) => {
-        
         const projectFormFields = $('#project-form-fields');
         const employeeFormFields = $('#employee-form-fields');
         if (projectFormFields && employeeFormFields) {
@@ -566,7 +542,6 @@ export function initModal() {
         openPanel('add');
     };
     window.openAddEmployeeEditModal = (employee) => {
-        
         const projectFormFields = $('#project-form-fields');
         const employeeFormFields = $('#employee-form-fields');
         if (projectFormFields && employeeFormFields) {
@@ -586,7 +561,6 @@ export function initModal() {
         $('#employee-salary').value = employee.salary;
     };
 
-    
     const assignBackdrop = $('#assign-backdrop');
     const assignModal = $('#assign-modal');
     const assignEmployeeName = $('#assign-employee-name');
@@ -609,19 +583,17 @@ export function initModal() {
     let currentAssignEmployee = null;
     let currentTotalCapacity = 0;
 
-     const updateAssignCalculations = () => {
+    const updateAssignCalculations = () => {
         const assignedCapacity = parseFloat(assignCapacitySlider.value) || 0;
         const fitCoefficient = parseFloat(assignFitSlider.value) || 1;
 
-        
         const period = getCurrentPeriod();
         const [currentYear, currentMonth] = period.split('-').map(Number);
         const weekdaysInMonth = getWeekdaysInMonth();
         const vacationDays = currentAssignEmployee?.vacationDays || [];
         const weekdayVacationDays = getWeekdayVacationDays(vacationDays, currentYear, currentMonth);
         const vacationCoefficient = weekdaysInMonth > 0 ? (weekdaysInMonth - weekdayVacationDays) / weekdaysInMonth : 0;
-        
-        
+
         const effectiveCapacity = assignedCapacity * fitCoefficient * vacationCoefficient;
         const predictedTotal = currentTotalCapacity + effectiveCapacity;
 
@@ -634,19 +606,17 @@ export function initModal() {
             assignAvailableCapacity.textContent = `Available: ${available.toFixed(2)}`;
         }
 
-        
         const selectedProjectName = assignProjectSelect?.value || '';
         const projects = getProjects();
-        const selectedProject = projects.find(p => p.projectName === selectedProjectName);
-        
+        const selectedProject = projects.find((p) => p.projectName === selectedProjectName);
+
         if (selectedProject) {
-            
             const projectCapacityEl = $('#assign-project-capacity');
             const projectTotalCapacityEl = $('#assign-project-total-capacity');
             const effectiveCapacityEl = $('#assign-effective-capacity-value');
             const predictedEffectiveEl = $('#assign-predicted-effective-capacity');
             const projectTotalCapacityEl2 = $('#assign-project-total-capacity-2');
-            
+
             if (projectCapacityEl) projectCapacityEl.textContent = selectedProject.employeeCapacity.toFixed(1);
             if (projectTotalCapacityEl) projectTotalCapacityEl.textContent = selectedProject.employeeCapacity;
             if (effectiveCapacityEl) effectiveCapacityEl.textContent = effectiveCapacity.toFixed(2);
@@ -654,7 +624,6 @@ export function initModal() {
             if (projectTotalCapacityEl2) projectTotalCapacityEl2.textContent = selectedProject.employeeCapacity;
         }
 
-        
         if (assignSlidersContainer) {
             if (assignProjectSelect && assignProjectSelect.value) {
                 assignSlidersContainer.classList.remove('hidden');
@@ -680,8 +649,9 @@ export function initModal() {
 
         currentTotalCapacity = parseFloat(currentAssignEmployee.assignedCapacity || 0);
 
-        if (assignEmployeeName) {
-            assignEmployeeName.textContent = `${currentAssignEmployee.name} ${currentAssignEmployee.surname}`;
+        const assignModalTitle = $('#assign-modal-title');
+        if (assignModalTitle) {
+            assignModalTitle.textContent = `Assign: ${currentAssignEmployee.name}  ${currentAssignEmployee.surname}`;
         }
 
         if (assignCurrentCapacity) {
@@ -695,15 +665,19 @@ export function initModal() {
             assignFitSlider.value = currentAssignEmployee.fit || 1.0;
         }
 
-        
-        initializeProjectSearch();
-
-        
-        if (assignSlidersContainer) {
-            assignSlidersContainer.classList.add('hidden');
-        }
-        if (assignCalculationsContainer) {
-            assignCalculationsContainer.classList.add('hidden');
+        // project select
+        if (assignProjectSelect) {
+            assignProjectSelect.innerHTML = '<option value="">-- Select Project --</option>';
+            const projects = getProjects();
+            projects.forEach((project) => {
+                const option = document.createElement('option');
+                option.value = project.projectName;
+                option.textContent = project.projectName;
+                if (currentAssignEmployee?.project === project.projectName) {
+                    option.selected = true;
+                }
+                assignProjectSelect.appendChild(option);
+            });
         }
 
         updateAssignCalculations();
@@ -719,62 +693,6 @@ export function initModal() {
         currentAssignEmployee = null;
     };
 
-    
-    function initializeProjectSearch() {
-        const projectSearchInput = $('#assign-project-search');
-        const projectSelect = $('#assign-project-select');
-        
-        if (!projectSearchInput || !projectSelect) return;
-
-        
-        function populateProjectList(filter = '') {
-            projectSelect.innerHTML = '<option value="">-- Select Project --</option>';
-            const projects = getProjects();
-            projects
-                .filter(project =>
-                    project.projectName.toLowerCase().includes(filter.toLowerCase())
-                )
-                .forEach((project) => {
-                    const option = document.createElement('option');
-                    option.value = project.projectName;
-                    option.textContent = project.projectName;
-                    if (currentAssignEmployee?.project === project.projectName) {
-                        option.selected = true;
-                    }
-                    projectSelect.appendChild(option);
-                });
-
-            if (projectSelect.options.length <= 1) {
-                const option = document.createElement('option');
-                option.value = '';
-                option.textContent = 'No projects found';
-                option.disabled = true;
-                projectSelect.appendChild(option);
-            }
-        }
-
-        
-        populateProjectList();
-
-       
-        projectSearchInput.addEventListener('input', (e) => {
-            const filter = e.target.value.trim();
-            populateProjectList(filter);
-            
-            
-            updateAssignCalculations();
-        });
-
-        
-        projectSearchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                projectSearchInput.value = '';
-                populateProjectList('');
-                updateAssignCalculations();
-            }
-        });
-    }
-
     const handleAssignConfirm = () => {
         if (!currentAssignEmployee) return;
 
@@ -782,7 +700,6 @@ export function initModal() {
         const fitCoefficient = parseFloat(assignFitSlider.value) || 1;
         const project = assignProjectSelect.value;
 
-        
         const period = getCurrentPeriod();
         const [currentYear, currentMonth] = period.split('-').map(Number);
         const weekdaysInMonth = getWeekdaysInMonth();
@@ -835,7 +752,6 @@ export function initModal() {
         openAssignModal(employeeId, { buttonX, buttonY, buttonWidth, buttonHeight });
     });
 
-    
     const availabilityBackdrop = $('#availability-backdrop');
     const availabilityModal = $('#availability-modal');
     const availabilityModalTitle = $('#availability-modal-title');
@@ -890,7 +806,6 @@ export function initModal() {
 
         calendarGrid.innerHTML = '';
 
-        
         dayNames.forEach((day) => {
             const dayHeader = document.createElement('div');
             dayHeader.className = 'calendar-day-header';
@@ -902,13 +817,11 @@ export function initModal() {
         const daysInMonth = new Date(currentCalendarYear, currentCalendarMonth + 1, 0).getDate();
         const startDay = firstDay.getDay();
 
-        
         for (let i = 0; i < startDay; i++) {
             const emptyCell = document.createElement('div');
             calendarGrid.appendChild(emptyCell);
         }
 
-        
         for (let day = 1; day <= daysInMonth; day++) {
             const dayCell = document.createElement('div');
             dayCell.className = 'calendar-day';
@@ -931,7 +844,8 @@ export function initModal() {
 
             // Today highlighting
             const today = new Date();
-            const isToday = day === today.getDate() &&
+            const isToday =
+                day === today.getDate() &&
                 currentCalendarMonth === today.getMonth() &&
                 currentCalendarYear === today.getFullYear();
             if (isToday) {
@@ -968,12 +882,10 @@ export function initModal() {
         log('Opening availability modal for employee: ' + employeeId);
         log('Employee vacationDays:', currentAvailabilityEmployee.vacationDays);
 
-        
         if (availabilityModalTitle) {
             availabilityModalTitle.textContent = `${currentAvailabilityEmployee.name} ${currentAvailabilityEmployee.surname} - Availability`;
         }
 
-        
         const monthSelect = $('#month-select');
         const yearSelect = $('#year-select');
         const currentMonth = parseInt(monthSelect?.value || 4) - 1;
@@ -983,12 +895,10 @@ export function initModal() {
         currentCalendarMonth = currentMonth;
         currentCalendarYear = currentYear;
 
-        
         if (availabilityMonth) {
             availabilityMonth.textContent = `${monthNames[currentMonth]} ${currentYear}`;
         }
 
-        
         originalVacationDays = Array.isArray(currentAvailabilityEmployee.vacationDays)
             ? [...currentAvailabilityEmployee.vacationDays]
             : [];
@@ -996,7 +906,6 @@ export function initModal() {
 
         log('Loaded vacation days:', selectedVacationDays);
 
-        
         updateWorkingDays();
         updateVacationCount();
 
@@ -1084,10 +993,8 @@ export function initModal() {
             return '0 days selected';
         }
 
-        
         const sortedDays = [...days].sort((a, b) => new Date(a) - new Date(b));
 
-        
         const ranges = [];
         let rangeStart = sortedDays[0];
         let rangeEnd = sortedDays[0];
@@ -1098,16 +1005,14 @@ export function initModal() {
             const diff = (currentDate - prevDate) / (1000 * 60 * 60 * 24);
 
             if (diff === 1) {
-                
                 rangeEnd = sortedDays[i];
             } else {
-                
                 ranges.push(formatRange(rangeStart, rangeEnd));
                 rangeStart = sortedDays[i];
                 rangeEnd = sortedDays[i];
             }
         }
-        
+
         ranges.push(formatRange(rangeStart, rangeEnd));
 
         return ranges.join(', ');
@@ -1149,7 +1054,6 @@ export function initModal() {
         openAvailabilityModal(employeeId);
     });
 
-    
     const editAssignmentBackdrop = $('#edit-assignment-backdrop');
     const editAssignmentModal = $('#edit-assignment-modal');
     const editAssignmentModalTitle = $('#edit-assignment-modal-title');
@@ -1174,11 +1078,9 @@ export function initModal() {
 
         log('Opening edit assignment modal for employee: ' + employee.id);
 
-        
         editAssignmentEmployeeName.textContent = `${employee.name} ${employee.surname}`;
         editAssignmentProject.textContent = `Project: ${project}`;
 
-        
         if (editAssignmentCapacitySlider) {
             editAssignmentCapacitySlider.value = employee.capacity || 0.5;
             editAssignmentCapacityValue.textContent = (employee.capacity || 0.5).toFixed(2);
@@ -1256,7 +1158,6 @@ export function initModal() {
         editAssignmentBackdrop.addEventListener('click', closeEditAssignmentModal);
     }
 
-    
     const unassignBackdrop = $('#unassign-backdrop');
     const unassignModal = $('#unassign-modal');
     const unassignModalTitle = $('#unassign-modal-title');
@@ -1285,79 +1186,63 @@ export function initModal() {
 
         log('Opening unassign confirmation modal for employee: ' + employee.id);
 
-        
         const projects = getProjects();
         const project = projects.find((p) => p.projectName === projectName);
         if (!project) return;
 
         currentUnassignProjectId = project.id;
 
-        
         const allEmployees = getEmployees();
         const projectEmployees = allEmployees.filter((e) => e.project === projectName);
 
-        
         const capacity = employee.capacity || 0.5;
         const salary = employee.salary || 0;
         const budget = project.budget || 0;
         const totalCapacity = project.employeeCapacity || 0;
 
-        
         const period = getCurrentPeriod();
         const [currentYear, currentMonth] = period.split('-').map(Number);
         const weekdaysInMonth = getWeekdaysInMonth();
-        
+
         const totalEffectiveCapacity = projectEmployees.reduce((sum, emp) => {
             const cap = emp.capacity || 1;
             const fit = emp.fit || 1;
             const weekdayVacations = getWeekdayVacationDays(emp.vacationDays || [], currentYear, currentMonth);
-            const vacationCoefficient = weekdaysInMonth > 0 
-                ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth 
-                : 0;
+            const vacationCoefficient =
+                weekdaysInMonth > 0 ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth : 0;
             return sum + cap * fit * vacationCoefficient;
         }, 0);
 
         const capacityForRevenue = Math.max(totalCapacity, totalEffectiveCapacity);
         const revenuePerUnit = capacityForRevenue > 0 ? budget / capacityForRevenue : 0;
 
-        
         const fit = employee.fit || 1;
         const weekdayVacations = getWeekdayVacationDays(employee.vacationDays || [], currentYear, currentMonth);
-        const vacationCoefficient = weekdaysInMonth > 0 
-            ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth 
-            : 0;
+        const vacationCoefficient = weekdaysInMonth > 0 ? (weekdaysInMonth - weekdayVacations) / weekdaysInMonth : 0;
         const empEffectiveCapacity = capacity * fit * vacationCoefficient;
 
-        
         const empEstimatedIncome = revenuePerUnit * empEffectiveCapacity;
 
-        
         const empSalaryShare = salary * Math.max(0.5, capacity);
 
-        
         const empBudgetShare = revenuePerUnit * empEffectiveCapacity;
 
-        
         const projectIncomeNow = projectEmployees.reduce((sum, emp) => {
             const cap = emp.capacity || 1;
             const f = emp.fit || 1;
             const vac = emp.vacationDays || [];
             const weekdayVacs = getWeekdayVacationDays(vac, currentYear, currentMonth);
-            const vacCoeff = weekdaysInMonth > 0 
-                ? (weekdaysInMonth - weekdayVacs) / weekdaysInMonth 
-                : 0;
+            const vacCoeff = weekdaysInMonth > 0 ? (weekdaysInMonth - weekdayVacs) / weekdaysInMonth : 0;
             const effCap = cap * f * vacCoeff;
             const rev = revenuePerUnit * effCap;
             const cost = (emp.salary || 0) * Math.max(0.5, cap);
             return sum + rev - cost;
         }, 0);
 
-        
         const capacityAfter = totalEffectiveCapacity - empEffectiveCapacity;
         const capacityForRevenueAfter = Math.max(totalCapacity, capacityAfter);
         const revenuePerUnitAfter = capacityForRevenueAfter > 0 ? budget / capacityForRevenueAfter : 0;
 
-        
         const projectIncomeAfter = projectEmployees
             .filter((emp) => emp.id !== employee.id)
             .reduce((sum, emp) => {
@@ -1365,24 +1250,21 @@ export function initModal() {
                 const f = emp.fit || 1;
                 const vac = emp.vacationDays || [];
                 const weekdayVacs = getWeekdayVacationDays(vac, currentYear, currentMonth);
-                const vacCoeff = weekdaysInMonth > 0 
-                    ? (weekdaysInMonth - weekdayVacs) / weekdaysInMonth 
-                    : 0;
+                const vacCoeff = weekdaysInMonth > 0 ? (weekdaysInMonth - weekdayVacs) / weekdaysInMonth : 0;
                 const effCap = cap * f * vacCoeff;
                 const rev = revenuePerUnitAfter * effCap;
                 const cost = (emp.salary || 0) * Math.max(0.5, cap);
                 return sum + rev - cost;
             }, 0);
 
-        
         unassignMessage.textContent = `You want to unassign ${employee.name} ${employee.surname} (${capacity.toFixed(2)} capacity) from ${projectName}?`;
 
-        
         if (unassignAssignedCapacity) unassignAssignedCapacity.textContent = capacity.toFixed(2);
         if (unassignSalaryShare) unassignSalaryShare.textContent = formatCurrency(empSalaryShare);
         if (unassignBudgetShare) unassignBudgetShare.textContent = formatCurrency(empBudgetShare);
         if (unassignEstimatedIncome) unassignEstimatedIncome.textContent = formatCurrency(empEstimatedIncome);
-        if (unassignCurrentCapacity) unassignCurrentCapacity.textContent = `${totalEffectiveCapacity.toFixed(1)} / ${totalCapacity}`;
+        if (unassignCurrentCapacity)
+            unassignCurrentCapacity.textContent = `${totalEffectiveCapacity.toFixed(1)} / ${totalCapacity}`;
         if (unassignAfterCapacity) unassignAfterCapacity.textContent = `${capacityAfter.toFixed(1)} / ${totalCapacity}`;
         if (unassignIncomeNow) unassignIncomeNow.textContent = formatCurrency(projectIncomeNow);
         if (unassignIncomeAfter) unassignIncomeAfter.textContent = formatCurrency(projectIncomeAfter);
@@ -1406,9 +1288,9 @@ export function initModal() {
 
         log('Confirming unassign for employee: ' + currentUnassignEmployee.id);
 
-        window.editEmployeeCallback(currentUnassignEmployee.id, { 
-            ...currentUnassignEmployee, 
-            project: '' 
+        window.editEmployeeCallback(currentUnassignEmployee.id, {
+            ...currentUnassignEmployee,
+            project: '',
         });
 
         closeUnassignConfirmationModal();
@@ -1431,7 +1313,6 @@ export function initModal() {
         unassignBackdrop.addEventListener('click', closeUnassignConfirmationModal);
     }
 
-    
     window.addEventListener('editAssignment', (e) => {
         const { employeeId, employeeData } = e.detail;
         log('Editing assignment for employee: ' + employeeId);

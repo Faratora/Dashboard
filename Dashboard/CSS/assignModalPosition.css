@@ -24,8 +24,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 15px;
+    padding-bottom: 5px;
     border-bottom: 1px solid #eee;
+    margin-bottom: 5px;
 }
 
 #assign-modal .modal-header h2 {
@@ -41,14 +42,16 @@
 
 #assign-modal .assign-info {
     background: #f8f9fa;
-    padding: 15px;
+    padding: 10px;
     border-radius: 8px;
     margin-bottom: 20px;
+    border-left: 3px solid #3498db;
 }
 
 #assign-modal .assign-info h3 {
     margin: 0 0 10px 0;
     color: #1a1a2e;
+    font-size: 18px;
 }
 
 #assign-modal .assign-info p {
@@ -57,8 +60,12 @@
     font-size: 14px;
 }
 
+#assign-modal .assign-info p::first-line {
+    font-weight: 700;
+}
+
 #assign-modal .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 #assign-modal .form-group label {
@@ -70,6 +77,7 @@
 
 #assign-modal .form-group input[type="range"] {
     width: 100%;
+    cursor: pointer;
 }
 
 #assign-modal .form-group span[id$="-value"] {
@@ -78,12 +86,25 @@
     min-width: 30px;
     display: inline-block;
 }
+#assign-modal .form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #bfbfbf;
+    border-radius: 8px;
+    font-size: 16px;
+   
+    background-color: #f5f5f5;
+    color: #999;
+    font-style: italic;
+
+}
 
 #assign-modal .small-label {
     display: block;
     font-size: 12px;
     color: #666;
     margin-bottom: 5px;
+    font-style: italic;
 }
 
 #assign-modal .fit-coefficient-text {
@@ -97,12 +118,17 @@
     background: #f8f9fa;
     padding: 15px;
     border-radius: 8px;
+    margin-top: 5px;
 }
 
 #assign-modal .assign-calculations p {
     margin: 8px 0;
-    color: #333;
+    color: #2e7d32;
     font-size: 14px;
+}
+
+.assign-available-capacity{
+    color: #2e7d32;
 }
 
 #assign-modal .assign-calculations p strong {
@@ -165,10 +191,17 @@
     border-radius: 4px;
     font-size: 14px;
     background: white;
+    color:black;
 }
 
 #assign-modal select:focus {
     outline: none;
     border-color: #1a1a2e;
     box-shadow: 0 0 0 2px rgba(26, 26, 46, 0.2);
+
+}
+#assign-modal .assign-calculations p:last-child {
+    margin-bottom: 0;
+    font-weight: bold;
+    font-size: 16px;
 }
