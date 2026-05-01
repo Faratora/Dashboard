@@ -325,7 +325,7 @@ function handleDeleteEmployee(id) {
     const row = $(`tr[data-id="${id}"]`);
     if (row) {
         row.remove();
-        storageDelete(id);
+        deleteEmployee(id);
         log(`Employee deleted: ${id}`);
     }
 }
@@ -432,7 +432,7 @@ function initSortFilter() {
         const { column, value } = e.detail;
         applyColumnFilter(column, value);
         updateClearButtonVisibility();
-    }, { passive: true });
+    });
 
     
     window.addEventListener('assignEmployee', (e) => {
@@ -441,7 +441,7 @@ function initSortFilter() {
         updateEmployee(employeeId, employeeData);
         renderEmployees();
         renderProjects();
-    }, { passive: true });
+    });
 
     
     window.addEventListener('setVacation', (e) => {
@@ -451,7 +451,7 @@ function initSortFilter() {
         updateEmployee(employeeId, employeeData);
         renderEmployees();
         renderProjects();
-    }, { passive: true });
+    });
 
     
     window.addEventListener('inlineEditEmployee', (e) => {
@@ -460,7 +460,7 @@ function initSortFilter() {
         updateEmployee(employeeId, employeeData);
         renderEmployees();
         renderProjects();
-    }, { passive: true });
+    });
 
     
     window.addEventListener('closeProjectEmployeesModal', () => {
@@ -468,7 +468,7 @@ function initSortFilter() {
         updateClearButtonVisibility();
         renderEmployees();
         updateEmployeeFilterChips();
-    }, { passive: true });
+    });
 }
 
 export { getEmployees, renderEmployees };

@@ -226,11 +226,11 @@ function showConfirmDialog(sourcePeriod, targetPeriod) {
         confirmDiv.remove();
     });
 
-     document.addEventListener('keydown', (e) => {
-         if (e.key === 'Escape') {
-             closeConfirm();
-         }
-     }, { passive: true });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            confirmDiv.remove();
+        }
+    });
 }
 
 export { initSeedData };
