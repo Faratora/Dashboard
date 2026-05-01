@@ -180,12 +180,12 @@ export function showFilterPopup(column, thElement, isProjectTable) {
         }
     };
     
-    window.addEventListener('resize', reposition);
-    window.addEventListener('scroll', reposition);
+    window.addEventListener('resize', reposition, { passive: true });
+    window.addEventListener('scroll', reposition, { passive: true });
     
     
     setTimeout(() => {
-        document.addEventListener('click', outsideClickHandler);
+        document.addEventListener('click', outsideClickHandler, { passive: true });
     }, 100);
 }
 

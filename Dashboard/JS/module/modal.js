@@ -315,8 +315,8 @@ export function initModal() {
             positionPopupRelativeToElement(filterModal, filterIconElement, 0, 5);
         }
 
-        window.addEventListener('resize', repositionFilterModal);
-        window.addEventListener('scroll', repositionFilterModal);
+        window.addEventListener('resize', repositionFilterModal, { passive: true });
+        window.addEventListener('scroll', repositionFilterModal, { passive: true });
     };
 
     const closeFilterModal = () => {
@@ -1386,13 +1386,13 @@ export function initModal() {
         unassignBackdrop.addEventListener('click', closeUnassignConfirmationModal);
     }
 
-    window.addEventListener('editAssignment', (e) => {
-        const { employeeId, employeeData } = e.detail;
-        log('Editing assignment for employee: ' + employeeId);
-        updateEmployee(employeeId, employeeData);
-        renderEmployees();
-        renderProjects();
-    });
+     window.addEventListener('editAssignment', (e) => {
+         const { employeeId, employeeData } = e.detail;
+         log('Editing assignment for employee: ' + employeeId);
+         updateEmployee(employeeId, employeeData);
+         renderEmployees();
+         renderProjects();
+     }, { passive: true });
 
     // Employee Assignments Modal
     const employeeAssignmentsBackdrop = $('#employee-assignments-backdrop');

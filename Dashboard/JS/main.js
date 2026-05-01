@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initSeedData();
     setupInputRestrictions();
 
-<<<<<<< HEAD
     // Global error handler to catch Chrome extension errors
     window.onerror = function(message, source, lineno, colno, error) {
         // Ignore IndexedDB errors (they're from extensions or old data)
@@ -51,22 +50,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-=======
->>>>>>> parent of 10faaa7 (fix: fix bag)
     window.addEventListener('periodChanged', (e) => {
-        const period = getCurrentPeriod();
-        console.log('[periodChanged] Event fired, period:', period);
-        if (e.detail) {
-            console.log('[periodChanged] Detail:', e.detail);
+        try {
+            const period = getCurrentPeriod();
+            console.log('[periodChanged] Event fired, period:', period);
+            if (e.detail) {
+                console.log('[periodChanged] Detail:', e.detail);
+            }
+            renderProjects();
+            renderEmployees();
+        } catch (error) {
+            console.error('[periodChanged] Error:', error);
         }
-        renderProjects();
-        renderEmployees();
-    });
-
+    }, { passive: true });
+    
     window.addEventListener('editAssignment', (e) => {
-        const { employeeId, employeeData } = e.detail;
-        console.log('[editAssignment] Employee updated:', employeeId, employeeData);
-        renderProjects();
-        renderEmployees();
-    });
+        try {
+            const { employeeId, employeeData } = e.detail;
+            console.log('[editAssignment] Employee updated:', employeeId, employeeData);
+            renderProjects();
+            renderEmployees();
+        } catch (error) {
+            console.error('[editAssignment] Error:', error);
+        }
+    }, { passive: true });
 });

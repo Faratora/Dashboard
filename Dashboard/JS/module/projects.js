@@ -426,7 +426,7 @@ function initSortFilter() {
         const { column, value } = e.detail;
         applyColumnFilter(column, value);
         updateClearButtonVisibility();
-    });
+    }, { passive: true });
 
     // Reset filters button
     const clearBtn = $('#clear-project-filters-btn');
