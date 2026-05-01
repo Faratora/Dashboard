@@ -112,6 +112,16 @@ function saveData(data) {
         console.error('[DataStorage] Failed to save data:', error);
     }
 }
+            return parsed;
+        } catch {
+            const period = getCurrentPeriod();
+            return { monthlyData: { [period]: initializeSampleData() } };
+        }
+    }
+
+    const period = getCurrentPeriod();
+    return { monthlyData: { [period]: initializeSampleData() } };
+}
 
 function initializeSampleData() {
     const sampleProjects = [
