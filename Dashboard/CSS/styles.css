@@ -114,9 +114,6 @@ nav {
     transition: opacity 0.3s ease;
 }
 
-.panel-backdrop.hidden {
-    display: none;
-}
 
 .panel-drawer {
     position: fixed;
@@ -394,8 +391,7 @@ nav {
     z-index: 2001;
     min-width: 400px;
 }
-#seed-data-modal.hidden,
-#seed-data-backdrop.hidden {
+.hidden {
     display: none;
 }
 /* Validation */
@@ -430,16 +426,12 @@ nav {
     z-index: 2000;
 }
 
-.employees-modal-backdrop.hidden {
-    display: none;
-}
+
 .employees-modal {
     z-index: 2001;
     width: 80%;
 }
-.employees-modal.hidden {
-    display: none;
-}
+
 .employees-modal h2 {
     margin: 0 0 20px 0;
     color: var(--color-text);

@@ -193,17 +193,18 @@ function openEmployeesModal(projectId) {
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
 
-    setTimeout(() => {
-        tbody.querySelectorAll('.change-btn').forEach((btn) => {
-            btn.addEventListener('click', (e) => {
-                const empId = e.target.dataset.id;
-                const project = e.target.dataset.project;
-                const employee = allEmployees.find((emp) => emp.id === empId);
-                if (employee) {
-                    window.openEditAssignmentModal(employee, project);
-                }
-            });
-        });
+     setTimeout(() => {
+         tbody.querySelectorAll('.change-btn').forEach((btn) => {
+             btn.addEventListener('click', (e) => {
+                 const empId = e.target.dataset.id;
+                 const project = e.target.dataset.project;
+                 const employee = allEmployees.find((emp) => emp.id === empId);
+                 const buttonRect = e.target.getBoundingClientRect();
+                 if (employee) {
+                     window.openEditAssignmentModal(employee, project, buttonRect);
+                 }
+             });
+         });
 
         tbody.querySelectorAll('.modal-unassign-employee').forEach((btn) => {
             btn.addEventListener('click', (e) => {

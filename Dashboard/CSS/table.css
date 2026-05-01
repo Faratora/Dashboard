@@ -88,11 +88,11 @@ th:hover {
     padding: 12px 20px;
     background-color: var(--color-bg-sidebar);
     border-top: 2px solid var(--color-border-bottom);
-    font-size: 16px;
+    font-size: 20px;
     font-weight: bold;
-    color: var(--color-white);
+    
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     align-items: center;
     gap: 15px;
 }
