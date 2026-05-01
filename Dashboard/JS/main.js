@@ -36,19 +36,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         console.log('[Unhandled Rejection]', event.reason);
+        // Prevent default
         event.preventDefault();
     };
 
-    // Check if localStorage has data, if not, force initialization
-    const stored = localStorage.getItem('monthlyData');
-    if (!stored) {
-        console.log('[Main] No localStorage data found, triggering initialization...');
-        // Trigger getProjects to force loadData() to create sample data
-        import('./module/dataStorage.js').then(module => {
-            const projects = module.getProjects();
-            console.log('[Main] Initialized projects:', projects?.length || 0);
-        });
-    }
+    window.onunhandledrejection = function(event) {
+        console.log('[Unhandled Rejection]', event.reason);
+        // Prevent default
+        event.preventDefault();
+    };
 
     window.addEventListener('periodChanged', (e) => {
         try {

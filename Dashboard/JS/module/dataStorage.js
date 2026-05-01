@@ -49,11 +49,11 @@ export function getCurrentPeriod() {
     const year = yearSelect ? yearSelect.value : null;
 
     if (!month || !year) {
-        // Fallback to current date
+        
         const now = new Date();
         const currentMonth = now.getMonth() + 1;
         const currentYear = now.getFullYear();
-        return `${currentYear}-${String(currentMonth).padStart(2, '0')}`;
+        return `${currentYear}-${currentMonth.toString().padStart(2, '0')}`;
     }
     return `${year}-${month}`;
 }
@@ -61,64 +61,27 @@ export function getCurrentPeriod() {
 export function getMonthData() {
     const data = loadData();
     const period = getCurrentPeriod();
-    const monthData = data.monthlyData?.[period];
-    
-    if (!monthData) {
-        // Initialize empty structure for this period
-        console.warn('[DataStorage] No data for period:', period);
-        const emptyData = { projects: [], employees: [] };
-        if (data.monthlyData) {
-            data.monthlyData[period] = emptyData;
-            saveData(data);
-        }
-        return emptyData;
-    }
-    return monthData;
+    return data.monthlyData[period];
 }
 
 function loadData() {
-    try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-            try {
-                const parsed = JSON.parse(stored);
-               
-                const period = getCurrentPeriod();
-                if (!parsed.monthlyData[period]) {
-                    parsed.monthlyData[period] = initializeSampleData();
-                    saveData(parsed);
-                }
-                return parsed;
-            } catch {
-                const period = getCurrentPeriod();
-                return { monthlyData: { [period]: initializeSampleData() } };
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+        try {
+            const parsed = JSON.parse(stored);
+           
+            const period = getCurrentPeriod();
+            if (!parsed.monthlyData[period]) {
+                parsed.monthlyData[period] = initializeSampleData();
+                saveData(parsed);
             }
-        }
-        
-        const period = getCurrentPeriod();
-        return { monthlyData: { [period]: initializeSampleData() } };
-    } catch (error) {
-        console.error('[DataStorage] localStorage error:', error);
-        // Fallback: return empty data structure
-        const period = getCurrentPeriod();
-        return { monthlyData: { [period]: { projects: [], employees: [] } } };
-    }
-}
-
-function saveData(data) {
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch (error) {
-        console.error('[DataStorage] Failed to save data:', error);
-    }
-}
             return parsed;
         } catch {
             const period = getCurrentPeriod();
             return { monthlyData: { [period]: initializeSampleData() } };
         }
     }
-
+    
     const period = getCurrentPeriod();
     return { monthlyData: { [period]: initializeSampleData() } };
 }
