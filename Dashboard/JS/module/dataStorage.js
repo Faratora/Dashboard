@@ -72,7 +72,7 @@ function loadData() {
            
             const period = getCurrentPeriod();
             if (!parsed.monthlyData[period]) {
-                // Create new period with sample data if empty
+                
                 parsed.monthlyData[period] = initializeSampleData();
                 saveData(parsed);
             }
@@ -83,24 +83,6 @@ function loadData() {
         }
     }
     
-    // First time load - initialize with sample data
-    console.log('[DataStorage] First load detected, initializing sample data');
-    const period = getCurrentPeriod();
-    const initialData = {
-        monthlyData: {
-            [period]: initializeSampleData()
-        }
-    };
-    saveData(initialData);
-    return initialData;
-}
-            return parsed;
-        } catch {
-            const period = getCurrentPeriod();
-            return { monthlyData: { [period]: initializeSampleData() } };
-        }
-    }
-
     const period = getCurrentPeriod();
     return { monthlyData: { [period]: initializeSampleData() } };
 }
