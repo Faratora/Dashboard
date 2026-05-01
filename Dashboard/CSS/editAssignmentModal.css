@@ -10,9 +10,8 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background: white;
-    padding: 20px;
     border-radius: 12px;
-    z-index: 2001;
+    z-index: 2002;
     min-width: 350px;
     max-width: 90%;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
@@ -22,7 +21,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 15px;
+    padding-bottom: 5px;
     border-bottom: 1px solid #eee;
 }
 
@@ -34,7 +33,6 @@
 
 #edit-assignment-modal .modal-body {
     margin-bottom: 20px;
-    padding: 20px 0;
 }
 
 #edit-assignment-modal .assignment-info {
@@ -78,6 +76,4 @@
     gap: 10px;
     justify-content: flex-end;
     margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px solid #eee;
 }

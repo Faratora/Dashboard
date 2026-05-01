@@ -95,7 +95,6 @@ nav {
     flex-wrap: wrap;
 }
 
-
 .content-header h1 {
     margin: 0;
     font-size: 28px;
@@ -228,8 +227,6 @@ nav {
     background: var(--color-bg-body);
 }
 
-
-на одной строче
 /* Filter Chips */
 .filter-chips {
     display: flex;
@@ -355,6 +352,15 @@ nav {
     font-weight: bold;
 }
 
+/* Modal */
+.modal {
+    padding: 20px;
+}
+
+
+
+/* end modal */
+
 #seed-data-modal table,
 #seed-data-modal th,
 #seed-data-modal td {
@@ -421,14 +427,12 @@ nav {
     left: 50%;
     transform: translate(-50%, -50%);
     background: white;
-    padding: 20px;
     border-radius: 12px;
     z-index: 2001;
     width: 90%;
     width: calc(100% - 280px);
-    max-height: 85vh;
     overflow-y: auto;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px #0003;
 }
 .employees-modal.hidden {
     display: none;
@@ -444,7 +448,7 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
 }
 .employees-modal .modal-close {
     background: #e74c3c;
@@ -482,9 +486,9 @@ nav {
     background: #f8f9fa;
 }
 .employees-modal .modal-footer {
-    margin-top: 20px;
+    margin-top: 10px;
     text-align: right;
-    padding-top: 15px;
+    padding-top: 5px;
 }
 
 /* Modal */
@@ -518,7 +522,6 @@ nav {
     left: 50%;
     transform: translate(-50%, -50%);
     background: white;
-    padding: 20px;
     border-radius: 12px;
     z-index: 2001;
     min-width: 200px;
@@ -526,19 +529,15 @@ nav {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
-
 .modal-header h2 {
     margin: 0;
     color: #1a1a2e;
     font-size: 22px;
 }
 
-
-#assign-modal .modal-body,
-#availability-modal .modal-body {
+#assign-modal .modal-body{
     margin-bottom: 20px;
 }
-
 
 #assign-modal .modal-footer {
     display: flex;
@@ -549,16 +548,19 @@ nav {
 /* Availability Modal */
 #availability-modal {
     min-width: 400px;
-    max-width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
+    max-width: 500px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px #0003;
+    z-index: 10002;
+
 }
 
 #availability-modal .availability-info {
     background: #f8f9fa;
-    padding: 15px;
+    padding: 5px;
     border-radius: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
 }
 
 #availability-modal .availability-info p {
@@ -574,7 +576,7 @@ nav {
 }
 
 #availability-modal .availability-calendar {
-    margin-top: 20px;
+    margin-top: 5px;
 }
 
 #availability-modal .calendar-header {
@@ -593,7 +595,7 @@ nav {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 5px;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
 }
 
 #availability-modal .calendar-day-header {

@@ -987,7 +987,7 @@ export function initModal() {
     const updateVacationCount = () => {
         if (availabilityVacationDays) {
             const vacationText = formatVacationDays(selectedVacationDays);
-            availabilityVacationDays.textContent = `Vacation Days: ${vacationText}`;
+            availabilityVacationDays.innerHTML = `<span class="vacation-days-label">Vacation Days:</span> <span class="vacation-days-value">${vacationText}</span>`;
         }
     };
 
@@ -1040,7 +1040,7 @@ export function initModal() {
         if (availabilityWorkingDays) {
             const totalDays = getWorkingDays(currentCalendarMonth, currentCalendarYear);
             const remainingDays = totalDays - selectedVacationDays.length;
-            availabilityWorkingDays.textContent = `Working Days: ${remainingDays}/${totalDays} days`;
+            availabilityWorkingDays.innerHTML = `<span class="working-days-label">Working Days:</span> <span class="working-days-value">${remainingDays}/${totalDays} days</span>`;
         }
     };
 
@@ -1276,17 +1276,23 @@ export function initModal() {
                 return sum + rev - cost;
             }, 0);
 
-        unassignMessage.textContent = `You want to unassign ${employee.name} ${employee.surname} (${capacity.toFixed(2)} capacity) from ${projectName}?`;
+        unassignMessage.innerHTML = `You want to unassign <strong>${employee.name} ${employee.surname}</strong> (${capacity.toFixed(2)} capacity) from <strong>${projectName}</strong>?`;
 
         if (unassignAssignedCapacity) unassignAssignedCapacity.textContent = capacity.toFixed(2);
         if (unassignSalaryShare) unassignSalaryShare.textContent = formatCurrency(empSalaryShare);
         if (unassignBudgetShare) unassignBudgetShare.textContent = formatCurrency(empBudgetShare);
-        if (unassignEstimatedIncome) unassignEstimatedIncome.textContent = formatCurrency(empEstimatedIncome);
+        if (unassignEstimatedIncome) {
+            unassignEstimatedIncome.innerHTML = `<span class="income-value income-positive">${formatCurrency(empEstimatedIncome)}</span>`;
+        }
         if (unassignCurrentCapacity)
             unassignCurrentCapacity.textContent = `${totalEffectiveCapacity.toFixed(1)} / ${totalCapacity}`;
         if (unassignAfterCapacity) unassignAfterCapacity.textContent = `${capacityAfter.toFixed(1)} / ${totalCapacity}`;
-        if (unassignIncomeNow) unassignIncomeNow.textContent = formatCurrency(projectIncomeNow);
-        if (unassignIncomeAfter) unassignIncomeAfter.textContent = formatCurrency(projectIncomeAfter);
+        if (unassignIncomeNow) {
+            unassignIncomeNow.innerHTML = `<span class="income-value income-negative">${formatCurrency(projectIncomeNow)}</span>`;
+        }
+        if (unassignIncomeAfter) {
+            unassignIncomeAfter.innerHTML = `<span class="income-value income-positive">${formatCurrency(projectIncomeAfter)}</span>`;
+        }
 
         if (unassignBackdrop) unassignBackdrop.classList.remove('hidden');
         if (unassignModal) unassignModal.classList.remove('hidden');

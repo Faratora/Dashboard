@@ -10,13 +10,10 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background: white;
-    padding: 20px;
     border-radius: 12px;
     z-index: 2001;
     min-width: 400px;
     max-width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
@@ -34,10 +31,6 @@
     font-size: 22px;
 }
 
-#unassign-modal .modal-body {
-    margin-bottom: 20px;
-    padding: 10px 0;
-}
 
 #unassign-modal .unassign-details {
     background: #f8f9fa;
@@ -51,19 +44,32 @@
     color: #333;
     font-size: 14px;
     line-height: 1.5;
+    display: flex;
+    justify-content: space-between;
 }
 
 #unassign-modal .unassign-details p strong {
     color: #1a1a2e;
-    display: inline-block;
-    min-width: 180px;
+    text-align: right;
+    margin-right: 20px;
+}
+
+#unassign-modal .unassign-details .income-value {
+    font-weight: 600;
+    text-align: right;
+}
+
+#unassign-modal .unassign-details .income-positive {
+    color: #27ae60;
+}
+
+#unassign-modal .unassign-details .income-negative {
+    color: #e74c3c;
 }
 
 #unassign-modal .modal-footer {
     display: flex;
     gap: 10px;
     justify-content: flex-end;
-    margin-top: 20px;
     padding-top: 15px;
-    border-top: 1px solid #eee;
 }

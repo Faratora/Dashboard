@@ -2,5 +2,9 @@
 #availability-modal .calendar-day.today {
     border: 2px solid #3498db;
     font-weight: bold;
-    background: #e3f2fd;
+}
+
+/* Calendar Day Font Size */
+#availability-modal .calendar-day {
+    font-size: 16px;
 }

@@ -41,14 +41,15 @@ function openSeedModal() {
         return;
     }
 
-    const monthSelect = $('#month-select');
-    const yearSelect = $('#year-select');
     const currentPeriodLabel = $('#current-period-label');
 
-    if (monthSelect && yearSelect && currentPeriodLabel) {
-        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const monthIndex = parseInt(monthSelect.value) - 1;
-        currentPeriodLabel.textContent = `(${monthNames[monthIndex]} ${yearSelect.value})`;
+    // Display current month and year as text
+    if (currentPeriodLabel) {
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        currentPeriodLabel.textContent = `(${monthNames[currentMonth]} ${currentYear})`;
     }
 
     renderSeedTable();
@@ -100,10 +101,10 @@ function renderSeedTable() {
 }
 
 function copyDataFromPeriod(sourcePeriod) {
-    let currentPeriod = getCurrentPeriod();
-    log('copyDataFromPeriod: source=' + sourcePeriod + ', target=' + currentPeriod);
+    const targetPeriod = getCurrentPeriod();
+    log('copyDataFromPeriod: source=' + sourcePeriod + ', target=' + targetPeriod);
 
-    if (sourcePeriod === currentPeriod) {
+    if (sourcePeriod === targetPeriod) {
         log('Source and target are the same, skipping');
         closeSeedModal();
         return;
@@ -142,12 +143,12 @@ function copyDataFromPeriod(sourcePeriod) {
     log('Source data validated: projects=' + sourceData.projects.length + ', employees=' + sourceData.employees.length);
 
     // Preserve existing data in target period, then add/update from source
-    if (!allData.monthlyData[currentPeriod]) {
-        allData.monthlyData[currentPeriod] = { employees: [], projects: [] };
+    if (!allData.monthlyData[targetPeriod]) {
+        allData.monthlyData[targetPeriod] = { employees: [], projects: [] };
     }
 
     // Merge projects (replace if same id)
-    const targetProjects = [...allData.monthlyData[currentPeriod].projects];
+    const targetProjects = [...allData.monthlyData[targetPeriod].projects];
     sourceData.projects.forEach((srcProj) => {
         const idx = targetProjects.findIndex((p) => p.id === srcProj.id);
         if (idx >= 0) {
@@ -158,7 +159,7 @@ function copyDataFromPeriod(sourcePeriod) {
     });
 
     // Merge employees (replace if same id, but clear vacationDays)
-    const targetEmployees = [...allData.monthlyData[currentPeriod].employees];
+    const targetEmployees = [...allData.monthlyData[targetPeriod].employees];
     sourceData.employees.forEach((srcEmp) => {
         const idx = targetEmployees.findIndex((e) => e.id === srcEmp.id);
         const empCopy = { ...srcEmp, vacationDays: [] }; // Clear vacation days for new month
@@ -169,17 +170,17 @@ function copyDataFromPeriod(sourcePeriod) {
         }
     });
 
-    allData.monthlyData[currentPeriod].projects = targetProjects;
-    allData.monthlyData[currentPeriod].employees = targetEmployees;
+    allData.monthlyData[targetPeriod].projects = targetProjects;
+    allData.monthlyData[targetPeriod].employees = targetEmployees;
 
     localStorage.setItem('monthlyData', JSON.stringify(allData));
 
     const verify = localStorage.getItem('monthlyData');
     const verifyData = JSON.parse(verify);
-    log('After copy - target projects:', verifyData.monthlyData[currentPeriod]?.projects?.length || 0);
-    log('After copy - target employees:', verifyData.monthlyData[currentPeriod]?.employees?.length || 0);
+    log('After copy - target projects:', verifyData.monthlyData[targetPeriod]?.projects?.length || 0);
+    log('After copy - target employees:', verifyData.monthlyData[targetPeriod]?.employees?.length || 0);
 
-    log('Data copied from ' + sourcePeriod + ' to ' + currentPeriod);
+    log('Data copied from ' + sourcePeriod + ' to ' + targetPeriod);
     closeSeedModal();
 
     setTimeout(() => {

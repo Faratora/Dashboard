@@ -10,7 +10,6 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background: white;
-    padding: 20px;
     border-radius: 8px;
     z-index: 2001;
     min-width: 320px;
@@ -64,6 +63,26 @@
 #assign-modal .assign-info .available-value {
     color: #27ae60;
     font-weight: 700;
+}
+
+#availability-modal .availability-info .working-days-label {
+    color: #27ae60;
+    font-weight: 600;
+}
+
+#availability-modal .availability-info .vacation-days-label {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+#availability-modal .availability-info .working-days-value {
+    color: #333;
+    font-weight: 400;
+}
+
+#availability-modal .availability-info .vacation-days-value {
+    color: #333;
+    font-weight: 400;
 }
 
 #assign-modal .assign-calculations p.calculation-row {
