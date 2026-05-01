@@ -5,7 +5,7 @@ table {
     background: var(--color-white);
     border-radius: 12px;
     overflow: auto;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--box-shadow);
     table-layout: auto;
     overflow: visible;
 }
@@ -69,17 +69,17 @@ th:hover {
 }
 /* Project table color coding */
 .over-capacity {
-    color: #e74c3c;
+    color: var(--color-button-red);
     font-weight: bold;
 }
 
 .income-positive {
-    color: #27ae60;
-    font-weight: bold;
+    color: var(--color-btn);
+    font-weight: 700;
 }
 
 .income-negative {
-    color: #e74c3c;
+    color: var(--color-button-red);
     font-weight: bold;
 }
 
@@ -98,7 +98,7 @@ th:hover {
 }
 
 .table-summary .total-label {
-    color: #1a1a2e;
+    font-weight: bold;
 }
 
 .table-summary .total-value {
@@ -106,9 +106,14 @@ th:hover {
 }
 
 .table-summary .total-value.income-positive {
-    color: #27ae60;
+    color: var(--color-btn);
 }
 
 .table-summary .total-value.income-negative {
-    color: #e74c3c;
+    color: var(--color-button-red);
+}
+
+.table-summary .total-bench {
+    font-size: 14px;
+    color: #999 !important;
 }

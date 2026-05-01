@@ -10,7 +10,7 @@
     transition: transform 0.3s ease;
     z-index: 1000;
     padding: 20px 0;
-    box-shadow: 2px 0 20px var(--color-box-shadow);
+    box-shadow: var(--box-shadow);
     display: flex;
     flex-direction: column;
 }

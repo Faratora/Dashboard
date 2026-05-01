@@ -1,29 +1,27 @@
 /* Filter Modal */
 
-
 .filter-modal {
     position: absolute;
-    background: white;
+    background: var(--color-white);
     padding: 10px;
     border-radius: 4px;
     z-index: 2001;
     min-width: 200px;
     max-width: 90%;
-    box-shadow: 0 4px 8px #0003;
+    box-shadow: var(--box-shadow);
 }
 
-.filter-modal-footer{
+.filter-modal-footer {
     margin-bottom: 5px;
     display: flex;
     gap: 5px;
     justify-content: flex-end;
 }
 
-
 .filter-modal-body input {
     width: 100%;
     padding: 5px 10px;
-    border: 1px solid #bfbfbf;
+    border: var(--border-default);
     border-radius: 8px;
     font-size: 10px;
     box-sizing: border-box;
@@ -33,5 +31,5 @@
 .filter-modal-body input:focus {
     outline: none;
     border-color: var(--color-button);
-    box-shadow: 0 4px 8px #0003;
+    box-shadow: var(--box-shadow);
 }

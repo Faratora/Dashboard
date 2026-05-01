@@ -6,7 +6,7 @@
     margin-left: 8px;
     cursor: pointer;
     font-size: 14px;
-    color: #3498db;
+    color: var(--color-button-blue);
     transition: color 0.2s;
     vertical-align: middle;
 }
@@ -45,7 +45,7 @@
 .edit-input {
     width: 100%;
     padding: 4px 8px;
-    border: 1px solid #3498db;
+    border: var(--border-radius);
     border-radius: 4px;
     font-size: 14px;
 }

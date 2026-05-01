@@ -9,13 +9,13 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: white;
+    background: var(--color-white);
     border-radius: 8px;
     z-index: 2001;
     min-width: 320px;
     max-width: 400px;
-    box-shadow: 0 4px 12px #0003;
-    border: 1px solid #bdc3c7;
+    box-shadow: var(--box-shadow);
+    border: var(--border-default);
 }
 
 #assign-modal .modal-header {
@@ -29,7 +29,7 @@
 
 #assign-modal .modal-header h2 {
     margin: 0;
-    color: #1a1a2e;
+    color: var(--color-text);
     font-size: 22px;
 }
 
@@ -43,12 +43,12 @@
     padding: 10px;
     border-radius: 8px;
     margin-bottom: 5px;
-    border-left: 3px solid #3498db;
+    border-left: 3px solid var(--color-button-blue);
 }
 
 #assign-modal .assign-info h3 {
     margin: 0 0 5px 0;
-    color: #1a1a2e;
+    color: var(--color-text);
     font-size: 18px;
 }
 
@@ -58,18 +58,14 @@
     font-size: 14px;
 }
 
-#assign-modal .assign-info .available-value {
-    color: #27ae60;
+#assign-modal .assign-info .available-value,
+#availability-modal .availability-info .working-days-label {
+    color: var(--color-btn);
     font-weight: 700;
 }
 
-#availability-modal .availability-info .working-days-label {
-    color: #27ae60;
-    font-weight: 600;
-}
-
 #availability-modal .availability-info .vacation-days-label {
-    color: #e74c3c;
+    color: var(--color-button-red);
     font-weight: 600;
 }
 
@@ -102,6 +98,15 @@
 }
 
 /* Employee Assignments Modal */
+#employee-assignments-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+}
 
 #employee-assignments-backdrop.hidden,
 #employee-assignments-modal.hidden {
@@ -120,7 +125,7 @@
 
 #employee-assignments-modal th,
 #employee-assignments-modal td {
-    border: 1px solid #bfbfbf;
+    border: var(--border-default);
     padding: 10px 12px;
     text-align: left;
     font-size: 14px;
@@ -128,17 +133,16 @@
     white-space: nowrap;
 }
 
-
 #employee-assignments-modal tbody tr:hover {
     background: #ecf0f1;
 }
 
 #employee-assignments-modal .profit-positive {
-    color: #27ae60;
+    color: var(--color-btn);
 }
 
 #employee-assignments-modal .profit-negative {
-    color: #e74c3c;
+    color: var(--color-button-red);
 }
 
 #assign-modal .assign-calculations p.calculation-row {
@@ -177,14 +181,14 @@
 
 #assign-modal .form-group span[id$='-value'] {
     font-weight: 600;
-    color: #1a1a2e;
+    color: var(--color-text);
     min-width: 30px;
     display: inline-block;
 }
 #assign-modal .form-group select {
     width: 100%;
     padding: 5px;
-    border: 1px solid #bfbfbf;
+    border: var(--border-default);
     border-radius: 8px;
     font-size: 16px;
 
@@ -224,7 +228,7 @@
 }
 
 #assign-modal .assign-calculations p strong {
-    color: #1a1a2e;
+    color: var(--color-text);
 }
 
 #assign-modal .modal-footer {
@@ -246,7 +250,7 @@
 
 #assign-modal .modal-footer .apply-btn {
     background: var(--color-button-blue);
-    color: white;
+    color: var(--color-white);
 }
 
 #assign-modal .modal-footer .apply-btn:hover {
@@ -265,31 +269,31 @@
 #assign-modal input[type='text'] {
     width: 100%;
     padding: 8px;
-    border: 1px solid #ddd;
+    border: var(--border-default);
     border-radius: 4px;
     font-size: 14px;
 }
 
 #assign-modal input[type='text']:focus {
     outline: none;
-    border-color: #1a1a2e;
-    box-shadow: 0 0 0 2px rgba(26, 26, 46, 0.2);
+    border-color: var(--color-text);
+    box-shadow: var(--box-shadow);
 }
 
 #assign-modal select {
     width: 100%;
     padding: 8px;
-    border: 1px solid #ddd;
+    border: var(--border-default);
     border-radius: 4px;
     font-size: 14px;
-    background: white;
+    background: var(--color-white);
     color: black;
 }
 
 #assign-modal select:focus {
     outline: none;
-    border-color: #1a1a2e;
-    box-shadow: 0 0 0 2px rgba(26, 26, 46, 0.2);
+    border-color: var(--color-text);
+    box-shadow: var(--box-shadow);
 }
 #assign-modal .assign-calculations p:last-child {
     margin-bottom: 0;

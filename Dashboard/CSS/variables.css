@@ -3,6 +3,8 @@
     --color-text: #1a1a2e;
     --table-header: #dbdcdd;
     --table-border: #bfbfbf;
+    --border-default: 1px solid #bfbfbf;
+    --border-radius: 1px solid #3498db;
 
     --background-btn-close: #d0d0d0;
     --background-btn-close-hover: #bfbfbf;
@@ -10,8 +12,12 @@
     --color-white: white;
     --color-button: #1abc9c;
     --color-hover-dark: #16a085;
+
+    --color-btn: #27ae60;
+    
+
     --color-windows-hover: rgba(0, 0, 0, 0.5);
-    --color-box-shadow: rgba(0, 0, 0, 0.2);
+    --box-shadow: 0 4px 8px #0003;
     --color-border-bottom: rgba(255, 255, 255, 0.1);
     --color-btn-hover: rgba(255, 255, 255, 0.5);
     

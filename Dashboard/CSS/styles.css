@@ -46,7 +46,7 @@ select {
 select:focus {
     outline: none;
     border-color: #5b9aff;
-    box-shadow: 0 0 0 2px rgba(91, 154, 255, 0.3);
+    box-shadow: var(--box-shadow);
 }
 
 /* select option {
@@ -98,7 +98,7 @@ nav {
 .content-header h1 {
     margin: 0;
     font-size: 28px;
-    border-bottom: 2px solid #1abc9c;
+    border-bottom: 2px solid var(--color-button);
     padding-bottom: 15px;
 }
 
@@ -125,7 +125,7 @@ nav {
     width: 400px;
     height: 100vh;
     background: var(--color-bg-body);
-    box-shadow: -2px 0 20px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--box-shadow);
     transform: translateX(100%);
     transition: transform 0.3s ease;
     z-index: 2000;
@@ -182,7 +182,7 @@ nav {
 .panel-drawer input {
     width: calc(100% - 40px);
     padding: 12px 15px;
-    border: 1px solid #bfbfbf;
+    border: var(--border-default);
     border-radius: 8px;
     font-size: 16px;
     transition: border-color 0.2s;
@@ -191,13 +191,13 @@ nav {
 .panel-drawer input:focus {
     outline: none;
     border-color: var(--color-button);
-    box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.1);
+    box-shadow: var(--box-shadow);
 }
 
 .panel-drawer select {
     width: calc(100% - 40px);
     padding: 12px 15px;
-    border: 1px solid #ddd;
+    border: var(--border-default);
     border-radius: 8px;
     font-size: 16px;
     background: #f5f5f5;
@@ -207,9 +207,9 @@ nav {
 
 .panel-drawer select:focus {
     outline: none;
-    color: black;
+    color: var(--color-text);
     border-color: var(--color-button);
-    box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.1);
+    box-shadow: var(--box-shadow);
 }
 
 .panel-drawer select option {
@@ -265,7 +265,7 @@ nav {
 
 /*apacity Overload Indicator */
 .over-capacity {
-    color: #e74c3c;
+    color: var(--color-button-red);
     font-weight: bold;
 }
 
@@ -276,7 +276,7 @@ nav {
 
 .filter-input {
     padding: 8px 12px;
-    border: 1px solid #bfbfbf;
+    border: var(--border-default);
     border-radius: 6px;
     font-size: 14px;
     width: 200px;
@@ -312,7 +312,7 @@ nav {
 .reset-filters-btn {
     background: #ecf0f1;
     color: #666;
-    border: 1px solid #bfbfbf;
+    border: var(--border-default);
     border-radius: 6px;
     padding: 8px 12px;
     font-size: 13px;
@@ -343,18 +343,26 @@ nav {
 }
 
 .profit-positive {
-    color: #27ae60;
+    color: var(--color-btn);
     font-weight: bold;
 }
 
 .profit-negative {
-    color: #e74c3c;
+    color: var(--color-button-red);
     font-weight: bold;
 }
 
 /* Modal */
 .modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--color-white);
+    border-radius: 12px;
+    z-index: 2003;
     padding: 20px;
+    box-shadow: var(--box-shadow);
 }
 
 /* end modal */
@@ -362,7 +370,7 @@ nav {
 #seed-data-modal table,
 #seed-data-modal th,
 #seed-data-modal td {
-    border: 1px solid #bfbfbf;
+    border: var(--border-default);
     padding: 8px;
     text-align: center;
 }
@@ -382,14 +390,7 @@ nav {
     background: rgba(0, 0, 0, 0.5);
     z-index: 2000;
 }
-#seed-data-modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
+.seed-data-modal {
     z-index: 2001;
     min-width: 400px;
 }
@@ -433,26 +434,17 @@ nav {
     display: none;
 }
 .employees-modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    border-radius: 12px;
     z-index: 2001;
-    width: 90%;
-    width: calc(100% - 280px);
-    overflow-y: auto;
-    box-shadow: 0 4px 12px #0003;
+    width: 80%;
 }
 .employees-modal.hidden {
     display: none;
 }
 .employees-modal h2 {
     margin: 0 0 20px 0;
-    color: #1a1a2e;
+    color: var(--color-text);
     font-size: 22px;
-    border-bottom: 2px solid #1abc9c;
+    border-bottom: 2px solid var(--color-button);
     padding-bottom: 15px;
 }
 .modal-header {
@@ -462,7 +454,7 @@ nav {
     margin-bottom: 5px;
 }
 .employees-modal .modal-close {
-    background: #e74c3c;
+    background: var(--color-button-red);
     color: white;
     border: none;
     width: 32px;
@@ -477,7 +469,7 @@ nav {
     padding: 0;
 }
 .employees-modal .modal-close:hover {
-    background: #c0392b;
+    background: var(--color-hover-red);
 }
 .employees-modal table {
     width: 100%;
@@ -486,7 +478,7 @@ nav {
 }
 .employees-modal th,
 .employees-modal td {
-    border: 1px solid #bfbfbf;
+    border: var(--border-default);
     padding: 10px 12px;
     text-align: left;
     font-size: 14px;
@@ -516,23 +508,15 @@ nav {
     display: none;
 }
 
-#assign-modal,
+.assign-modal,
 #availability-modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    border-radius: 12px;
-    z-index: 2001;
     min-width: 200px;
-    max-width: 90%;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    max-width: 80%;
 }
 
 .modal-header h2 {
     margin: 0;
-    color: #1a1a2e;
+    color: var(--color-text);
     font-size: 22px;
 }
 
@@ -547,17 +531,14 @@ nav {
 }
 
 /* Availability Modal */
-#availability-modal {
+.availability-modal {
     min-width: 400px;
     max-width: 500px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 8px 32px #0003;
     z-index: 10002;
 }
 
 #availability-modal .availability-info {
-    background: #ecf0f1;
+    background: var(--color-bg-body);
     padding: 5px;
     border-radius: 8px;
     margin-bottom: 5px;
@@ -571,7 +552,7 @@ nav {
 
 #availability-modal .availability-info p:first-child {
     font-weight: bold;
-    color: #1a1a2e;
+    color: var(--color-text);
     font-size: 16px;
 }
 
@@ -588,7 +569,7 @@ nav {
 
 #availability-modal .calendar-header h3 {
     margin: 0;
-    color: #1a1a2e;
+    color: var(--color-text);
     font-size: 16px;
 }
 #availability-modal .calendar-grid {
@@ -622,18 +603,18 @@ nav {
 }
 
 #availability-modal .calendar-day.vacation {
-    background: #e74c3c;
-    color: white;
+    background: var(--color-button-red);
+    color: var(--color-white);
 }
 
 #availability-modal .calendar-day.weekend {
-    background: #ecf0f1;
+    background: var(--color-bg-body);
     color: #999;
 }
 
 #availability-modal .calendar-day.selected {
-    background: #3498db;
-    color: white;
+    background: var(--color-button-blue);
+    color: var(--color-white);
 }
 
 #availability-modal .modal-footer {

@@ -4,17 +4,9 @@
     display: none;
 }
 
-#unassign-modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    border-radius: 12px;
-    z-index: 2003;
+.unassign-modal {
     min-width: 400px;
-    max-width: 90%;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    max-width: 80%;
 }
 
 #unassign-modal .modal-header {
@@ -27,7 +19,7 @@
 
 #unassign-modal .modal-header h2 {
     margin: 0;
-    color: #1a1a2e;
+    color: var(--color-text);
     font-size: 22px;
 }
 
@@ -48,7 +40,7 @@
 }
 
 #unassign-modal .unassign-details p strong {
-    color: #1a1a2e;
+    color: var(--color-text);
     text-align: right;
     margin-right: 20px;
 }
@@ -59,11 +51,11 @@
 }
 
 #unassign-modal .unassign-details .income-positive {
-    color: #27ae60;
+    color: var(--color-btn);
 }
 
 #unassign-modal .unassign-details .income-negative {
-    color: #e74c3c;
+    color: var(--color-button-red);
 }
 
 #unassign-modal .modal-footer {
