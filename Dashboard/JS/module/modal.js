@@ -76,10 +76,13 @@ function openEmployeesModal(projectId) {
     const projects = getProjects();
     const project = projects.find((p) => p.id === projectId);
 
-    if (project) {
-        log(`Opening employees modal for project: ${project.projectName}`);
-        modalTitle.textContent = `Employees on ${project.projectName}`;
+    if (!project) {
+        log('Project not found for id: ' + projectId);
+        return;
     }
+
+    log(`Opening employees modal for project: ${project.projectName}`);
+    modalTitle.textContent = `Employees on ${project.projectName}`;
 
     tbody.innerHTML = '';
     const allEmployees = getEmployees();
