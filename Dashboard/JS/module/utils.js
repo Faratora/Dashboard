@@ -124,8 +124,8 @@ export function initSortFilter(config) {
         }
     }
 
-         for (const [eventName, handler] of Object.entries(extraListeners)) {
-            window.addEventListener(eventName, handler, { passive: true });
-         }
+        for (const [eventName, handler] of Object.entries(extraListeners)) {
+        window.addEventListener(eventName, handler);
+    }
 }
 

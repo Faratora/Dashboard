@@ -131,7 +131,7 @@ export function initInlineEditListeners() {
                 handleInlineEdit(employeeId, 'position', employee);
             }
         }
-    }, { passive: true });
+    });
 }
 
 export { POSITIONS };
