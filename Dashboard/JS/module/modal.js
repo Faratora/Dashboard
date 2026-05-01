@@ -74,19 +74,11 @@ function openEmployeesModal(projectId) {
 
     currentProjectId = projectId;
     const projects = getProjects();
-    let project = projects.find((p) => p.id === projectId);
+    const project = projects.find((p) => p.id === projectId);
 
     if (!project) {
-        log('Project not found by ID: ' + projectId);
-        // Fallback: проверяем, не является ли projectId именем проекта
-        project = projects.find((p) => p.projectName === projectId);
-        if (project) {
-            log('Found project by name: ' + project.projectName);
-        } else {
-            log('Project not found at all. Available projects:', projects.map(p => ({ id: p.id, name: p.projectName })));
-            alert('Project not found. Please refresh the page.');
-            return;
-        }
+        log('Project not found for id: ' + projectId);
+        return;
     }
 
     log(`Opening employees modal for project: ${project.projectName}`);
