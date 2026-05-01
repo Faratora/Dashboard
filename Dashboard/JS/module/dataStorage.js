@@ -198,10 +198,6 @@ function initializeSampleData() {
     };
 }
 
-function saveData(data) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
-
 export function addProject(projectData) {
     log('addProject called');
     const data = loadData();
