@@ -223,19 +223,34 @@ function renderProjectsSummary(projects) {
         return sum + calculateProjectProfit(project.projectName, project.budget);
     }, 0);
 
+    // Calculate total bench payments (employees with no project assignments)
+    const allEmployees = getEmployees();
+    const benchCost = allEmployees.reduce((sum, emp) => {
+        const assignments = emp.assignments || [];
+        if (assignments.length === 0) {
+            return sum + (emp.salary || 0) * 0.5;
+        }
+        return sum;
+    }, 0);
+
     const totalClass = totalIncome > 0 ? 'income-positive' : totalIncome < 0 ? 'income-negative' : '';
 
     summary.innerHTML = '';
     const labelSpan = document.createElement('span');
     labelSpan.className = 'total-label';
-    labelSpan.textContent = 'Total Projected Income:';
+    labelSpan.textContent = 'Total Estimated Income: ';
 
     const valueSpan = document.createElement('span');
     valueSpan.className = `total-value ${totalClass}`;
     valueSpan.textContent = formatCurrency(totalIncome);
 
+    const benchSpan = document.createElement('span');
+    benchSpan.className = 'total-bench';
+    benchSpan.textContent = ` (Bench payments: ${formatCurrency(benchCost)})`;
+
     summary.appendChild(labelSpan);
     summary.appendChild(valueSpan);
+    summary.appendChild(benchSpan);
 }
 
 function renderProjectRow(project) {
