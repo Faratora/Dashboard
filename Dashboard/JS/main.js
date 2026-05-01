@@ -11,23 +11,26 @@ import { getCurrentPeriod } from './module/dataStorage.js';
 document.addEventListener('DOMContentLoaded', () => {
     initSidebar();
     initPeriodSelector();
-    initSeedData();
+    initNavigation();
+    initModal();
     initProjects();
     initEmployees();
-    initModal();
-    initNavigation();
+    initSeedData();
     setupInputRestrictions();
 
 <<<<<<< HEAD
     // Global error handler to catch Chrome extension errors
     window.onerror = function(message, source, lineno, colno, error) {
+        // Ignore IndexedDB errors (they're from extensions or old data)
+        if (message.includes('NotFoundError') && message.includes('object stores')) {
+            console.debug('[Ignored] IndexedDB error:', message);
+            return true;
+        }
         console.log('[Global Error Handler]', message, source, lineno, colno);
-        // Return true to prevent default error handling (which might be causing the issue)
         return false;
     };
     
     window.onunhandledrejection = function(event) {
-<<<<<<< HEAD
         // Ignore IndexedDB rejections
         if (event.reason && event.reason.message && event.reason.message.includes('NotFoundError')) {
             event.preventDefault();
@@ -47,12 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('[Main] Initialized projects:', projects?.length || 0);
         });
     }
-=======
-        console.log('[Unhandled Rejection]', event.reason);
-        // Prevent default
-        event.preventDefault();
-    };
->>>>>>> parent of 6989b6e (fix: Initializing sample data when localStorage is empty + IndexedDB error handling)
 
 =======
 >>>>>>> parent of 10faaa7 (fix: fix bag)

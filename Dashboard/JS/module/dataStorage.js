@@ -77,7 +77,6 @@ export function getMonthData() {
 }
 
 function loadData() {
-<<<<<<< HEAD
     try {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
@@ -93,18 +92,6 @@ function loadData() {
             } catch {
                 const period = getCurrentPeriod();
                 return { monthlyData: { [period]: initializeSampleData() } };
-=======
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-        try {
-            const parsed = JSON.parse(stored);
-           
-            const period = getCurrentPeriod();
-            if (!parsed.monthlyData[period]) {
-                
-                parsed.monthlyData[period] = initializeSampleData();
-                saveData(parsed);
->>>>>>> parent of 6989b6e (fix: Initializing sample data when localStorage is empty + IndexedDB error handling)
             }
         }
         
@@ -116,7 +103,6 @@ function loadData() {
         const period = getCurrentPeriod();
         return { monthlyData: { [period]: { projects: [], employees: [] } } };
     }
-<<<<<<< HEAD
 }
 
 function saveData(data) {
@@ -125,11 +111,6 @@ function saveData(data) {
     } catch (error) {
         console.error('[DataStorage] Failed to save data:', error);
     }
-=======
-    
-    const period = getCurrentPeriod();
-    return { monthlyData: { [period]: initializeSampleData() } };
->>>>>>> parent of 6989b6e (fix: Initializing sample data when localStorage is empty + IndexedDB error handling)
 }
 
 function initializeSampleData() {
