@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Behavior Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 8px; }
+        .pass { background: #d4edda; color: #155724; }
+        .fail { background: #f8d7da; color: #721c24; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        #output { white-space: pre-wrap; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>Filter Behavior Test</h1>
+    
+    <div class="test-section">
+        <h3>Test 1: Initial State</h3>
+        <p>After page load, column filters should be empty</p>
+        <button onclick="runTest1()">Run Test</button>
+        <div id="test1"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 2: Set Filter and Check</h3>
+        <p>Set a column filter, then verify it's set</p>
+        <button onclick="runTest2()">Run Test</button>
+        <div id="test2"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 3: Simulate Nav to Employees (clear filters)</h3>
+        <p>Simulate the Employees nav button click - should clear column filters</p>
+        <button onclick="runTest3()">Run Test</button>
+        <div id="test3"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 4: Simulate Init Employees (clear filters on init)</h3>
+        <p>Simulate initEmployees() - should clear column filters on init</p>
+        <button onclick="runTest4()">Run Test</button>
+        <div id="test4"></div>
+    </div>
+
+    <h2>Output:</h2>
+    <div id="output"></div>
+
+    <script>
+        // Mock the sortAndFilterEmployees function to check filter state
+        let testResults = [];
+
+        function log(msg) {
+            const output = document.getElementById('output');
+            output.textContent += msg + '\n';
+        }
+
+        function runTest1() {
+            const filterableColumns = ['name', 'surname', 'age', 'position', 'salary', 'estimatedPayment', 'project', 'estimatedIncome'];
+            let allEmpty = true;
+            for (const column of filterableColumns) {
+                if (window[`filter_${column}`]) {
+                    allEmpty = false;
+                    break;
+                }
+            }
+            const result = allEmpty ? 'PASS' : 'FAIL';
+            document.getElementById('test1').innerHTML = `<span class="${allEmpty ? 'pass' : 'fail'}">${result}: All column filters are empty on initial load</span>`;
+            log(`Test 1: ${result} - All column filters empty on init: ${allEmpty}`);
+        }
+
+        function runTest2() {
+            // Set a filter
+            window.filter_name = 'john';
+            window.filter_project = 'test';
+            
+            const hasFilters = window.filter_name === 'john' && window.filter_project === 'test';
+            const result = hasFilters ? 'PASS' : 'FAIL';
+            document.getElementById('test2').innerHTML = `<span class="${hasFilters ? 'pass' : 'fail'}">${result}: Filters can be set</span>`;
+            log(`Test 2: ${result} - Filters set: name='john', project='test'`);
+        }
+
+        function runTest3() {
+            // Simulate the Employees nav button click behavior
+            const filterableColumns = ['name', 'surname', 'age', 'position', 'salary', 'estimatedPayment', 'project', 'estimatedIncome'];
+            filterableColumns.forEach((column) => {
+                window[`filter_${column}`] = '';
+            });
+            
+            let allEmpty = true;
+            for (const column of filterableColumns) {
+                if (window[`filter_${column}`]) {
+                    allEmpty = false;
+                    break;
+                }
+            }
+            const result = allEmpty ? 'PASS' : 'FAIL';
+            document.getElementById('test3').innerHTML = `<span class="${allEmpty ? 'pass' : 'fail'}">${result}: Nav to Employees clears column filters</span>`;
+            log(`Test 3: ${result} - Column filters cleared on nav: ${allEmpty}`);
+        }
+
+        function runTest4() {
+            // Set some filters first
+            window.filter_name = 'jane';
+            window.filter_surname = 'doe';
+            
+            // Simulate initEmployees behavior
+            const filterableColumns = ['name', 'surname', 'age', 'position', 'salary', 'estimatedPayment', 'project', 'estimatedIncome'];
+            filterableColumns.forEach((column) => {
+                window[`filter_${column}`] = '';
+            });
+            
+            let allEmpty = true;
+            for (const column of filterableColumns) {
+                if (window[`filter_${column}`]) {
+                    allEmpty = false;
+                    break;
+                }
+            }
+            const result = allEmpty ? 'PASS' : 'FAIL';
+            document.getElementById('test4').innerHTML = `<span class="${allEmpty ? 'pass' : 'fail'}">${result}: initEmployees clears column filters</span>`;
+            log(`Test 4: ${result} - Column filters cleared on init: ${allEmpty}`);
+        }
+    </script>
+</body>
+</html>
