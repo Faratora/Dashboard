@@ -1072,10 +1072,12 @@ export function initModal() {
 
     let currentEditAssignmentEmployee = null;
     let currentEditAssignmentProject = null;
+    let currentEditButtonRect = null;
 
-    const openEditAssignmentModal = (employee, project) => {
+    const openEditAssignmentModal = (employee, project, buttonRect = null) => {
         currentEditAssignmentEmployee = employee;
         currentEditAssignmentProject = project;
+        currentEditButtonRect = buttonRect;
 
         if (!editAssignmentModal || !editAssignmentEmployeeName || !editAssignmentProject) return;
 
@@ -1094,16 +1096,47 @@ export function initModal() {
         }
 
         if (editAssignmentBackdrop) editAssignmentBackdrop.classList.remove('hidden');
-        if (editAssignmentModal) editAssignmentModal.classList.remove('hidden');
+        if (editAssignmentModal) {
+            editAssignmentModal.classList.remove('hidden');
+            // Position modal relative to button if button rect provided
+            if (buttonRect) {
+                editAssignmentModal.classList.add('button-positioned');
+                // Position modal below and slightly to the right of the button
+                const modalRect = editAssignmentModal.getBoundingClientRect();
+                let top = buttonRect.bottom + window.scrollY + 10;
+                let left = buttonRect.left + window.scrollX;
+                
+                // Adjust if modal would go off screen
+                if (left + modalRect.width > window.innerWidth + window.scrollX) {
+                    left = window.innerWidth + window.scrollX - modalRect.width - 20;
+                }
+                if (top + modalRect.height > window.innerHeight + window.scrollY) {
+                    top = buttonRect.top + window.scrollY - modalRect.height - 10;
+                }
+                
+                editAssignmentModal.style.top = top + 'px';
+                editAssignmentModal.style.left = left + 'px';
+            } else {
+                editAssignmentModal.classList.remove('button-positioned');
+                editAssignmentModal.style.top = '';
+                editAssignmentModal.style.left = '';
+            }
+        }
     };
 
     window.openEditAssignmentModal = openEditAssignmentModal;
 
     const closeEditAssignmentModal = () => {
         if (editAssignmentBackdrop) editAssignmentBackdrop.classList.add('hidden');
-        if (editAssignmentModal) editAssignmentModal.classList.add('hidden');
+        if (editAssignmentModal) {
+            editAssignmentModal.classList.add('hidden');
+            editAssignmentModal.classList.remove('button-positioned');
+            editAssignmentModal.style.top = '';
+            editAssignmentModal.style.left = '';
+        }
         currentEditAssignmentEmployee = null;
         currentEditAssignmentProject = null;
+        currentEditButtonRect = null;
     };
 
     const handleEditAssignmentSave = () => {
@@ -1429,7 +1462,8 @@ export function initModal() {
 
                 if (editBtn) {
                     editBtn.addEventListener('click', () => {
-                        window.openEditAssignmentModal(employee, project.projectName);
+                        const buttonRect = editBtn.getBoundingClientRect();
+                        window.openEditAssignmentModal(employee, project.projectName, buttonRect);
                     });
                 }
 

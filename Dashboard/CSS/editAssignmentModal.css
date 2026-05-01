@@ -17,6 +17,13 @@
     box-shadow: var(--box-shadow);
 }
 
+#edit-assignment-modal.button-positioned {
+    top: auto;
+    left: auto;
+    transform: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
 #edit-assignment-modal .modal-header {
     display: flex;
     justify-content: space-between;
