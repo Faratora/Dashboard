@@ -126,7 +126,7 @@ button:hover:disabled {
 .edit-btn:hover,
 .open-btn:hover {
     background: var(--color-hover-dark);
-    transform: scale(1.1);
+    border-radius: 0;
 }
 
 .close-btn:hover,

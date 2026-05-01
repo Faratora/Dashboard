@@ -30,13 +30,12 @@ export function initNavigation() {
         navEmployees.classList.add('active');
         navProjects.classList.remove('active');
         log('Switched to Employees view');
-        // Clear column filters when switching to Employees view
-        // so filters don't auto-apply; they only apply when the filter icon (⌕) is clicked
+        
         const filterableColumns = ['name', 'surname', 'age', 'position', 'salary', 'estimatedPayment', 'project', 'estimatedIncome'];
         const thead = $('#employees-thead');
         filterableColumns.forEach((column) => {
             window[`filter_${column}`] = '';
-            // Reset filter icon color
+            
             if (thead) {
                 const th = thead.querySelector(`th[data-filter="${column}"]`);
                 if (th) {
@@ -47,7 +46,7 @@ export function initNavigation() {
                 }
             }
         });
-        // Hide clear button since we just cleared filters
+        
         const clearBtn = $('#clear-employee-filters-btn');
         if (clearBtn) {
             clearBtn.style.display = 'none';
@@ -55,7 +54,6 @@ export function initNavigation() {
         renderEmployees();
     });
 
-    // Universal handler for Add buttons
     function configureAddButton(buttonId, mode, openModalFn) {
         const button = $(buttonId);
         if (button) {

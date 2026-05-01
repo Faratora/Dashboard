@@ -36,7 +36,7 @@
 }
 
 #edit-assignment-modal .assignment-info {
-    background: #f8f9fa;
+    background: #ecf0f1;
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 25px;
@@ -65,7 +65,7 @@
     font-weight: 500;
 }
 
-#edit-assignment-modal .form-group input[type="range"] {
+#edit-assignment-modal .form-group input[type='range'] {
     width: 100%;
     height: 6px;
     cursor: pointer;

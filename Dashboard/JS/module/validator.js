@@ -43,7 +43,7 @@ export function validateProject() {
             showFieldError(projectBudget, 'Budget must be a positive number');
             isValid = false;
         } else {
-            // Check decimal places
+            
             const parts = projectBudget.value.split('.');
             if (parts[1] && parts[1].length > 2) {
                 showFieldError(projectBudget, 'Budget must have maximum 2 decimal places');
@@ -79,7 +79,7 @@ export function validateProject() {
 function updateSubmitButtonState(formType, isValid) {
     const submitBtn = $('#submit-btn');
     if (submitBtn) {
-        // Check if the correct form is visible
+        
         const projectFormFields = $('#project-form-fields');
         const employeeFormFields = $('#employee-form-fields');
         
@@ -92,8 +92,7 @@ function updateSubmitButtonState(formType, isValid) {
         
         if (isRelevant) {
             submitBtn.disabled = !isValid;
-            // Optional: style disabled button
-            if (isValid) {
+                        if (isValid) {
                 submitBtn.style.opacity = '1';
                 submitBtn.style.cursor = 'pointer';
             } else {
@@ -209,10 +208,10 @@ function clearValidationErrors() {
 }
 
 export function setupInputRestrictions() {
-    // Project/Company names: alphanumeric only
+    
     const letterFields = [
         'project-name',
-        'company-name', 
+        'company-name',
         'employee-name',
         'employee-surname'
     ];
@@ -220,7 +219,7 @@ export function setupInputRestrictions() {
     letterFields.forEach(id => {
         const field = $(`#${id}`);
         if (field) {
-            // Allow letters, numbers, spaces, hyphens
+            
             field.addEventListener('input', (e) => {
                 const oldValue = e.target.value;
                 const newValue = oldValue.replace(/[^a-zA-Zа-яА-ЯёЁ0-9\s-]/g, '');
@@ -231,27 +230,27 @@ export function setupInputRestrictions() {
         }
     });
     
-    // Budget: positive number, max 2 decimal places
+    
     const budgetField = $('#project-budget');
     if (budgetField) {
         budgetField.addEventListener('input', (e) => {
             let value = e.target.value;
             
-            // Remove non-numeric except decimal point
+            
             value = value.replace(/[^0-9.]/g, '');
             
-            // Ensure only one decimal point
+           
             const parts = value.split('.');
             if (parts.length > 2) {
                 value = parts[0] + '.' + parts.slice(1).join('');
             }
             
-            // Limit to 2 decimal places
+           
             if (parts[1] && parts[1].length > 2) {
                 value = parts[0] + '.' + parts[1].substring(0, 2);
             }
             
-            // Ensure positive (remove leading minus)
+            
             if (value.startsWith('-')) {
                 value = value.substring(1);
             }
@@ -260,16 +259,16 @@ export function setupInputRestrictions() {
         });
     }
     
-    // Employee Capacity: positive integer only
+    
     const capacityField = $('#employee-capacity');
     if (capacityField) {
         capacityField.addEventListener('input', (e) => {
             let value = e.target.value;
             
-            // Remove non-numeric
+            
             value = value.replace(/[^0-9]/g, '');
             
-            // Ensure at least 1 when submitted (validation handles this)
+            
             e.target.value = value;
         });
     }

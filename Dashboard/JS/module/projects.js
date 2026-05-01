@@ -268,7 +268,7 @@ function renderProjectRow(project) {
     if (budgetEl) budgetEl.textContent = formatCurrency(project.budget);
     if (capacityEl) {
         capacityEl.textContent = `${usedCapacity.toFixed(1)}/${totalCapacity}`;
-        // Remove old classes and add the correct one
+        
         capacityEl.classList.remove('project-capacity', 'over-capacity');
         capacityEl.classList.add('project-capacity');
         if (overCapacity) {
@@ -287,7 +287,7 @@ function renderProjectRow(project) {
         incomeEl.className = 'project-income';
         if (incomeClass) incomeEl.classList.add(incomeClass);
     }
-    // Buttons are now in template, just set their text content and data attributes
+    
     const editBtn = tr.querySelector('.edit-btn');
     const deleteBtn = tr.querySelector('.delete-btn');
     if (editBtn) {

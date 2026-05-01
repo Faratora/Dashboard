@@ -552,7 +552,7 @@ export function initModal() {
         editingId = employee.id;
         $('#employee-name').value = employee.name;
         $('#employee-surname').value = employee.surname;
-        $('#employee-age').value = employee.age;
+        $('#employee-age').value = employee.birthDate;
         $('#employee-position').value = employee.position;
         const projectSelect = $('#employee-project');
         if (projectSelect) {

@@ -15,10 +15,8 @@
     min-width: 320px;
     max-width: 400px;
     box-shadow: 0 4px 12px #0003;
-  border: 1px solid #bdc3c7;
-
+    border: 1px solid #bdc3c7;
 }
-
 
 #assign-modal .modal-header {
     display: flex;
@@ -41,7 +39,7 @@
 }
 
 #assign-modal .assign-info {
-    background: #f8f9fa;
+    background: #ecf0f1;
     padding: 10px;
     border-radius: 8px;
     margin-bottom: 5px;
@@ -130,12 +128,9 @@
     white-space: nowrap;
 }
 
-#employee-assignments-modal th {
-    background: #f8f9fa;
-}
 
 #employee-assignments-modal tbody tr:hover {
-    background: #f8f9fa;
+    background: #ecf0f1;
 }
 
 #employee-assignments-modal .profit-positive {
@@ -175,12 +170,12 @@
     color: #333;
 }
 
-#assign-modal .form-group input[type="range"] {
+#assign-modal .form-group input[type='range'] {
     width: 100%;
     cursor: pointer;
 }
 
-#assign-modal .form-group span[id$="-value"] {
+#assign-modal .form-group span[id$='-value'] {
     font-weight: 600;
     color: #1a1a2e;
     min-width: 30px;
@@ -192,11 +187,10 @@
     border: 1px solid #bfbfbf;
     border-radius: 8px;
     font-size: 16px;
-   
+
     background-color: #f5f5f5;
     color: #999;
     font-style: italic;
-
 }
 
 #assign-modal .small-label {
@@ -210,14 +204,13 @@
 #assign-modal .fit-coefficient-text {
     font-size: 12px;
     color: #666;
-        font-style: italic;
+    font-style: italic;
 }
 
 #assign-modal .assign-calculations {
-    background: #f8f9fa;
+    background: #ecf0f1;
     padding: 5px;
     border-radius: 8px;
-    
 }
 
 #assign-modal .assign-calculations p {
@@ -226,7 +219,7 @@
     font-size: 14px;
 }
 
-.assign-available-capacity{
+.assign-available-capacity {
     color: #2e7d32;
 }
 
@@ -252,7 +245,7 @@
 }
 
 #assign-modal .modal-footer .apply-btn {
-    background:var(--color-button-blue);
+    background: var(--color-button-blue);
     color: white;
 }
 
@@ -261,7 +254,7 @@
 }
 
 #assign-modal .modal-footer .cancel-btn {
-    background: #f0f0f0;
+    background: #ecf0f1;
     color: #333;
 }
 
@@ -269,7 +262,7 @@
     background: #e0e0e0;
 }
 
-#assign-modal input[type="text"] {
+#assign-modal input[type='text'] {
     width: 100%;
     padding: 8px;
     border: 1px solid #ddd;
@@ -277,7 +270,7 @@
     font-size: 14px;
 }
 
-#assign-modal input[type="text"]:focus {
+#assign-modal input[type='text']:focus {
     outline: none;
     border-color: #1a1a2e;
     box-shadow: 0 0 0 2px rgba(26, 26, 46, 0.2);
@@ -290,14 +283,13 @@
     border-radius: 4px;
     font-size: 14px;
     background: white;
-    color:black;
+    color: black;
 }
 
 #assign-modal select:focus {
     outline: none;
     border-color: #1a1a2e;
     box-shadow: 0 0 0 2px rgba(26, 26, 46, 0.2);
-
 }
 #assign-modal .assign-calculations p:last-child {
     margin-bottom: 0;

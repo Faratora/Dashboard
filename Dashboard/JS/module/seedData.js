@@ -43,7 +43,7 @@ function openSeedModal() {
 
     const currentPeriodLabel = $('#current-period-label');
 
-    // Display current month and year as text
+    
     if (currentPeriodLabel) {
         const now = new Date();
         const currentMonth = now.getMonth();
@@ -142,12 +142,12 @@ function copyDataFromPeriod(sourcePeriod) {
 
     log('Source data validated: projects=' + sourceData.projects.length + ', employees=' + sourceData.employees.length);
 
-    // Preserve existing data in target period, then add/update from source
+    
     if (!allData.monthlyData[targetPeriod]) {
         allData.monthlyData[targetPeriod] = { employees: [], projects: [] };
     }
 
-    // Merge projects (replace if same id)
+    
     const targetProjects = [...allData.monthlyData[targetPeriod].projects];
     sourceData.projects.forEach((srcProj) => {
         const idx = targetProjects.findIndex((p) => p.id === srcProj.id);
@@ -158,11 +158,11 @@ function copyDataFromPeriod(sourcePeriod) {
         }
     });
 
-    // Merge employees (replace if same id, but clear vacationDays)
+    
     const targetEmployees = [...allData.monthlyData[targetPeriod].employees];
     sourceData.employees.forEach((srcEmp) => {
         const idx = targetEmployees.findIndex((e) => e.id === srcEmp.id);
-        const empCopy = { ...srcEmp, vacationDays: [] }; // Clear vacation days for new month
+        const empCopy = { ...srcEmp, vacationDays: [] }; 
         if (idx >= 0) {
             targetEmployees[idx] = empCopy;
         } else {
