@@ -1217,7 +1217,7 @@ export function initModal() {
             const empAssignments = emp.assignments || [];
             const empAssignment = empAssignments.find(a => a.projectName === projectName);
             if (!empAssignment) return sum;
-            
+
             const cap = empAssignment.capacity || 1;
             const fit = empAssignment.fit || 1;
             const weekdayVacations = getWeekdayVacationDays(emp.vacationDays || [], currentYear, currentMonth);
@@ -1243,7 +1243,7 @@ export function initModal() {
         const projectIncomeNow = projectEmployees.reduce((sum, emp) => {
             const empAssignment = (emp.assignments || []).find(a => a.projectName === projectName);
             if (!empAssignment) return sum;
-            
+
             const cap = empAssignment.capacity || 1;
             const f = empAssignment.fit || 1;
             const vac = emp.vacationDays || [];
@@ -1264,7 +1264,7 @@ export function initModal() {
             .reduce((sum, emp) => {
                 const empAssignment = (emp.assignments || []).find(a => a.projectName === projectName);
                 if (!empAssignment) return sum;
-                
+
                 const cap = empAssignment.capacity || 1;
                 const f = empAssignment.fit || 1;
                 const vac = emp.vacationDays || [];
@@ -1374,6 +1374,7 @@ export function initModal() {
 
         if (employeeAssignmentsBackdrop) employeeAssignmentsBackdrop.classList.remove('hidden');
         if (employeeAssignmentsModal) employeeAssignmentsModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
     };
 
     const renderEmployeeAssignmentsTable = (employee) => {

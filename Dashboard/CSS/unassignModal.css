@@ -11,7 +11,7 @@
     transform: translate(-50%, -50%);
     background: white;
     border-radius: 12px;
-    z-index: 2001;
+    z-index: 2003;
     min-width: 400px;
     max-width: 90%;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);

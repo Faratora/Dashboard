@@ -104,6 +104,12 @@
 }
 
 /* Employee Assignments Modal */
+
+#employee-assignments-backdrop.hidden,
+#employee-assignments-modal.hidden {
+    display: none;
+}
+
 #employee-assignments-modal {
     min-width: 900px;
 }
